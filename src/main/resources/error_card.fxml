@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="300.0" prefWidth="200.0" spacing="2" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+        >
+    <padding>
+        <Insets left="10" top="5" />
+    </padding>
+    <Label fx:id="error_label" prefHeight="20" prefWidth="100" style="-fx-font-weight: bold" styleClass="login_plain" text="num" />
+    <Label fx:id="explanation" prefHeight="100" prefWidth="100" styleClass="login_plain" text="Filler why" wrapText="true" />
+    <ButtonBar fx:id="errorBar" prefHeight="125" prefWidth="100" style="-fx-background-color: aliceblue" styleClass="login_plain" />
+    <Button fx:id="learnMore" prefHeight="20" prefWidth="100" styleClass="login_plain" text="Learn More" textAlignment="CENTER" />
+    <!--onAction="learnMore"-->
+
+</VBox>

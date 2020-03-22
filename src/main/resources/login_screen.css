@@ -1,0 +1,41 @@
+.login_plain {
+    -fx-text-fill: black;
+    -fx-font-size: 12;
+    -fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+}
+
+#avatar {
+    -fx-font-size: 12;
+    -fx-text-fill: black;
+    -fx-font-family: "DejaVu Sans", "Calibri", Arial, SansSerif;
+    -fx-background-color: #ff8f00;
+}
+
+#avatar:selected {
+    -fx-background-color: #ff6f00;
+}
+
+
+#sign_up {
+    -fx-border-radius: 2;
+    -fx-border-color: black;
+    -fx-background-color: #26C6DA;
+}
+
+#enter {
+    -fx-border-radius: 2;
+    -fx-border-color: black;
+    -fx-background-color: #ef5350;
+}
+
+#login {
+    -fx-font-size: 14;
+    -fx-font-family: Serif;
+    -fx-text-fill: black;
+}
+
+#title_text{
+    -fx-font-size: 20;
+    -fx-font-family: SansSerif;
+    -fx-font-weight: bold;
+}

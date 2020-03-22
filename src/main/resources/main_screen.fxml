@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LanguageTextEditor">
+
+    <GridPane alignment="CENTER" hgap="10" prefHeight="500" prefWidth="500" vgap="10" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="200">
+        <Text id="title_text" text="Welcome to LanguageEditor" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <ComboBox id="languages" fx:id="languages" prefHeight="20" prefWidth="300" promptText="Choose a Language" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="English" />
+                    <String fx:value="British English" />
+                    <String fx:value="Spanish" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+        <TextArea id="main_area" fx:id="area" prefHeight="300" prefWidth="300" promptText="Enter text here" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2" />
+        <Button id="main_button" fx:id="button" onAction="#checkLanguage" styleClass="border" text="Grammar Check" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Button id="submit" onAction="#submitAssignment" prefHeight="27.0" prefWidth="112.0" styleClass="border" text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+        <Label id="notice" fx:id="notice" prefHeight="100" prefWidth="250" text="Either grammatical or spelling mistakes were found. Would you like to fix them?" visible="false" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Button id="lang_dialog" fx:id="lang_dialog" onAction="#fixErrors" prefHeight="27.0" prefWidth="54.0" styleClass="border" text="Fix?" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+        <padding>
+            <Insets left="10" right="30" />
+        </padding>
+      <columnConstraints>
+         <ColumnConstraints />
+         <ColumnConstraints maxWidth="260.0" minWidth="227.0" prefWidth="227.0" />
+         <ColumnConstraints maxWidth="113.0" minWidth="80.0" prefWidth="113.0" />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+      </rowConstraints>
+    </GridPane>
+    <VBox id="errorBox" fx:id="errorBox" layoutX="385.0" prefHeight="600" prefWidth="215" spacing="5">
+        <Label id="errorBarTitle" alignment="CENTER" text="Potential Errors" textAlignment="CENTER" />
+    </VBox>
+
+
+
+
+</AnchorPane>
