@@ -120,7 +120,7 @@ public class LoginScreen extends Application {
 
     @FXML
     private void selectAvatar(){
-        
+
     }
 
     @FXML

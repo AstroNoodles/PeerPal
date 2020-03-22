@@ -19,12 +19,11 @@ public enum ErrorType {
 
     public static ErrorType explanationToError(String explanation){
             Map<String, ErrorType> explErrorMap = new HashMap<>(21);
+            explErrorMap.put("concordancia de género", ErrorType.VP);
             explErrorMap.put("género", ErrorType.GEN);
             explErrorMap.put("mayusculo", ErrorType.ORT);
             explErrorMap.put("tilde", ErrorType.AC);
             explErrorMap.put("símbolo", ErrorType.ADD);
-            explErrorMap.put("concordancia de género", ErrorType.VP);
-
 
             for(String keyWord : explErrorMap.keySet()){
                 if(explanation.contains(keyWord)){
