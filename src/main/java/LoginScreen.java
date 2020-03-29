@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -120,11 +121,24 @@ public class LoginScreen extends Application {
 
     @FXML
     private void selectAvatar(){
-
+        System.out.println("hiw");
+        openAvatarScreen();
     }
 
     @FXML
     private void changeAvatar(){
+        openAvatarScreen();
+    }
+
+    private void openAvatarScreen(){
+        System.out.println("hi");
+        Stage avatarDialog = new Stage();
+        avatarDialog.initModality(Modality.WINDOW_MODAL);
+
+        AvatarScreen as = new AvatarScreen();
+        Scene dialogScene = new Scene(as.createAvatarDialog(), 300, 300);
+        avatarDialog.setScene(dialogScene);
+        avatarDialog.show();
 
     }
 

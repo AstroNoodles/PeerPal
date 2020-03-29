@@ -10,48 +10,54 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<TabPane fx:id="tabPane" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LoginScreen">
-     <tabs>
-       <Tab fx:id="signUpTab" text="Sign Up">
-         <content>
-           <fx:include prefHeight="400" prefWidth="600" source="sign_up_screen.fxml" />
-         </content>
-       </Tab>
-         <Tab text="Login">
-             <GridPane hgap="10" prefHeight="600" prefWidth="600" style="-fx-background-color: #80DEEA" vgap="10">
-                 <Label id="title_text" prefHeight="30" prefWidth="350" text="LanguageEditor Login" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                 <Label id="login" alignment="CENTER" text="Login:" textAlignment="CENTER" underline="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                 <Label styleClass="login_plain" text="              Username:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                 <TextField fx:id="username" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                 <Label styleClass="login_plain" text="              Password:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                 <PasswordField fx:id="pwd" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+<TabPane fx:id="tabPane" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE"
+         xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LoginScreen">
 
-                 <Label styleClass="login_plain" text="             Class Code:" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                 <TextField fx:id="class_code" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                 <Button id="enter" fx:id="enter" onAction="#enter" prefHeight="30" prefWidth="200" styleClass="login_plain" text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-                 <Button text="Change Avatar" GridPane.columnIndex="1" GridPane.rowIndex="8" prefHeight="30" prefWidth="200" id="avatar" fx:id="changeAvatar" />
-                 <Label styleClass="login_plain" text="              Don't have an account?:" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                 <Button id="sign_up" onAction="#goToPrevTab" styleClass="login_plain" text="Go To Previous Tab" GridPane.columnIndex="2" GridPane.rowIndex="9" />
-                 <columnConstraints>
-                     <ColumnConstraints />
-                     <ColumnConstraints />
-                     <ColumnConstraints />
-                 </columnConstraints>
-                 <rowConstraints>
-                     <RowConstraints />
-                     <RowConstraints />
-                     <RowConstraints />
-                     <RowConstraints />
-                     <RowConstraints />
-                     <RowConstraints />
-                     <RowConstraints />
-                     <RowConstraints />
-                     <RowConstraints />
-               <RowConstraints />
-                 </rowConstraints>
-             </GridPane>
+    <Tab fx:id="signUpTab" text="Sign Up">
+        <fx:include prefHeight="400" prefWidth="600" source="sign_up_screen.fxml"/>
+    </Tab>
+    <Tab text="Login">
+        <GridPane hgap="10" prefHeight="600" prefWidth="600" style="-fx-background-color: #80DEEA" vgap="10">
+            <Label id="title_text" prefHeight="30" prefWidth="350" text="LanguageEditor Login" GridPane.columnIndex="1"
+                   GridPane.rowIndex="1"/>
+            <Label id="login" alignment="CENTER" text="Login:" textAlignment="CENTER" underline="true"
+                   GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+            <Label styleClass="login_plain" text="              Username:" GridPane.columnIndex="1"
+                   GridPane.rowIndex="3"/>
+            <TextField fx:id="username" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+            <Label styleClass="login_plain" text="              Password:" GridPane.columnIndex="1"
+                   GridPane.rowIndex="4"/>
+            <PasswordField fx:id="pwd" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
 
-         </Tab>
-     </tabs>
+            <Label styleClass="login_plain" text="             Class Code:" GridPane.columnIndex="1"
+                   GridPane.rowIndex="5"/>
+            <TextField fx:id="class_code" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
+            <Button id="enter" fx:id="enter" onAction="#enter" prefHeight="30" prefWidth="200" styleClass="login_plain"
+                    text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
+            <Button text="Change Avatar" GridPane.columnIndex="2" GridPane.rowIndex="8" prefHeight="30" prefWidth="200"
+                    id="avatar" onAction="#changeAvatar"/>
+            <Label styleClass="login_plain" text="              Don't have an account?:" GridPane.columnIndex="1"
+                   GridPane.rowIndex="9"/>
+            <Button id="sign_up" onAction="#goToPrevTab" styleClass="login_plain" text="Go To Previous Tab"
+                    GridPane.columnIndex="2" GridPane.rowIndex="9"/>
+            <columnConstraints>
+                <ColumnConstraints/>
+                <ColumnConstraints/>
+                <ColumnConstraints/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints/>
+                <RowConstraints/>
+                <RowConstraints/>
+                <RowConstraints/>
+                <RowConstraints/>
+                <RowConstraints/>
+                <RowConstraints/>
+                <RowConstraints/>
+                <RowConstraints/>
+                <RowConstraints/>
+            </rowConstraints>
+        </GridPane>
 
+    </Tab>
 </TabPane>

@@ -13,7 +13,7 @@
     <padding>
         <Insets left="10" right="10" />
     </padding>
-        <Label id="title_text" prefHeight="50.0" prefWidth="600.0" text="LanguageEditor Sign Up" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label id="title_text" prefHeight="50.0" prefWidth="700.0" text="LanguageEditor Sign Up" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <Label prefHeight="30" prefWidth="185.0" styleClass="login_plain" text="               Email: " GridPane.rowIndex="2" />
    <TextField fx:id="email" prefHeight="27.0" prefWidth="203.0" promptText="Must be a valid email" styleClass="login_plain" GridPane.columnIndex="1" GridPane.rowIndex="2" />
    <TextField fx:id="usernameSign" styleClass="login_plain" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -26,7 +26,7 @@
    <TextField fx:id="classSign" GridPane.columnIndex="1" GridPane.rowIndex="6" />
    <Button id="sign_submit" alignment="CENTER" contentDisplay="CENTER" onAction="#signUp" text="Sign In" GridPane.columnIndex="1" GridPane.rowIndex="7" />
    <Label fx:id="errorText" prefWidth="300" style="-fx-text-fill: RED" styleClass="login_plain" text="Sign Up Now" textAlignment="CENTER" GridPane.rowIndex="9" />
-   <Button mnemonicParsing="false" text="Select Avatar" id="avatar" fx:id="selectAvatar"
+   <Button mnemonicParsing="false" text="Select Avatar" id="avatar" onAction="#selectAvatar"
            GridPane.columnIndex="1" GridPane.rowIndex="9" prefHeight="30" prefWidth="100" />
    <columnConstraints>
       <ColumnConstraints maxWidth="290.0" minWidth="187.0" prefWidth="200.0" />

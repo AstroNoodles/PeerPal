@@ -8,11 +8,13 @@
     -fx-font-size: 12;
     -fx-text-fill: black;
     -fx-font-family: "DejaVu Sans", "Calibri", Arial, SansSerif;
-    -fx-background-color: #ff8f00;
+    -fx-background-color: #ffcc80;
+    -fx-border-radius: 1;
 }
 
 #avatar:selected {
-    -fx-background-color: #ff6f00;
+    -fx-background-color: #ffc947;
+    -fx-border-radius: 2;
 }
 
 
