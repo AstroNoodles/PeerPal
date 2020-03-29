@@ -134,9 +134,11 @@ public class LoginScreen extends Application {
         System.out.println("hi");
         Stage avatarDialog = new Stage();
         avatarDialog.initModality(Modality.WINDOW_MODAL);
+        avatarDialog.setResizable(false);
+        avatarDialog.setTitle("Choose Your Avatar!");
 
         AvatarScreen as = new AvatarScreen();
-        Scene dialogScene = new Scene(as.createAvatarDialog(), 300, 300);
+        Scene dialogScene = new Scene(as.createAvatarDialog(), 1000, 400);
         avatarDialog.setScene(dialogScene);
         avatarDialog.show();
 
