@@ -8,12 +8,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,18 +24,20 @@ public class AvatarScreen {
 
     private static final String MODEL_CSS =
             "-fx-border-radius: 2; -fx-padding: 5";
+    //private static final Path currDir =
+    //        Paths.get(System.getProperty("user.dir"), "src", "main", "resources");
+    private static final Path currDir =
+            Paths.get(System.getProperty("user.dir"));
 
 
     // TEST
     public static void main(String[] args){
         AvatarScreen as = new AvatarScreen();
-        Path currDir = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "avatars");
+        // Path currDir = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "avatars");
         System.out.println(currDir);
         try {
-            Files.list(currDir).forEach(System.out::println);
-            System.out.println(Files.isDirectory(currDir));
             System.out.println(as.getNumFiles(currDir));
-            System.out.println(as.getSubFilePaths(currDir));
+            System.out.println(as.getSubFilePaths());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,10 +45,10 @@ public class AvatarScreen {
 
     public VBox createAvatarDialog(){
         HBox mainBox = new HBox(30);
-        Path currDir = Paths.get(System.getProperty("user.dir"), "src", "main", "resources");
 
-        Image modelImage = new Image(getClass().getResource("/avatars/model.png").toExternalForm(), 200, 200,
+        Image modelImage = new Image(getClass().getResource("/model.png").toExternalForm(), 200, 200,
                 true, true, true);
+        System.out.println(getClass().getResource("/model.png").toExternalForm());
         ImageView model = new ImageView(modelImage);
         model.setStyle(MODEL_CSS);
 
@@ -67,8 +72,10 @@ public class AvatarScreen {
             imageGrid.setVgap(5);
             imageGrid.setPadding(new Insets(10, 10, 10, 0));
 
-            List<String> subFilePaths = getSubFilePaths(currDir);
-            subFilePaths.remove("/avatars/model.png");
+            List<String> subFilePaths = getSubFilePaths();
+            // subFilePaths.remove("/avatars/model.png");
+            subFilePaths.remove("/model.png");
+            System.out.println(subFilePaths);
             int numFiles = (int) getNumFiles(currDir);
 
             double gridArrangement = Math.sqrt(numFiles);
@@ -89,12 +96,16 @@ public class AvatarScreen {
                     row++;
                 }
                 System.out.println(column);
-                Image im = new Image(subFilePath, 150, 150, true, true, true);
-                Button imButton = new Button("", new ImageView(im));
-                imButton.setPrefWidth(170);
-                imButton.setPrefHeight(170);
-                imageGrid.add(imButton, column, row);
-                column++;
+                System.out.println(subFilePath);
+                if (subFilePath.endsWith(".png")) {
+                    Image im = new Image(getClass().getResource(subFilePath).toExternalForm(),
+                            150, 150, true, true, true);
+                    Button imButton = new Button("", new ImageView(im));
+                    imButton.setPrefWidth(170);
+                    imButton.setPrefHeight(170);
+                    imageGrid.add(imButton, column, row);
+                    column++;
+                }
             }
             mainBox.getChildren().add(imageGrid);
 
@@ -114,17 +125,16 @@ public class AvatarScreen {
         }
     }
 
-    private List<String> getSubFilePaths(Path folderPath) throws IOException {
-        List<String> subFilePaths = new ArrayList<>();
-        if(Files.isDirectory(folderPath, LinkOption.NOFOLLOW_LINKS)){
-            List<String> collector =
-                    Files.list(folderPath).
-                            map(p -> String.format("/avatars/%s", p.toAbsolutePath().toString())).collect(Collectors.toList());
-            subFilePaths.addAll(collector);
-        } else {
-            subFilePaths.add(String.format("/avatars/%s", folderPath.getFileName()));
-        }
-        return subFilePaths;
+    private List<String> getSubFilePaths() throws IOException {
+        System.out.println(currDir);
+        Path resPath = Paths.get(currDir.toString(), "src", "main");
+
+        // TODO
+        // Find a better way around doing this. This seems spotty... Ask StackOverflow???
+        String[] imgs = new String[]{"/D1.png", "/D2.png", "/D3.png", "/D4.png", "/D5.png", "/D6.png"};
+
+        return Arrays.asList(imgs);
+
     }
 
 

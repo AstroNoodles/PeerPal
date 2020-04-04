@@ -138,7 +138,7 @@ public class LoginScreen extends Application {
         avatarDialog.setTitle("Choose Your Avatar!");
 
         AvatarScreen as = new AvatarScreen();
-        Scene dialogScene = new Scene(as.createAvatarDialog(), 1000, 400);
+        Scene dialogScene = new Scene(as.createAvatarDialog(), 1100, 400);
         avatarDialog.setScene(dialogScene);
         avatarDialog.show();
 
