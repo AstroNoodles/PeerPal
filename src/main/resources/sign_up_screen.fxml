@@ -5,15 +5,17 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
+<?import javafx.scene.image.Image?>
 <GridPane hgap="10" prefHeight="400.0" prefWidth="600.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LoginScreen">
     <padding>
         <Insets left="10" right="10" />
     </padding>
-        <Label id="title_text" prefHeight="50.0" prefWidth="700.0" text="LanguageEditor Sign Up" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label id="title_text" prefHeight="50.0" prefWidth="900.0" text="SIGN UP HERE" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <Label prefHeight="30" prefWidth="185.0" styleClass="login_plain" text="               Email: " GridPane.rowIndex="2" />
    <TextField fx:id="email" prefHeight="27.0" prefWidth="203.0" promptText="Must be a valid email" styleClass="login_plain" GridPane.columnIndex="1" GridPane.rowIndex="2" />
    <TextField fx:id="usernameSign" styleClass="login_plain" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -26,11 +28,15 @@
    <TextField fx:id="classSign" GridPane.columnIndex="1" GridPane.rowIndex="6" />
    <Button id="sign_submit" alignment="CENTER" contentDisplay="CENTER" onAction="#signUp" text="Sign In" GridPane.columnIndex="1" GridPane.rowIndex="7" />
    <Label fx:id="errorText" prefWidth="300" style="-fx-text-fill: RED" styleClass="login_plain" text="Sign Up Now" textAlignment="CENTER" GridPane.rowIndex="9" />
-   <Button mnemonicParsing="false" text="Select Avatar" id="avatar" onAction="#selectAvatar"
-           GridPane.columnIndex="1" GridPane.rowIndex="9" prefHeight="30" prefWidth="100" />
+   <Button id="avatar" mnemonicParsing="false" onAction="#selectAvatar" prefHeight="30" prefWidth="100" text="Select Avatar" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+   <ImageView fitHeight="150.0" fitWidth="200.0"
+              pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="9" fx:id="avatar" >
+       <Image url="model.png" />
+   </ImageView>
    <columnConstraints>
       <ColumnConstraints maxWidth="290.0" minWidth="187.0" prefWidth="200.0" />
       <ColumnConstraints maxWidth="301.0" minWidth="68.0" prefWidth="200.0" />
+      <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
       <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
    </columnConstraints>
    <rowConstraints>

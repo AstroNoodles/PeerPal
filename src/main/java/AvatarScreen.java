@@ -5,8 +5,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,31 +24,20 @@ public class AvatarScreen {
     //        Paths.get(System.getProperty("user.dir"), "src", "main", "resources");
     private static final Path currDir =
             Paths.get(System.getProperty("user.dir"));
+    private static ImageView model;
 
 
-    // TEST
-    public static void main(String[] args){
-        AvatarScreen as = new AvatarScreen();
-        // Path currDir = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "avatars");
-        System.out.println(currDir);
-        try {
-            System.out.println(as.getNumFiles(currDir));
-            System.out.println(as.getSubFilePaths());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public VBox createAvatarDialog(){
+    public VBox createAvatarDialog(Stage stage){
         HBox mainBox = new HBox(30);
 
         Image modelImage = new Image(getClass().getResource("/model.png").toExternalForm(), 200, 200,
                 true, true, true);
         System.out.println(getClass().getResource("/model.png").toExternalForm());
-        ImageView model = new ImageView(modelImage);
-        model.setStyle(MODEL_CSS);
+        model = new ImageView(modelImage);
+        model.setId("/model.png");
 
-        StackPane borderImage = new StackPane(model);
+        VBox borderImage = new VBox(model);
         borderImage.setStyle(MODEL_CSS);
 
         VBox titleBox = new VBox(3);
@@ -72,7 +61,7 @@ public class AvatarScreen {
             // subFilePaths.remove("/avatars/model.png");
             subFilePaths.remove("/model.png");
             System.out.println(subFilePaths);
-            int numFiles = (int) getNumFiles(currDir);
+            int numFiles = (int) getNumFiles();
 
             double gridArrangement = Math.sqrt(numFiles);
             int gridWidth;
@@ -99,11 +88,30 @@ public class AvatarScreen {
                     Button imButton = new Button("", new ImageView(im));
                     imButton.setPrefWidth(170);
                     imButton.setPrefHeight(170);
+                    imButton.setOnAction(e -> {
+                        Image buttonImg = ((ImageView) imButton.getGraphic()).getImage();
+                        model.setImage(buttonImg);
+                        model.setId(subFilePath);
+
+                    });
                     imageGrid.add(imButton, column, row);
                     column++;
                 }
             }
             mainBox.getChildren().add(imageGrid);
+
+            Button submit = new Button("Submit");
+            submit.setStyle("-fx-background-color: #26C6DA; " +
+                    "-fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif; -fx-font-size: 14; " +
+                    "-fx-text-fill: black");
+            submit.setPrefWidth(100);
+            submit.setPrefHeight(50);
+            submit.setOnAction(e -> {
+                stage.close();
+                System.out.println("XX - " + model.getId());
+            });
+
+            titleBox.getChildren().add(submit);
 
         } catch(IOException e){
             e.printStackTrace();
@@ -113,9 +121,9 @@ public class AvatarScreen {
     }
 
 
-    private long getNumFiles(Path folderPath) throws IOException {
-        if(Files.isDirectory(folderPath, LinkOption.NOFOLLOW_LINKS)){
-            return Files.list(folderPath).count();
+    private long getNumFiles() throws IOException {
+        if(Files.isDirectory(currDir, LinkOption.NOFOLLOW_LINKS)){
+            return Files.list(currDir).count();
         } else {
             return 1;
         }
@@ -131,6 +139,17 @@ public class AvatarScreen {
 
         return Arrays.asList(imgs);
 
+    }
+
+    public static String getSelectedImage(){
+        if(model == null){
+            return "/model.png";
+        }
+        return model.getId();
+    }
+
+    public static void setSelectedImage(String newImage){
+        model.setId(newImage);
     }
 
 

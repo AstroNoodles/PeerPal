@@ -4,6 +4,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -26,6 +28,10 @@ public class LoginScreen extends Application {
 
     @FXML
     private Tab signUpTab;
+    
+    @FXML
+    private ImageView avatar,
+            changedAvatar;
 
     private static final String EMAIL_REGEX = "" +
             "^([a-zA-Z0-9_\\-.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))" +
@@ -65,7 +71,10 @@ public class LoginScreen extends Application {
                 System.out.println(users[0]);
                 System.out.println(users[1]);
                 System.out.println(users[2]);
-                if(username.getText().equals(users[0]) && pwd.getText().equals(users[1]) && class_code.getText().equals(users[2])){
+                System.out.println(users[3]);
+                if(username.getText().equals(users[0]) && 
+                        pwd.getText().equals(users[1]) && class_code.getText().equals(users[2])){
+                    AvatarScreen.setSelectedImage(users[3]);
                     StageHelper.loadMainEditor("The Language Learn App", 600, 500,
                             "/main_screen.fxml", "/main_screen.css");
                     StageHelper.closeCurrentWindow(username);
@@ -101,13 +110,14 @@ public class LoginScreen extends Application {
 
             if(pwdSign.getText().equals(repwdSign.getText()) && email.getText().matches(EMAIL_REGEX)) {
 
-                PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(members)), true);
-                writer.println(String.format("%s, %s, %s, %s",
-                        usernameSign.getText(), pwdSign.getText(), classSign.getText(), email.getText()));
+                PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(members, true)), true);
+                writer.print(String.format("%s, %s, %s, %s, %s\r\n",
+                        usernameSign.getText(), pwdSign.getText(), classSign.getText(), email.getText(), 
+                        AvatarScreen.getSelectedImage()));
                 writer.close();
-                errorText.setText("SUCCESS! Now, login in the next tab.");
+                errorText.setText("SUCCESS! Go to the next tab.");
             } else {
-                errorText.setText("The passwords do not match or your email is not in the right format");
+                errorText.setText("The passwords do not match.");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,13 +131,22 @@ public class LoginScreen extends Application {
 
     @FXML
     private void selectAvatar(){
-        System.out.println("hiw");
         openAvatarScreen();
+        System.out.println(AvatarScreen.getSelectedImage() + "--sdf");
+        avatar.setImage(new Image(
+                AvatarScreen.getSelectedImage(), 120, 120, true, true, true));
+    }
+
+    @FXML
+    private void onLogin(){
+        changedAvatar.setImage(new Image(
+                AvatarScreen.getSelectedImage(), 120, 120, true, true, true));
     }
 
     @FXML
     private void changeAvatar(){
         openAvatarScreen();
+        changedAvatar.setImage(new Image(AvatarScreen.getSelectedImage(), 170, 200,true, true, true));
     }
 
     private void openAvatarScreen(){
@@ -138,9 +157,9 @@ public class LoginScreen extends Application {
         avatarDialog.setTitle("Choose Your Avatar!");
 
         AvatarScreen as = new AvatarScreen();
-        Scene dialogScene = new Scene(as.createAvatarDialog(), 1100, 400);
+        Scene dialogScene = new Scene(as.createAvatarDialog(avatarDialog), 1100, 500);
         avatarDialog.setScene(dialogScene);
-        avatarDialog.show();
+        avatarDialog.showAndWait();
 
     }
 
