@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.github.astronoodles.peerpal.LoginScreen"
+      spacing="5" prefHeight="800" prefWidth="600">
+
+    <MenuBar onKeyPressed="#handleShortcuts">
+        <Menu text="Customize">
+            <MenuItem text="About" onAction="#showAboutDialog"/>
+        </Menu>
+        <Menu text="Teacher">
+            <MenuItem text="Generate Class Code" onAction="#createClassCode">
+                <accelerator>
+                    <KeyCodeCombination code="C" shift="DOWN" control="ANY" shortcut="DOWN" meta="ANY" alt="ANY" />
+                </accelerator>
+            </MenuItem>
+        </Menu>
+    </MenuBar>
+
+    <TabPane fx:id="tabPane" prefHeight="700" prefWidth="600" tabClosingPolicy="UNAVAILABLE">
+
+        <Tab fx:id="signUpTab" text="Sign Up">
+            <fx:include prefHeight="600" prefWidth="800" source="sign_up_screen.fxml"/>
+        </Tab>
+        <Tab onSelectionChanged="#onLogin" text="Login">
+            <VBox prefWidth="600" prefHeight="600" spacing="5" styleClass="loginOther">
+                <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                    <ImageView fitHeight="200" fitWidth="200" preserveRatio="true" pickOnBounds="true">
+                        <Image url="@/peerpal.png"/>
+                    </ImageView>
+                </HBox>
+
+                <Label styleClass="title_text" prefHeight="30" minWidth="500" prefWidth="900"
+                       text="Login with Your PeerPal Account!">
+                    <padding>
+                        <Insets top="10" left="10"/>
+                    </padding>
+                </Label>
+                <GridPane hgap="10" prefHeight="300" prefWidth="600" style="-fx-background-color: #80DEEA" vgap="10">
+                    <Label id="login" prefWidth="100" prefHeight="20"
+                           style="-fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;" alignment="CENTER"
+                           text="Login:" textAlignment="CENTER" underline="true" GridPane.columnIndex="1"
+                           GridPane.rowIndex="2"/>
+                    <Label styleClass="login_plain" text="              Full Name:" GridPane.columnIndex="1"
+                           GridPane.rowIndex="3"/>
+                    <TextField fx:id="username" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                    <Label styleClass="login_plain" text="              Password:" GridPane.columnIndex="1"
+                           GridPane.rowIndex="4"/>
+                    <PasswordField fx:id="pwd" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+
+                    <Label styleClass="login_plain" text="             Class Code:" GridPane.columnIndex="1"
+                           GridPane.rowIndex="5"/>
+                    <TextField fx:id="class_code" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
+                    <Button id="enter" fx:id="enter" onAction="#enter" prefHeight="30" prefWidth="200"
+                            styleClass="login_plain" text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
+
+                    <columnConstraints>
+                        <ColumnConstraints/>
+                        <ColumnConstraints/>
+                        <ColumnConstraints/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                    </rowConstraints>
+                </GridPane>
+                <Separator styleClass="divider" prefWidth="Infinity"/>
+
+                <HBox spacing="10" prefWidth="150" prefHeight="150">
+                    <padding>
+                        <Insets left="10" right="10" bottom="20"/>
+                    </padding>
+                    <StackPane styleClass="avatarPane" maxHeight="200" maxWidth="200">
+                        <ImageView fx:id="changedAvatar" fitHeight="128" fitWidth="128" preserveRatio="true">
+                            <Image url="@/avatars/D0.png"/>
+                        </ImageView>
+                    </StackPane>
+                    <Button id="avatar" translateY="30" translateX="40"
+                            onAction="#changeAvatar" prefHeight="50" prefWidth="150" text="Change Avatar"/>
+                </HBox>
+                <Label styleClass="login_plain" wrapText="true" prefWidth="500" prefHeight="200"
+                       text="If you would like to do so, you may change the avatar associated with your account. This avatar will save between sessions when you login. Do not fret if the previous avatar you selected is not in the box above.">
+                    <padding>
+                        <Insets left="10" top="10"/>
+                    </padding>
+                </Label>
+                <HBox spacing="10" prefHeight="150" prefWidth="150">
+                    <Label styleClass="login_plain" style="-fx-font-size: 10" text="Don't have an account?:">
+                        <padding>
+                            <Insets left="10" top="10"/>
+                        </padding>
+                    </Label>
+                    <Button id="sign_up" onAction="#goToPrevTab" styleClass="login_plain" style="-fx-font-weight: bold"
+                            text="Go To Previous Tab"/>
+                </HBox>
+            </VBox>
+
+        </Tab>
+    </TabPane>
+</VBox>

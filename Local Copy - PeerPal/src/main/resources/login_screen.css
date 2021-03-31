@@ -1,0 +1,77 @@
+.login_plain {
+    -fx-text-fill: black;
+    -fx-font-size: 13;
+    -fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+}
+
+#classCodeField {
+
+}
+
+#classCodeIndicator {
+    -fx-text-fill: black;
+    -fx-font-size: 11;
+    -fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+}
+
+#classCodeTitle {
+    -fx-font-family: Charter, Arial, Times, sans-serif;
+    -fx-font-size: 15;
+}
+
+#avatar {
+    -fx-font-size: 12;
+    -fx-text-fill: black;
+    -fx-border-color: black;
+    -fx-font-family: "DejaVu Sans", "Calibri", Arial, SansSerif;
+    -fx-background-color: #ffcc80;
+    -fx-start-margin: 20;
+}
+
+.avatarPane {
+    -fx-border-color: black;
+    -fx-border-radius: 2;
+    -fx-effect: dropshadow(two-pass-box, #F48FB1, 2, 1.0, 5, 5);
+}
+
+.avatarPane:hover {
+    -fx-border-radius: 4;
+    -fx-effect: dropshadow(two-pass-box, #EC407A, 2.2, 1.0, 5, 5);
+}
+
+.loginOther {
+    -fx-background-color: #e1f5fe;
+}
+
+#avatar:hover {
+    -fx-background-color: #ffc947;
+    -fx-border-width: 2;
+}
+
+.divider {
+    -fx-background-color: black;
+}
+
+#sign_up {
+    -fx-border-radius: 2;
+    -fx-border-color: black;
+    -fx-background-color: #26C6DA;
+}
+
+#enter {
+    -fx-border-radius: 2;
+    -fx-border-color: black;
+    -fx-background-color: #ef5350;
+}
+
+#login {
+    -fx-font-size: 14;
+    -fx-font-family: Serif;
+    -fx-text-fill: black;
+}
+
+.title_text{
+    -fx-font-size: 16;
+    -fx-font-family: SansSerif;
+    -fx-font-weight: bold;
+}

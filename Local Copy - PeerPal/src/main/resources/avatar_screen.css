@@ -1,0 +1,38 @@
+#chooseAvatar {
+    -fx-font-weight: bold;
+    -fx-font-size: 18;
+    -fx-font-family: "DejaVu Sans", "Calibri", Arial, SansSerif;
+}
+
+#selectedAvatar {
+    -fx-border-width: 2;
+    -fx-border-color: #ba68c8;
+    -fx-border-radius: 4;
+}
+
+.avatarPick {
+    -fx-border-width: 1;
+    -fx-border-radius: 1;
+    -fx-border-color: black;
+    -fx-background-color: #e3f2fd;
+}
+
+.avatarPick:hover {
+    -fx-border-width: 2;
+    -fx-background-color: #bbdefb;
+}
+
+#selectedAvatar:focused {
+    -fx-border-color: #7986cb;
+    -fx-border-width: 3;
+}
+
+#submitAvatar {
+    -fx-border-color: black;
+    -fx-background-color: #ffecb3;
+    -fx-border-radius: 2;
+}
+
+#submitAvatar:hover {
+    -fx-background-color: #ffe082;
+}
