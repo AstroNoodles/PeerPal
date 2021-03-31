@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.github.astronoodles.peerpal.dialogs.ClassCodeDialog"
+            prefHeight="400.0" prefWidth="600.0">
+    <VBox prefWidth="400" prefHeight="300" spacing="2">
+        <HBox prefWidth="400" prefHeight="50" spacing="2">
+            <padding>
+                <Insets top="20" left="5" right="5" bottom="10" />
+            </padding>
+            <Label prefHeight="20" prefWidth="300" id="classCodeTitle"
+                   text="Enter class details below" />
+            <Button onAction="#createCode" fx:id="codeButton" styleClass="login_plain" text="Generate" />
+        </HBox>
+        <GridPane hgap="10" prefHeight="300" prefWidth="600" vgap="10">
+            <Label styleClass="login_plain" text="              Teacher Name:" GridPane.columnIndex="1"
+                   GridPane.rowIndex="2"/>
+            <TextField fx:id="teacherName" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+            <Label styleClass="login_plain" text="              Room #:" GridPane.columnIndex="1"
+                   GridPane.rowIndex="3"/>
+            <TextField fx:id="roomNum" GridPane.columnIndex="2" GridPane.rowIndex="3"  />
+            <Label styleClass="login_plain" text="              Language:" GridPane.columnIndex="1"
+                   GridPane.rowIndex="4"/>
+            <TextField fx:id="languageSelect" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <TextField fx:id="classCode" editable="false"
+                       id="classCodeField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Label id="classCodeIndicator" GridPane.columnIndex="2" GridPane.rowIndex="6" text="Generated Class Code" />
+
+
+        </GridPane>
+    </VBox>
+
+
+</AnchorPane>

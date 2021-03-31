@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<AnchorPane prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.dialogs.AssignmentDialog">
+    <VBox prefHeight="300" prefWidth="400" spacing="1">
+        <padding>
+            <Insets left="10" top="15" />
+        </padding>
+        <Label id="assignmentTitle" prefHeight="10" prefWidth="300" text="Create A New Assignment" textAlignment="CENTER" />
+        <GridPane hgap="20" prefHeight="274.0" prefWidth="399.0" vgap="10">
+            <Label prefHeight="20" prefWidth="500" styleClass="login_plain" text="Assignment Name*: " wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField id="assignStyle" fx:id="assignName" prefHeight="10.0" prefWidth="20" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label prefWidth="600" styleClass="login_plain" text="Assignment Description:" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextArea fx:id="assignDesc" prefHeight="100" prefWidth="700" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Label prefHeight="20" prefWidth="200" styleClass="login_plain" text="Start*:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <DatePicker fx:id="assignStart" prefHeight="20" prefWidth="200" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Label styleClass="login_plain" text="End*:" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <DatePicker fx:id="assignEnd" prefHeight="20" prefWidth="200" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Label styleClass="login_plain" prefHeight="25" prefWidth="500" text="Assignment File Type*:" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <ComboBox GridPane.columnIndex="2" styleClass="login_plain" GridPane.rowIndex="7" prefWidth="200" prefHeight="200" fx:id="comboExtensions" >
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="PDF - PDF File" />
+                        <String fx:value="DOCX - Microsoft Word Document" />
+                        <String fx:value="TXT - Text File" />
+                        <String fx:value="PPTX - Microsoft PowerPoint Slides" />
+                        <String fx:value="RTF - Rich Text Format" />
+                        <String fx:value="HTML - Webpage" />
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+
+            <Label id="requiredNote" prefHeight="25" prefWidth="500" text="All fields with (*) are required!" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+            <Button onAction="#createAssignment" prefHeight="20" prefWidth="100" text="Create" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints maxWidth="156.0" minWidth="129.0" prefWidth="156.0" />
+            <ColumnConstraints maxWidth="221.0" minWidth="194.0" prefWidth="200.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" />
+            <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+
+
+
+        </GridPane>
+    </VBox>
+
+
+</AnchorPane>

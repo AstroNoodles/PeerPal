@@ -1,0 +1,22 @@
+.login_plain {
+    -fx-text-fill: black;
+    -fx-font-size: 13;
+    -fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+}
+
+#assignmentTitle {
+    -fx-font-size: 24;
+    -fx-font-family: Arial, Helvetica, sans-serif;
+    -fx-font-weight: bold;
+}
+
+#assignStyle {
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+#requiredNote {
+    -fx-font-size: 11;
+    -fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+    -fx-font-style: italic;
+}
