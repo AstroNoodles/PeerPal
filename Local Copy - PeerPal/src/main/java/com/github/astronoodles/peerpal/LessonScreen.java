@@ -40,7 +40,9 @@ public class LessonScreen {
             htmlText.getEngine().loadContent(lessonParts[i], "text/html");
             htmlText.getEngine().setUserStyleSheetLocation(getClass().getResource("/lessons.css").toString());
 
-            Tab lessonPart = new Tab(String.format("Part %d", i + 1), htmlText);
+            String tabTitle = String.format("Part %d", i + 1).equals("Part 1") && lessonParts.length == 1 ? "Lesson"
+                    : String.format("Part %d", i + 1);
+            Tab lessonPart = new Tab(tabTitle);
             tabPane.getTabs().add(lessonPart);
         }
 
