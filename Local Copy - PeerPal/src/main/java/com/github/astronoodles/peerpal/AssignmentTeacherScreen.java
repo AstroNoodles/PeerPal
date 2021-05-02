@@ -275,15 +275,17 @@ public class AssignmentTeacherScreen {
     public void updateGridStudentAssignments() {
 
         // NOTE - assert that all student assignments are saved to the same path
-        String assignmentPath = updatedStudentAssignments.get(0).getAssignmentPath();
+        if (!updatedStudentAssignments.isEmpty()) {
+            String assignmentPath = updatedStudentAssignments.get(0).getAssignmentPath();
 
-        try(ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get(assignmentPath),
-                StandardOpenOption.WRITE))) {
-            for(StudentAssignment assign : updatedStudentAssignments) {
-                oos.writeObject(new StudentAssignment.SerializableStudentAssignment(assign));
+            try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get(assignmentPath),
+                    StandardOpenOption.WRITE))) {
+                for (StudentAssignment assign : updatedStudentAssignments) {
+                    oos.writeObject(new StudentAssignment.SerializableStudentAssignment(assign));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch(IOException e) {
-            e.printStackTrace();
         }
     }
 

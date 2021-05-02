@@ -15,6 +15,7 @@ import javafx.scene.web.WebView;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -37,12 +38,12 @@ public class LessonScreen {
             htmlText.setPrefHeight(500);
             htmlText.setPrefWidth(300);
             System.out.println(lessonParts[i]);
-            htmlText.getEngine().loadContent(lessonParts[i], "text/html");
+            htmlText.getEngine().loadContent(lessonParts[i]);
             htmlText.getEngine().setUserStyleSheetLocation(getClass().getResource("/lessons.css").toString());
 
             String tabTitle = String.format("Part %d", i + 1).equals("Part 1") && lessonParts.length == 1 ? "Lesson"
                     : String.format("Part %d", i + 1);
-            Tab lessonPart = new Tab(tabTitle);
+            Tab lessonPart = new Tab(tabTitle, htmlText);
             tabPane.getTabs().add(lessonPart);
         }
 
@@ -111,12 +112,14 @@ public class LessonScreen {
         Path lessonPath = Paths.get(lessonString);
         try(BufferedReader reader = Files.newBufferedReader(lessonPath)) {
             StringBuilder sb = new StringBuilder();
-            for(String line = reader.readLine(); line != null; line = reader.readLine()){
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 sb.append(line);
             }
-
+            //System.out.println("does this method even run?");
             return sb.toString();
-        } catch(IOException e){
+        } catch(NoSuchFileException e) {
+            return "<p> The developers have not created this lesson yet. Please contact them for further info.<p>";
+        } catch(IOException e) {
             e.printStackTrace();
         }
         return lessonString;

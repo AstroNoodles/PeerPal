@@ -32,7 +32,8 @@ public enum ErrorType {
             explErrorMap.put("Error de concordancia", ErrorType.ART);
             explErrorMap.put("falta de concordancia de persona", ErrorType.VP);
             explErrorMap.put("Pronombre átono sin verbo.", ErrorType.VF);
-            explErrorMap.put("mayusculo", ErrorType.ORT);
+            explErrorMap.put("mayúsculo", ErrorType.ORT);
+            explErrorMap.put("mayúscula", ErrorType.ORT);
             explErrorMap.put("tilde", ErrorType.AC);
             explErrorMap.put("símbolo", ErrorType.ADD);
 
