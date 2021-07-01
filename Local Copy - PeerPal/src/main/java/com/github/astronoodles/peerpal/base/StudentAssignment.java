@@ -8,7 +8,6 @@ public class StudentAssignment extends Assignment {
     private final SimpleFloatProperty grade;
     private final SimpleObjectProperty<AssignmentStatus> status;
     private String assignPath;
-    private boolean markDirty;
 
     public StudentAssignment(Assignment otherAssign, String assignPath, float grade) {
         super(otherAssign.getFullName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
@@ -83,14 +82,6 @@ public class StudentAssignment extends Assignment {
 
     public SimpleObjectProperty<AssignmentStatus> statusProperty() {
         return status;
-    }
-
-    public void markDirty() {
-        this.markDirty = true;
-    }
-
-    public boolean isDirty() {
-        return this.markDirty;
     }
 
     // INNER CLASS

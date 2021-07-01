@@ -1,10 +1,11 @@
 package com.github.astronoodles.peerpal;
 
+import com.github.astronoodles.peerpal.base.Assignment;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 import com.github.astronoodles.peerpal.dialogs.AssignmentDialog;
-import com.github.astronoodles.peerpal.base.Assignment;
 import com.github.astronoodles.peerpal.dialogs.StudentAssignmentGrid;
 import com.github.astronoodles.peerpal.extras.StageHelper;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -16,21 +17,17 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AssignmentTeacherScreen {
 
@@ -51,7 +48,7 @@ public class AssignmentTeacherScreen {
     private final TableView<Assignment> table = new TableView<>();
 
 
-    public GridPane loadStage(){
+    public GridPane loadStage() {
         GridPane grid = AssignmentScreen.setupPane(name);
 
         table.setEditable(true);
@@ -79,6 +76,8 @@ public class AssignmentTeacherScreen {
         createAssign.setPrefWidth(200);
         createAssign.setPrefHeight(50);
 
+        createAssign.disableProperty().bind(Bindings.createBooleanBinding(() -> !data.isEmpty()));
+
         createAssign.setOnAction(e -> {
             try {
                 FXMLLoader dialogLoader = new FXMLLoader(getClass().getResource("/assignment_page.fxml"));
@@ -96,17 +95,9 @@ public class AssignmentTeacherScreen {
                 stage.setTitle("Create An Assignment");
                 stage.showAndWait();
 
-//                for(Assignment storedAssign : obtainAssignments()) {
-//                    if(data.stream().noneMatch(assign ->
-//                            assign.getFullName().equals(storedAssign.getFullName()))) {
-//                        data.add(storedAssign);
-//                    }
-//                }
-                data.addAll(StageHelper.obtainMissingAssignments(obtainAssignments(), data));
-
                 System.out.println("Old Data: " + data);
-                //data.addAll(assignDialog.getTeacherAssignments());
-                if(assignDialog.getCurAssignment() != null &&
+
+                if (assignDialog.getCurAssignment() != null &&
                         !data.contains(assignDialog.getCurAssignment()))
                     data.add(assignDialog.getCurAssignment());
 
@@ -116,7 +107,7 @@ public class AssignmentTeacherScreen {
                 table.setItems(data);
                 // backUpAssignments(data);
 
-            } catch(IOException ex) {
+            } catch (IOException ex) {
                 ex.printStackTrace();
                 System.err.println("Be more careful with the FXML location");
             }
@@ -134,77 +125,73 @@ public class AssignmentTeacherScreen {
         table.setRowFactory(tv -> {
             TableRow<Assignment> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-                    if (!(nameLabel.getText().indexOf("Assignment")==0)) {
-                        CloudAssignmentParser parser = new CloudAssignmentParser(
-                                String.format("%s.%s", row.getItem().getFullName(), row.getItem().getFileExtension())
-                        );
-                        Map<String, List<StudentAssignment>> allAssign = parser.getStudentAssignments();
-                        List<StudentAssignment> studentData = isolateAssignments(
-                                allAssign, row.getItem());
-                        System.out.println("this is it " + studentData);
-                        //System.out.println(studentData.get(0).getAssignmentPath());
-
-                        Stage assignGridDialog = new Stage();
-                        StudentAssignmentGrid sag = new StudentAssignmentGrid(
-                                studentData.parallelStream().filter(StudentAssignment::isDirty).
-                                        collect(Collectors.toList()));
-
-
-                        Scene sc = new Scene(sag.createStudentGrid(new LinkedList<>(allAssign.keySet()),
-                                1, StudentAssignmentGrid.STUDENT_ROWS), 500, 500);
-
-                        assignGridDialog.setScene(sc);
-                        assignGridDialog.setTitle("Student Assignments");
-                        assignGridDialog.showAndWait();
-
-                        // Add all assignments that have updated grades plus
-                        // assignments that still need to be stored in the student data file
-
-
-                        for(StudentAssignment updatedAssign : sag.getUpdatedStudentAssignments()) {
-                            if(updatedStudentAssignments.isEmpty()) {
-                                updatedStudentAssignments.add(updatedAssign);
-                                break;
-                            }
-
-                            for(int i = 0; i < updatedStudentAssignments.size(); i++) {
-                                if(updatedAssign.getFullName().equals(updatedStudentAssignments.get(i).getFullName())){
-                                    updatedAssign.setAssignmentPath(updatedStudentAssignments.get(i).getAssignmentPath());
-                                    updatedStudentAssignments.set(i, updatedAssign);
-                                }
-                            }
-                        };
-
-                        List<StudentAssignment> extras = studentData.parallelStream().filter((assign) -> !assign.isDirty()).collect(Collectors.toList());
-                        System.out.println("Starting Assignments: " + updatedStudentAssignments);
-
-                        System.out.println(extras);
-
-
-                        for(StudentAssignment extraAssign : extras) {
-                           if(updatedStudentAssignments.stream().noneMatch((assign) -> assign.getFullName().equals(extraAssign.getFullName()))) {
-                               updatedStudentAssignments.add(extraAssign);
-                           }
-                        }
-
-                        System.out.println("Full Assignments To Update: " + updatedStudentAssignments);
-
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    if (!(nameLabel.getText().indexOf("Assignment") == 0)) {
+                            updateAssignmentsByGrid(row);
                     }
-                } else if(event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                } else if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
                     System.out.println("TESTING 123");
                     createTeacherContextMenu(row.getItem()).
                             show(tv, event.getScreenX(), event.getScreenY());
                 }
             });
-            return row ;
+            return row;
         });
         data.addAll(AssignmentScreen.obtainAssignments(name));
-        System.out.println(data);
 
+        clearUpAssignments();
+
+        System.out.println(data);
         table.setItems(data);
-        grid.add(table,0,1,3,1);
+        grid.add(table, 0, 1, 3, 1);
         return grid;
+    }
+
+    private void updateAssignmentsByGrid(TableRow<Assignment> row) {
+
+        // ----------- GRADE LOOKUP SECTION -----------
+
+        // Get all of the completed data from the students and ensure that we can look at it
+        // and access the grades on them
+        CloudAssignmentParser parser = new CloudAssignmentParser(
+                String.format("%s.%s", row.getItem().getFullName(), row.getItem().getFileExtension())
+        );
+
+        Map<String, List<StudentAssignment>> allAssign = parser.getStudentAssignments();
+        List<StudentAssignment> studentData = isolateAssignments(
+                allAssign, row.getItem());
+        System.out.println("this is it " + studentData);
+
+        Stage assignGridDialog = new Stage();
+        StudentAssignmentGrid sag = new StudentAssignmentGrid(studentData);
+
+
+        Scene sc = new Scene(sag.createStudentGrid(new LinkedList<>(allAssign.keySet()),
+                1, StudentAssignmentGrid.STUDENT_ROWS), 500, 500);
+
+        assignGridDialog.setScene(sc);
+        assignGridDialog.setTitle("Student Assignments");
+        assignGridDialog.showAndWait();
+
+        // Add all assignments that have updated grades plus
+        // assignments that still need to be stored in the student data file
+
+
+        for (StudentAssignment updatedAssign : sag.getUpdatedStudentAssignments()) {
+            if (updatedStudentAssignments.isEmpty()) {
+                updatedStudentAssignments.add(updatedAssign);
+                break;
+            }
+
+            for (int i = 0; i < updatedStudentAssignments.size(); i++) {
+                if (updatedAssign.getFullName().equals(updatedStudentAssignments.get(i).getFullName())) {
+                    updatedAssign.setAssignmentPath(updatedStudentAssignments.get(i).getAssignmentPath());
+                    updatedStudentAssignments.set(i, updatedAssign);
+                }
+            }
+        }
+
+        System.out.println("Full Assignments To Update: " + updatedStudentAssignments);
     }
 
     private ContextMenu createTeacherContextMenu(Assignment assign) {
@@ -227,102 +214,148 @@ public class AssignmentTeacherScreen {
     private List<StudentAssignment> isolateAssignments(
             Map<String, List<StudentAssignment>> studentAssignments, Assignment item) {
         List<StudentAssignment> assignments = new LinkedList<>();
-        System.out.println(studentAssignments.values().size());
-        for(List<StudentAssignment> assign : studentAssignments.values()) {
+        for (List<StudentAssignment> assign : studentAssignments.values()) {
             System.out.println(assign);
             String pathCheck = null;
             for (StudentAssignment studentAssignment : assign) {
                 if (studentAssignment.getFullName().trim().equals(item.getFullName().trim())) {
                     // TODO Ensure that all assignments have an assignment path and
                     // TODO are written to the studentAssignments file.
-                    studentAssignment.markDirty();
+                    assignments.add(studentAssignment);
                 }
 
-                if(studentAssignment.getAssignmentPath() != null) {
+                if (studentAssignment.getAssignmentPath() != null) {
                     pathCheck = studentAssignment.getAssignmentPath();
                 } else {
                     studentAssignment.setAssignmentPath(pathCheck);
                 }
-
-
-                assignments.add(studentAssignment);
             }
         }
         return assignments;
     }
 
+    /**
+     * Backs up all assignments that the teacher has created to the assignments.dat
+     * It saves these assignments in a LIST format so all reads from this folder must be done
+     * with the consideration that the assignments are saved in a list.
+     */
     protected void backUpAssignments() {
         try {
             Path assignmentsLoc =
                     Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                    "storage", "assignments.dat");
+                            "storage", "assignments.dat");
 
-            if(!Files.exists(assignmentsLoc)) Files.createFile(assignmentsLoc);
+            if (!Files.exists(assignmentsLoc)) Files.createFile(assignmentsLoc);
+            List<Assignment.SerializableAssignment> serializableAssignments =
+                    data.parallelStream().map(Assignment.SerializableAssignment::new).collect(Collectors.toList());
 
-            try(ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(assignmentsLoc,
+            try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(assignmentsLoc,
                     StandardOpenOption.WRITE))) {
-
-                for (Assignment assign : data) {
-                    oos.writeObject(new Assignment.SerializableAssignment(assign));
-                }
+                oos.writeObject(serializableAssignments);
             }
 
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Clears all assignments 2 days after the maximum end date of the assignments.
+     * At this point, the teacher can add more assignments due to the data list being empty
+     */
+    private void clearUpAssignments() {
+        Period gradingPeriod = Period.ofDays(3);
+        // find the maximum end date of the assignments + add 2 days for grading
+        LocalDate date = LocalDate.MIN;
+        for(Assignment assignment : data) {
+            if(assignment.getEndDate().isAfter(date)){
+                date = assignment.getEndDate();
+            }
+        }
+        date = date.plus(gradingPeriod);
+
+        // delete the assignments
+        if(LocalDate.now().isEqual(date)){
+            try(Stream<Path> dirWalk = Files.walk(Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+                    "storage"))) {
+                Path assignmentsPath = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+                        "storage", "assignments.dat");
+                Files.delete(assignmentsPath);
+
+                dirWalk.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .peek(System.out::println)
+                        .forEach(File::delete);
+
+                data.clear();
+            } catch(IOException e) {
+                e.printStackTrace(); // i hate these errors
+            }
+        }
+    }
+
+    /**
+     * Updates the individual student assignments from the teacher interaction with the grid of student assignments
+     * You must ensure that each of the student assignments has a path they are saved with and it is not null!
+     */
     public void updateGridStudentAssignments() {
 
         // NOTE - assert that all student assignments are saved to the same path
         if (!updatedStudentAssignments.isEmpty()) {
             String assignmentPath = updatedStudentAssignments.get(0).getAssignmentPath();
 
+            List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
+                    updatedStudentAssignments.parallelStream().map(StudentAssignment.SerializableStudentAssignment::new).
+                            collect(Collectors.toList());
+
             try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get(assignmentPath),
                     StandardOpenOption.WRITE))) {
-                for (StudentAssignment assign : updatedStudentAssignments) {
-                    oos.writeObject(new StudentAssignment.SerializableStudentAssignment(assign));
-                }
+                oos.writeObject(serializableStudentAssignments);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    protected static List<Assignment> obtainAssignments() {
-        List<Assignment> assignments = new ArrayList<>(10);
-
-        try {
-            // System.out.println(System.getProperty("user.dir"));
-            Path assignmentsLoc =
-                    Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                            "storage", "assignments.dat");
-
-            if(!Files.exists(assignmentsLoc)) {
-                return assignments;
-            }
-
-            ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(assignmentsLoc,
-                    StandardOpenOption.READ));
-            while (true) {
-                try {
-                    Assignment.SerializableAssignment assign = (Assignment.SerializableAssignment)
-                            ois.readObject();
-                    assignments.add(new Assignment(assign));
-                } catch(ClassNotFoundException ce) {
-                    ce.printStackTrace();
-                    ois.close();
-                } catch(EOFException eof) {
-                    ois.close();
-                    return assignments;
-                }
-            }
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-
-        return assignments;
-    }
+    /**
+     * Obtains all assignments that the teacher has created from the assignments.dat file in the storage folder.
+     * These assignments are bare-bones (they do not have a grade on them or any student effort attached)
+     * All assignments are read from a list format saved in the assignments.dat file.
+     *
+     * @return A list containing all bare-bones assignments read from the assignments.dat file
+     */
+//    @SuppressWarnings("unchecked")
+//    protected static List<Assignment> obtainAssignments() {
+//        List<Assignment> assignments = new ArrayList<>(10);
+//
+//        try {
+//            // the general path of the assignments.dat file.
+//            Path assignmentsLoc =
+//                    Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+//                            "storage", "assignments.dat");
+//
+//            // skip the running time of the file reading process if the file itself doesn't exist yet
+//            if (!Files.exists(assignmentsLoc)) {
+//                return assignments;
+//            }
+//
+//            try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(assignmentsLoc,
+//                    StandardOpenOption.READ))) {
+//
+//                // all assignments are read are going to be part of a specific list
+//                List<Assignment.SerializableAssignment> serializableAssignments =
+//                        (List<Assignment.SerializableAssignment>) ois.readObject();
+//
+//                assignments.addAll(serializableAssignments.stream().map(
+//                        (Assignment::new)).collect(Collectors.toList()));
+//            }
+//
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return assignments;
+//    }
 
     private TableColumn<Assignment, String> addSimilarColumns() {
         TableColumn<Assignment, String> schoolCol = new TableColumn<>("School: Bronx Science");

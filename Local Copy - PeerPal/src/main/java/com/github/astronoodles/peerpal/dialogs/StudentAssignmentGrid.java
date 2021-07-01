@@ -27,7 +27,10 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class StudentAssignmentGrid {
     private final List<StudentAssignment> assignments;
@@ -39,8 +42,11 @@ public class StudentAssignmentGrid {
 
     public Pane createStudentGrid(List<String> studentNames, int imageID, int studentRows) {
 
+        // TODO I want to remove all of the students if they did not submit their assignments on this page
+        List<StudentAssignment> refreshedAssignments = refreshStudents(studentNames);
+
         if (imageID < 1 || imageID > 6) imageID = 0;
-        if (assignments.size() != studentNames.size()) return null;
+        if (refreshedAssignments.size() != studentNames.size()) return null;
 
         GridPane pane = new GridPane();
         pane.setVgap(3);
@@ -48,7 +54,7 @@ public class StudentAssignmentGrid {
         pane.setPadding(new Insets(5));
 
         final Font gridFont = Font.font("DejaVu Sans", FontWeight.BOLD, 13);
-        if (assignments.size() == 0) {
+        if (refreshedAssignments.size() == 0) {
             Label noStudents = new Label("No students have turned in their assignments yet.\nPlease wait...");
             noStudents.setPrefWidth(500);
             noStudents.setAlignment(Pos.CENTER);
@@ -66,7 +72,7 @@ public class StudentAssignmentGrid {
 
         // the length of the assignments array is a proxy for the number of students in the class
         for (int i = 0; i < studentRows; i++) {
-            for (int j = 0; j < (assignments.size() / studentRows); j++) {
+            for (int j = 0; j < (refreshedAssignments.size() / studentRows); j++) {
                 final int curRow = i;
                 final int curCol = j;
 
@@ -85,7 +91,7 @@ public class StudentAssignmentGrid {
                 viewAssignment.setPrefWidth(150);
                 viewAssignment.setOnAction(e -> {
                     try {
-                        downloadAssignment(studentNames.get(curRow), assignments.get(curRow * curCol));
+                        downloadAssignment(studentNames.get(curRow), refreshedAssignments.get(curRow * curCol));
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -96,7 +102,7 @@ public class StudentAssignmentGrid {
 
                 // double check the math is right on this... (see below)
                 updateGrade.setOnAction(e -> {
-                    updateAssignmentGrade(assignments.get(curRow * curCol));
+                    updateAssignmentGrade(refreshedAssignments.get(curRow * curCol));
                     // TODO showGradeTransition(updateGrade).play();
                 });
 
@@ -110,6 +116,22 @@ public class StudentAssignmentGrid {
             }
         }
         return pane;
+    }
+
+    /**
+     * Refreshes the student grid to only contain students who have submitted their assignment for a given assignment
+     */
+    private List<StudentAssignment> refreshStudents(List<String> studentNames) {
+        List<StudentAssignment> completedAssignments = new ArrayList<>(studentNames.size() / 2);
+
+        for(int i = 0; i < assignments.size(); i++) {
+            if(assignments.get(i).getStatus() != StudentAssignment.AssignmentStatus.MISSING) {
+                completedAssignments.add(assignments.get(i));
+            } else {
+                studentNames.remove(i);
+            }
+        }
+        return completedAssignments;
     }
 
     private void downloadAssignment(String studentName, Assignment curAssignment) throws IOException {

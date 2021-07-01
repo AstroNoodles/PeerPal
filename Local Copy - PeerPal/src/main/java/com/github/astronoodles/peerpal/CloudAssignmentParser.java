@@ -22,9 +22,19 @@ public class CloudAssignmentParser {
     }
 
     public Map<String, Path> getStudentTasks() {return studentWritings;}
+
+    /**
+     * A getter method to retrieve the list of student assignments for each student in the class.
+     * @return A hash map that maps a student's name to the list of assignments they have completed.
+     */
     public Map<String, List<StudentAssignment>> getStudentAssignments() {return studentAssignments; }
 
-
+    /**
+     * This method reverse maps a student's assignment in the app to their name in their class.
+     * @param assignmentFileName The assignment's name
+     * @return A hashmap which maps the owner of the assignment to the Path which describes the
+     * location of the assignment
+     */
     private Map<String, Path> obtainStudentWritings(String assignmentFileName) {
         Map<String, Path> studentWritings = new LinkedHashMap<>(20);
         Path storagePath = Paths.get("./src/main/java/com/github/astronoodles/peerpal",

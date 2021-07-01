@@ -3,9 +3,6 @@ package com.github.astronoodles.peerpal.base;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -58,21 +55,57 @@ public class Assignment {
 
     // Getters and Setters Below
 
-    public final String getFullName() {return fullName.get();}
-    public final String getInstructorName() {return instructorName.get();}
-    public final String getDescription() {return assignDesc.get();}
-    public final String getFileExtension() {return assignExtension.get(); }
-    public LocalDate getStartDate() { return startDate.get(); }
-    public LocalDate getEndDate() { return endDate.get(); }
+    public final String getFullName() {
+        return fullName.get();
+    }
 
-    public final SimpleStringProperty fullNameProperty() {return fullName;}
-    public final SimpleStringProperty instructorNameProperty() {return instructorName;}
-    public final SimpleStringProperty descriptionProperty() {return assignDesc;}
-    public final SimpleStringProperty extensionProperty() {return assignExtension; }
-    public final SimpleObjectProperty<LocalDate> startDateProperty() {return startDate;}
-    public final SimpleObjectProperty<LocalDate> endDateProperty() {return endDate;}
+    public final String getInstructorName() {
+        return instructorName.get();
+    }
 
-    public static int getAssignmentCount() {return assignmentCount;}
+    public final String getDescription() {
+        return assignDesc.get();
+    }
+
+    public final String getFileExtension() {
+        return assignExtension.get();
+    }
+
+    public LocalDate getStartDate() {
+        return startDate.get();
+    }
+
+    public LocalDate getEndDate() {
+        return endDate.get();
+    }
+
+    public final SimpleStringProperty fullNameProperty() {
+        return fullName;
+    }
+
+    public final SimpleStringProperty instructorNameProperty() {
+        return instructorName;
+    }
+
+    public final SimpleStringProperty descriptionProperty() {
+        return assignDesc;
+    }
+
+    public final SimpleStringProperty extensionProperty() {
+        return assignExtension;
+    }
+
+    public final SimpleObjectProperty<LocalDate> startDateProperty() {
+        return startDate;
+    }
+
+    public final SimpleObjectProperty<LocalDate> endDateProperty() {
+        return endDate;
+    }
+
+    public static int getAssignmentCount() {
+        return assignmentCount;
+    }
 
     public HashMap<String, Boolean> getSpellSettings() {
         return spellSettings;

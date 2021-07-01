@@ -15,14 +15,15 @@ import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AssignmentScreen {
@@ -105,13 +106,6 @@ public class AssignmentScreen {
         table.setItems(data);
         grid.add(table, 0, 1, 3, 1);
 
-        //Images
-    /*Image assignmentImage = new Image("https://i.pinimg.com/originals/56/b4/9f/56b49f8fe357deecf54ad7805209d79e.png",
-            170,140, true,true);
-    grid.add(new ImageView(assignmentImage), 0, 4,2,1);
-    Image assignmentImage2 = new Image("https://www.clker.com/cliparts/Y/l/P/U/K/D/talking-bubble-no-shadow-md.png",
-            200,100, false,true);
-    grid.add(new ImageView(assignmentImage2), 2, 3,3,2);*/
         return grid;
     }
 
@@ -210,6 +204,14 @@ public class AssignmentScreen {
         return new ContextMenu(descItem, uploadItem);
     }
 
+    /**
+     * Backs up all student assignments into their appropriate storage folder given by the student's name.
+     * The student assignments will be saved in a LIST format so ensure that you read the assignments by
+     * reading a list!
+     *
+     * @param assignments The list of student assignments to be saved for a particular student
+     * @param studentName The student's name (the name of the student's folder)
+     */
     private void backUpAssignments(List<StudentAssignment> assignments, String studentName) {
         try {
             Path assignmentsLoc =
@@ -225,14 +227,17 @@ public class AssignmentScreen {
 
             if (!Files.exists(assignmentsLoc)) Files.createFile(assignmentsLoc);
 
+            final Path finalAssignmentsLoc = assignmentsLoc;
+            assignments.forEach(assign -> assign.setAssignmentPath(finalAssignmentsLoc.toString()));
+
+            List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
+                    assignments.parallelStream()
+                            .map(StudentAssignment.SerializableStudentAssignment::new)
+                            .collect(Collectors.toList());
+
             try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(assignmentsLoc,
                     StandardOpenOption.WRITE))) {
-
-                for (StudentAssignment assign : assignments) {
-                    System.out.println("Current Backed Up Assignment: " + assign);
-                    assign.setAssignmentPath(assignmentsLoc.toString());
-                    oos.writeObject(new StudentAssignment.SerializableStudentAssignment(assign));
-                }
+                oos.writeObject(serializableStudentAssignments);
             }
 
         } catch (IOException e) {
@@ -240,65 +245,53 @@ public class AssignmentScreen {
         }
     }
 
-    // ENSURE that the general assignments file are read first AND then read the student assignments!
+    /**
+     * This method retrieves all of the student assignments from the respective student folder as indicated by
+     * the studentName property specified in the method.
+     * Make sure to read the assignments from a LIST rather than individually as they are inputted as a LIST
+     * in the above method.
+     *
+     * @param studentName The student name and name of the folder to retrieve the student names from.
+     * @return A list of all of the student assignments that the student specified
+     */
+    @SuppressWarnings("unchecked")
     protected static List<StudentAssignment> obtainAssignments(String studentName) {
+        // ENSURE that the general assignments file are read first AND then read the student assignments!
         List<StudentAssignment> assignments = new ArrayList<>(10);
 
-        try {
-            // Read both the student assignments and the general assignments path to see current assignments
-            // and new teacher assignments
+        // Read both the student assignments and the general assignments path to see current assignments
+        // and new teacher assignments
 
-            // Only read a path if it exists (the studentAssignments will not exist in the beginning)
-            Path[] allAssignmentPaths = new Path[]{Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                    "storage", studentName, "studentAssignments.dat"),
-                    Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                            "storage", "assignments.dat")};
-            List<String> retrievedAssignNames = new ArrayList<>(10);
+        // Only read a path if it exists (the studentAssignments will not exist in the beginning)
+        Path[] allAssignmentPaths = new Path[]{Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+                "storage", studentName, "studentAssignments.dat"),
+                Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+                        "storage", "assignments.dat")};
+        List<String> retrievedAssignNames = new ArrayList<>(10);
 
-            for (Path assignmentsLoc : allAssignmentPaths) {
-                if (Files.exists(assignmentsLoc)) {
-                    System.out.println("Path Reading: " + assignmentsLoc.toString());
-                    ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(assignmentsLoc,
-                            StandardOpenOption.READ));
-                    while (true) {
-                        try {
-                            if (assignmentsLoc.getFileName().toString().equals("studentAssignments.dat")) {
-                                StudentAssignment.SerializableStudentAssignment assign =
-                                        (StudentAssignment.SerializableStudentAssignment)
-                                                ois.readObject();
-                                StudentAssignment assign1 = new StudentAssignment(assign);
-                                retrievedAssignNames.add(assign1.getFullName());
-                                assignments.add(assign1);
-
-                            } else if (assignmentsLoc.getFileName().toString().equals("assignments.dat")) {
-                                Assignment.SerializableAssignment assign =
-                                        (Assignment.SerializableAssignment)
-                                                ois.readObject();
-                                StudentAssignment blankAssign = new StudentAssignment(assign);
-
-                                if(!retrievedAssignNames.contains(blankAssign.getFullName())) {
-                                    assignments.add(blankAssign);
-                                }
-                            }
-                        } catch (ClassNotFoundException ce) {
-                            ce.printStackTrace();
-                            ois.close();
-                        } catch (EOFException eof) {
-                            System.out.println("Finished reading one path");
-                            break;
-                        } catch(StreamCorruptedException sce) {
-                            System.err.println("Double check your files");
-                            break;
-
-                        }
+        for (Path assignmentPath : allAssignmentPaths) {
+            if (Files.exists(assignmentPath)) {
+                try (ObjectInputStream ois =
+                             new ObjectInputStream(Files.newInputStream(assignmentPath, StandardOpenOption.READ))) {
+                    if (assignmentPath.getFileName().toString().equals("studentAssignments.dat")) {
+                        // I know what I am doing with these casts
+                        List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
+                                (List<StudentAssignment.SerializableStudentAssignment>) ois.readObject();
+                        assignments.addAll(serializableStudentAssignments.parallelStream()
+                                .map(StudentAssignment::new).collect(Collectors.toList()));
+                        assignments.forEach(assign -> retrievedAssignNames.add(assign.getFullName()));
+                    } else { // assignments.dat
+                        List<Assignment.SerializableAssignment> serializableAssignments =
+                                (List<Assignment.SerializableAssignment>) ois.readObject();
+                        assignments.addAll(serializableAssignments.parallelStream().map(StudentAssignment::new)
+                                .filter(assign2 -> !retrievedAssignNames.contains(assign2.getFullName()))
+                                .collect(Collectors.toList()));
                     }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
         return assignments;
     }
-
 }
