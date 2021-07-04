@@ -2,6 +2,7 @@ package com.github.astronoodles.peerpal.dialogs;
 
 import com.github.astronoodles.peerpal.base.Assignment;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
+import com.github.astronoodles.peerpal.extras.StageHelper;
 import javafx.animation.FillTransition;
 import javafx.animation.SequentialTransition;
 import javafx.beans.binding.Bindings;
@@ -70,6 +71,8 @@ public class StudentAssignmentGrid {
 
         if (studentRows > refreshedAssignments.size()) studentRows = refreshedAssignments.size();
 
+        Map<String, String> userAvatarMap = StageHelper.getUserAvatarMapping();
+
         // the length of the assignments array is a proxy for the number of students in the class
         for (int i = 0; i < studentRows; i++) {
             for (int j = 0; j < (refreshedAssignments.size() / studentRows); j++) {
@@ -83,7 +86,7 @@ public class StudentAssignmentGrid {
                 nameLabel.setAlignment(Pos.CENTER);
 
                 Image avatarImage = new Image(
-                        getClass().getResource(String.format("/avatars/D%d.png", imageID)).toExternalForm(),
+                        userAvatarMap.get(studentNames.get(curRow)),
                         100, 100, true, true);
                 ImageView avatarView = new ImageView(avatarImage);
 

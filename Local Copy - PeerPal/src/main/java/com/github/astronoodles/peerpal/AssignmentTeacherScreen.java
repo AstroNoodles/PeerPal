@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -275,7 +276,7 @@ public class AssignmentTeacherScreen {
 
         // delete the assignments for both studentAssignments.dat (all students) and assignments.dat
         // This info will still remain online but will be deleted on local machine
-        if (LocalDate.now().isEqual(date)) {
+        if (LocalDate.now().isEqual(date) || LocalDate.now().isAfter(date)) {
             try (Stream<Path> dirWalk = Files.walk(Paths.get("./src/main/java/com/github/astronoodles/peerpal",
                     "storage"))) {
                 Path assignmentsPath = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
