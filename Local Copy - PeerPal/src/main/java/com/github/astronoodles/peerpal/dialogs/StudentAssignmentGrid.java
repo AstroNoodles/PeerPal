@@ -68,7 +68,7 @@ public class StudentAssignmentGrid {
             return emptyContainer;
         }
 
-        if (studentRows > assignments.size()) studentRows = assignments.size();
+        if (studentRows > refreshedAssignments.size()) studentRows = refreshedAssignments.size();
 
         // the length of the assignments array is a proxy for the number of students in the class
         for (int i = 0; i < studentRows; i++) {

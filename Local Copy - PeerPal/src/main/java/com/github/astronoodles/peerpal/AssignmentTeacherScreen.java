@@ -4,8 +4,7 @@ import com.github.astronoodles.peerpal.base.Assignment;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 import com.github.astronoodles.peerpal.dialogs.AssignmentDialog;
 import com.github.astronoodles.peerpal.dialogs.StudentAssignmentGrid;
-import com.github.astronoodles.peerpal.extras.StageHelper;
-import javafx.beans.binding.Bindings;
+import com.sun.media.jfxmedia.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -19,12 +18,13 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -72,11 +72,9 @@ public class AssignmentTeacherScreen {
         schoolCol.getColumns().add(startDate);
         schoolCol.getColumns().add(endDate);
 
-        Button createAssign = new Button("Create Assignment");
+        final Button createAssign = new Button("Create Assignment");
         createAssign.setPrefWidth(200);
         createAssign.setPrefHeight(50);
-
-        createAssign.disableProperty().bind(Bindings.createBooleanBinding(() -> !data.isEmpty()));
 
         createAssign.setOnAction(e -> {
             try {
@@ -95,14 +93,14 @@ public class AssignmentTeacherScreen {
                 stage.setTitle("Create An Assignment");
                 stage.showAndWait();
 
-                System.out.println("Old Data: " + data);
+                //System.out.println("Old Data: " + data);
 
                 if (assignDialog.getCurAssignment() != null &&
                         !data.contains(assignDialog.getCurAssignment()))
                     data.add(assignDialog.getCurAssignment());
 
 
-                System.out.println("New Data: " + data);
+                //System.out.println("New Data: " + data);
 
                 table.setItems(data);
                 // backUpAssignments(data);
@@ -127,7 +125,7 @@ public class AssignmentTeacherScreen {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     if (!(nameLabel.getText().indexOf("Assignment") == 0)) {
-                            updateAssignmentsByGrid(row);
+                        updateAssignmentsByGrid(row);
                     }
                 } else if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
                     System.out.println("TESTING 123");
@@ -138,11 +136,12 @@ public class AssignmentTeacherScreen {
             return row;
         });
         data.addAll(AssignmentScreen.obtainAssignments(name));
-
         clearUpAssignments();
 
-        System.out.println(data);
+        System.out.println("Queried Data: " + data);
         table.setItems(data);
+
+        createAssign.setDisable(!data.isEmpty());
         grid.add(table, 0, 1, 3, 1);
         return grid;
     }
@@ -160,11 +159,10 @@ public class AssignmentTeacherScreen {
         Map<String, List<StudentAssignment>> allAssign = parser.getStudentAssignments();
         List<StudentAssignment> studentData = isolateAssignments(
                 allAssign, row.getItem());
-        System.out.println("this is it " + studentData);
+        //System.out.println("this is it " + studentData);
 
         Stage assignGridDialog = new Stage();
         StudentAssignmentGrid sag = new StudentAssignmentGrid(studentData);
-
 
         Scene sc = new Scene(sag.createStudentGrid(new LinkedList<>(allAssign.keySet()),
                 1, StudentAssignmentGrid.STUDENT_ROWS), 500, 500);
@@ -176,9 +174,10 @@ public class AssignmentTeacherScreen {
         // Add all assignments that have updated grades plus
         // assignments that still need to be stored in the student data file
 
+        System.out.println("BEFORE: " + sag.getUpdatedStudentAssignments());
 
         for (StudentAssignment updatedAssign : sag.getUpdatedStudentAssignments()) {
-            if (updatedStudentAssignments.isEmpty()) {
+            if (!updatedStudentAssignments.contains(updatedAssign)) {
                 updatedStudentAssignments.add(updatedAssign);
                 break;
             }
@@ -215,7 +214,7 @@ public class AssignmentTeacherScreen {
             Map<String, List<StudentAssignment>> studentAssignments, Assignment item) {
         List<StudentAssignment> assignments = new LinkedList<>();
         for (List<StudentAssignment> assign : studentAssignments.values()) {
-            System.out.println(assign);
+            //System.out.println(assign);
             String pathCheck = null;
             for (StudentAssignment studentAssignment : assign) {
                 if (studentAssignment.getFullName().trim().equals(item.getFullName().trim())) {
@@ -260,23 +259,24 @@ public class AssignmentTeacherScreen {
     }
 
     /**
-     * Clears all assignments 2 days after the maximum end date of the assignments.
+     * Clears all assignments 3 days after the maximum end date of the assignments.
      * At this point, the teacher can add more assignments due to the data list being empty
      */
     private void clearUpAssignments() {
         Period gradingPeriod = Period.ofDays(3);
-        // find the maximum end date of the assignments + add 2 days for grading
+        // find the maximum end date of the assignments + add 3 days for grading
         LocalDate date = LocalDate.MIN;
-        for(Assignment assignment : data) {
-            if(assignment.getEndDate().isAfter(date)){
+        for (Assignment assignment : data) {
+            if (assignment.getEndDate().isAfter(date)) {
                 date = assignment.getEndDate();
             }
         }
         date = date.plus(gradingPeriod);
 
-        // delete the assignments
-        if(LocalDate.now().isEqual(date)){
-            try(Stream<Path> dirWalk = Files.walk(Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+        // delete the assignments for both studentAssignments.dat (all students) and assignments.dat
+        // This info will still remain online but will be deleted on local machine
+        if (LocalDate.now().isEqual(date)) {
+            try (Stream<Path> dirWalk = Files.walk(Paths.get("./src/main/java/com/github/astronoodles/peerpal",
                     "storage"))) {
                 Path assignmentsPath = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
                         "storage", "assignments.dat");
@@ -288,7 +288,7 @@ public class AssignmentTeacherScreen {
                         .forEach(File::delete);
 
                 data.clear();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace(); // i hate these errors
             }
         }
@@ -356,7 +356,6 @@ public class AssignmentTeacherScreen {
 //
 //        return assignments;
 //    }
-
     private TableColumn<Assignment, String> addSimilarColumns() {
         TableColumn<Assignment, String> schoolCol = new TableColumn<>("School: Bronx Science");
 

@@ -21,6 +21,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.*;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,13 +74,10 @@ public class AssignmentScreen {
                 new PropertyValueFactory<>("grade")
         );
 
-        System.out.println("Old Assignments: " + data);
-
         //data.addAll(StageHelper.obtainMissingAssignments(obtainAssignments(name), data));
         data.addAll(obtainAssignments(name));
         System.out.println("All assignments: " + data);
         table.setItems(data);
-        //System.out.println(data.get(0).getFullName());
 
         //double-clicking function
         Label idLabel = new Label();
@@ -185,7 +183,8 @@ public class AssignmentScreen {
 
                     Files.copy(selectedFile.toPath(), userLoc, StandardCopyOption.REPLACE_EXISTING);
 
-                    LocalDate lateDate = curAssignment.getEndDate().plus(2, ChronoUnit.WEEKS);
+                    Period latePeriod = Period.ofWeeks(2); // adjustable
+                    LocalDate lateDate = curAssignment.getEndDate().plus(latePeriod);
 
                     if (LocalDate.now().isAfter(lateDate)) {
                         curAssignment.setStatus(StudentAssignment.AssignmentStatus.LATE);
