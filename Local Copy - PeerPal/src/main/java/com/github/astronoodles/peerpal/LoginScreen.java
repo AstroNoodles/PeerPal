@@ -1,5 +1,6 @@
 package com.github.astronoodles.peerpal;
 
+import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
 import com.github.astronoodles.peerpal.extras.StageHelper;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -17,7 +18,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.*;
-import java.util.Arrays;
 
 
 public class LoginScreen extends Application {
@@ -36,7 +36,7 @@ public class LoginScreen extends Application {
 
     @FXML
     private Tab signUpTab;
-    
+
     @FXML
     private ImageView avatar,
             changedAvatar;
@@ -62,6 +62,7 @@ public class LoginScreen extends Application {
 
             primaryStage.setScene(main);
             primaryStage.setTitle("Language Learn Login");
+            primaryStage.setOnCloseRequest(saveToCloudStorageOnClose());
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,22 +73,25 @@ public class LoginScreen extends Application {
     private void enter() {
         boolean hasUser = false;
         int classCodeEntries = 0;
-        try(BufferedReader reader = new BufferedReader(new FileReader(CSV_PATH))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(CSV_PATH))) {
             String line;
-            while ((line = reader.readLine()) != null){
+            while ((line = reader.readLine()) != null) {
                 String[] users = line.split(", ");
                 // 4 Things In The CSV File
                 // Full Name, Password, Class Code, Email, Avatar File ID
                 //System.out.println(Arrays.toString(users));
 
-                if(class_code.getText().equals(users[2])){
+                if (class_code.getText().equals(users[2])) {
                     classCodeEntries += 1;
                 }
                 //System.out.println(classCodeEntries);
-                if(username.getText().trim().equals(users[0]) &&
-                        pwd.getText().equals(users[1]) && class_code.getText().equals(users[2])){
+                if (username.getText().trim().equals(users[0]) &&
+                        pwd.getText().equals(users[1]) && class_code.getText().equals(users[2])) {
 
-                    if(classCodeEntries > 1) {
+                    CloudStorageConfig cloudConfig = new CloudStorageConfig();
+                    if(!cloudConfig.isCloudStorageEmpty()) cloudConfig.downloadCloudStorage();
+
+                    if (classCodeEntries > 1) {
                         AssignmentScreen screen = new AssignmentScreen(users[0], users[4]);
                         Scene scene = new Scene(screen.loadStage());
 
@@ -120,7 +124,7 @@ public class LoginScreen extends Application {
                 }
             }
 
-            if(!hasUser){
+            if (!hasUser) {
                 Alert notice = new Alert(Alert.AlertType.INFORMATION,
                         "You have not signed up for this. Sign up now by clicking the bottom most button.",
                         new ButtonType("OK", ButtonBar.ButtonData.OK_DONE), new ButtonType("Cancel",
@@ -129,20 +133,20 @@ public class LoginScreen extends Application {
             }
 
 
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
     @FXML
-    private void signUp(){
+    private void signUp() {
         try {
             File members = new File(CSV_PATH);
-            if(!members.createNewFile())
+            if (!members.createNewFile())
                 System.out.println("The members.csv file is already created and has login info.");
 
-            if(pwdSign.getText().equals(repwdSign.getText()) && email.getText().matches(EMAIL_REGEX)) {
+            if (pwdSign.getText().equals(repwdSign.getText()) && email.getText().matches(EMAIL_REGEX)) {
 
                 PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(members, true)), true);
                 writer.print(String.format("%s, %s, %s, %s, %d\r\n",
@@ -162,14 +166,14 @@ public class LoginScreen extends Application {
     // MENU ITEMS
 
     @FXML
-    private void handleShortcuts(KeyEvent ke){
-        if(ke.isShortcutDown() && ke.isShiftDown() && ke.getCode().equals(KeyCode.C)){
+    private void handleShortcuts(KeyEvent ke) {
+        if (ke.isShortcutDown() && ke.isShiftDown() && ke.getCode().equals(KeyCode.C)) {
             createClassCode();
         }
     }
 
     @FXML
-    private void createClassCode(){
+    private void createClassCode() {
         StageHelper.loadSceneFXML("Generate Class Code", 400, 300,
                 "/create_class_code.fxml",
                 "/login_screen.css");
@@ -187,12 +191,12 @@ public class LoginScreen extends Application {
     // MENU ITEMS
 
     @FXML
-    private void goToPrevTab(){
+    private void goToPrevTab() {
         tabPane.getSelectionModel().select(signUpTab);
     }
 
     @FXML
-    private void selectAvatar(){
+    private void selectAvatar() {
         EventHandler<WindowEvent> onCloseFirstTab = changeAvatarOnClose(avatar);
         openAvatarScreen(onCloseFirstTab);
     }
@@ -209,8 +213,16 @@ public class LoginScreen extends Application {
         };
     }
 
+    private EventHandler<WindowEvent> saveToCloudStorageOnClose() {
+        return (windowEvent) -> {
+            CloudStorageConfig cloudConfig = new CloudStorageConfig();
+            if(!cloudConfig.isLocalStorageEmpty()) cloudConfig.saveLocalStorage();
+        };
+    }
+
+
     @FXML
-    private void onLogin(){
+    private void onLogin() {
         String imageURL = getClass().getResource(
                 String.format("/avatars/D%d.png", AvatarScreenFX.getSelectedAvatarID())).toExternalForm();
 
@@ -219,12 +231,12 @@ public class LoginScreen extends Application {
     }
 
     @FXML
-    private void changeAvatar(){
+    private void changeAvatar() {
         EventHandler<WindowEvent> onCloseSecondTab = changeAvatarOnClose(changedAvatar);
         openAvatarScreen(onCloseSecondTab);
     }
 
-    private void openAvatarScreen(EventHandler<WindowEvent> onClose){
+    private void openAvatarScreen(EventHandler<WindowEvent> onClose) {
         Stage as = StageHelper.loadSceneFXML("Choose Your Avatar!", 800, 400,
                 "/avatar_screen.fxml", "/avatar_screen.css");
 

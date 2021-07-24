@@ -3,12 +3,15 @@ package com.github.astronoodles.peerpal;
 import com.github.astronoodles.peerpal.base.Assignment;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 import com.github.astronoodles.peerpal.dialogs.AssignmentDialog;
+import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
 import com.github.astronoodles.peerpal.extras.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
@@ -119,8 +122,19 @@ public class AssignmentScreen {
         Label welcome = new Label(String.format("Welcome %s", name));
         welcome.setFont(new Font("Cambria", 15));
 
+        ImageView refreshIcon = new ImageView(new Image(AssignmentScreen.class.getResourceAsStream("/refresh.png")));
+        Button refreshButton = new Button("", refreshIcon);
+        refreshButton.setPrefWidth(50);
+        refreshButton.setPrefHeight(50);
+
+        refreshButton.setOnAction((event) -> {
+            CloudStorageConfig config = new CloudStorageConfig();
+            if(!config.isCloudStorageEmpty()) config.downloadCloudStorage();
+        });
+
         Label heading = new Label("NOW VIEWING: Home Page");
         grid.add(welcome, 0, 0, 2, 1);
+        grid.add(refreshButton, 2, 0, 1, 1);
         grid.add(heading, 0, 2, 2, 1);
 
         return grid;

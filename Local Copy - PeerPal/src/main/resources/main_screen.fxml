@@ -16,7 +16,7 @@
 
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<HBox prefHeight="600.0" prefWidth="600.0" maxWidth="Infinity" spacing="2" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.base.LanguageTextEditor">
+<HBox prefHeight="600.0" prefWidth="600.0" maxWidth="Infinity" spacing="2" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.base.LanguageTextDebugger">
     <GridPane alignment="CENTER" hgap="10" prefHeight="500" maxWidth="Infinity" prefWidth="500" vgap="10" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="200">
         <Text id="title_text" text="Welcome to LanguageEditor" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         <ComboBox id="languages" fx:id="languages" prefHeight="20" prefWidth="300" promptText="Choose a Language" GridPane.columnIndex="1" GridPane.rowIndex="2">
