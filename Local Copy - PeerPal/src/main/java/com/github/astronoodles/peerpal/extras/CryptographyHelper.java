@@ -2,6 +2,12 @@ package com.github.astronoodles.peerpal.extras;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -17,7 +23,7 @@ public class CryptographyHelper {
     - KEY_LENGTH --> the length of the encoded password in bytes
     - ALGORITHM --> the hashing algorithm
      */
-    private static final SecureRandom RAND = new SecureRandom();
+    private static final SecureRandom RAND = new SecureRandom(new byte[] {1, 2, 47});
     private static final int ITERATIONS = 65536;
     private static final int KEY_LENGTH = 512;
     private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
@@ -36,15 +42,50 @@ public class CryptographyHelper {
      * @return The salt as a {@link Base64} encoded {@link Optional<String>} that may contain the password.
      * It is empty if length is a non-negative integer
      */
-    public static Optional<String> generateSecureSalt(final int length) {
+    private static void generateSecureSalt(final int length) {
         if (length < 1) {
             System.err.println("The length of a salt should be a non-negative number to prevent brute force attacks. " +
                     "Choose a positive length for the salt");
-            return Optional.empty();
         }
         byte[] saltBytes = new byte[length];
         RAND.nextBytes(saltBytes);
-        return Optional.of(Base64.getEncoder().encodeToString(saltBytes));
+        Optional<String> saltOptional = Optional.of(Base64.getEncoder().encodeToString(saltBytes));
+        storeSecureSalt(saltOptional.orElse(""));
+    }
+
+    /**
+     * Generates a secure salt and saves it in a file called salt.txt in the extras directory of PeerPal
+     */
+    private static void storeSecureSalt(String salt) {
+        Path saltPath = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+                "extras", "salt.txt");
+        try(BufferedWriter writer = Files.newBufferedWriter(saltPath, StandardOpenOption.CREATE)) {
+            writer.write(salt);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns a secure salt that is retrievable frm the salt.txt file in the extras directory of PeerPal.
+     * @see CryptographyHelper#generateSecureSalt(int)
+     * @see CryptographyHelper#storeSecureSalt(String)
+     * @return The secure salt stored in the salt.txt file (creating one if it does not exist).
+     */
+    public static String getSecureSalt() {
+        Path saltPath = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+                "extras", "salt.txt");
+        try {
+            if(Files.exists(saltPath)) {
+                return Files.readAllLines(saltPath).get(0);
+            } else {
+                generateSecureSalt(512);
+                return getSecureSalt();
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     /**
@@ -91,6 +132,7 @@ public class CryptographyHelper {
      */
     public static boolean verifyPassword(String password, String dbPassword, String salt) {
         Optional<String> hashedPassword = encodeUserPassword(password, salt);
+        System.out.println(hashedPassword);
         return hashedPassword.map(s -> s.equals(dbPassword)).orElse(false);
     }
 }

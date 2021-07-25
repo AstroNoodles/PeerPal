@@ -121,7 +121,8 @@ public class AssignmentScreen {
         Label welcome = new Label(String.format("Welcome %s", name));
         welcome.setFont(new Font("Cambria", 15));
 
-        ImageView refreshIcon = new ImageView(new Image(AssignmentScreen.class.getResourceAsStream("/refresh.png")));
+        ImageView refreshIcon = new ImageView(
+                new Image(AssignmentScreen.class.getResourceAsStream("/refresh.png"), 50, 50, true, true));
         Button refreshButton = new Button("", refreshIcon);
         refreshButton.setPrefWidth(50);
         refreshButton.setPrefHeight(50);

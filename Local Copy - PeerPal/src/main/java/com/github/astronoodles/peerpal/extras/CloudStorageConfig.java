@@ -1,6 +1,7 @@
 package com.github.astronoodles.peerpal.extras;
 
 import com.azure.storage.file.share.*;
+import com.azure.storage.file.share.models.ShareStorageException;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,34 +12,28 @@ import java.nio.file.Paths;
 
 public class CloudStorageConfig {
     // Find a way to secure this later (via KeyVault)
-    private static final String CONNECT_STRING = "DefaultEndpointsProtocol=https;" +
-            "AccountName=peerpalblobstorage;AccountKey=08/ZzWL/P8P6k2PwJV65KMjbR5Qi05BtXq2CG" +
-            "cHdURNVEYXsGB97vUX02n7OGpgYfbv5rQCBB3iGcoHMfOl1cA==;EndpointSuffix=core.windows.net";
+    private static final String CONNECT_STRING = "<connect-string-here>";
     private static final String STORAGE_NAME = "peerpal";
 
     public CloudStorageConfig() {
         ShareClient mainClient = new ShareClientBuilder()
                 .connectionString(CONNECT_STRING).shareName("peerpal").buildClient();
 
-        int maxStorageCap = mainClient.getProperties().getQuota() * 1100; // convert quota in TiB to GB
-        double adjustableLimit = 0.95; // adjustable limit (how far to go until storage is maxed out
-        if(mainClient.getStatistics().getShareUsageInGB() > maxStorageCap * adjustableLimit) {
-            mainClient.delete();
-        }
-
-        try {
-            mainClient.create();
-        } catch(Exception e) {
-            if(e.getMessage().contains("already exists")) {
-                System.out.println("The file share with the name " + mainClient.getShareName() + " already exists.");
+        if (mainClient.exists()) {
+            int maxStorageCap = mainClient.getProperties().getQuota() * 1100; // convert quota in TiB to GB
+            double adjustableLimit = 0.95; // adjustable limit (how far to go until storage is maxed out)
+            if (mainClient.getStatistics().getShareUsageInGB() > maxStorageCap * adjustableLimit) {
+                mainClient.delete();
             }
+        } else {
+            mainClient.create();
         }
     }
 
-    // FOR DEBUG ONLY
-     public static void main(String[] args) {
-         //new CloudStorageConfig().isLocalStorageEmpty();
-     }
+//    // FOR DEBUG ONLY
+//     public static void main(String[] args) {
+//         //new CloudStorageConfig().isLocalStorageEmpty();
+//     }
 
     public boolean saveLocalStorage() {
         Path storageDir = Paths.get("./src/main/java/com/github/astronoodles/peerpal", "storage");
@@ -65,8 +60,8 @@ public class CloudStorageConfig {
                 }
             }
             return true;
-        } catch(IOException e) {
-            e.printStackTrace();
+        } catch(IOException | ShareStorageException e) {
+            e.printStackTrace(); // either I/O error happened or could not save local storage
             return false;
         }
     }
@@ -92,7 +87,7 @@ public class CloudStorageConfig {
                      fileClient.downloadToFile(fileItem.toString());
                  }
              });
-         } catch(Exception e) {
+         } catch(ShareStorageException e) {
              e.printStackTrace();
              return false;
              // TODO Check Internet problems

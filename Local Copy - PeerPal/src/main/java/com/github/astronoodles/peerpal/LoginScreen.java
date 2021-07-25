@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.*;
+import java.util.Optional;
 
 
 public class LoginScreen extends Application {
@@ -49,7 +50,7 @@ public class LoginScreen extends Application {
     public static final String CSV_PATH = "./src/main/java/com/github/astronoodles/peerpal/" +
             "extras/members.csv";
 
-    private static final String SECURE_SALT = CryptographyHelper.generateSecureSalt(512).get();
+    public static final String SECURE_SALT = CryptographyHelper.getSecureSalt();
 
     public static void main(String[] args) {
         launch(args);
@@ -153,9 +154,12 @@ public class LoginScreen extends Application {
             if (pwdSign.getText().equals(repwdSign.getText()) && email.getText().matches(EMAIL_REGEX)) {
 
                 PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(members, true)), true);
+
+                Optional<String> possiblePwd = CryptographyHelper.encodeUserPassword(pwdSign.getText(), SECURE_SALT);
+
                 writer.print(String.format("%s, %s, %s, %s, %d\r\n",
                         usernameSign.getText().trim(),
-                        CryptographyHelper.encodeUserPassword(pwdSign.getText(), SECURE_SALT),
+                        possiblePwd.orElseGet(() -> pwdSign.getText()),
                         classSign.getText(),
                         email.getText(),
                         AvatarScreenFX.getSelectedAvatarID()));
