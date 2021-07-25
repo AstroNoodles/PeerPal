@@ -1,6 +1,7 @@
 package com.github.astronoodles.peerpal;
 
 import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
+import com.github.astronoodles.peerpal.extras.CryptographyHelper;
 import com.github.astronoodles.peerpal.extras.StageHelper;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -48,6 +49,8 @@ public class LoginScreen extends Application {
     public static final String CSV_PATH = "./src/main/java/com/github/astronoodles/peerpal/" +
             "extras/members.csv";
 
+    private static final String SECURE_SALT = CryptographyHelper.generateSecureSalt(512).get();
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -86,10 +89,11 @@ public class LoginScreen extends Application {
                 }
                 //System.out.println(classCodeEntries);
                 if (username.getText().trim().equals(users[0]) &&
-                        pwd.getText().equals(users[1]) && class_code.getText().equals(users[2])) {
+                        CryptographyHelper.verifyPassword(pwd.getText(), users[1], SECURE_SALT)
+                        && class_code.getText().equals(users[2])) {
 
                     CloudStorageConfig cloudConfig = new CloudStorageConfig();
-                    if(!cloudConfig.isCloudStorageEmpty()) cloudConfig.downloadCloudStorage();
+                    if (!cloudConfig.isCloudStorageEmpty()) cloudConfig.downloadCloudStorage();
 
                     if (classCodeEntries > 1) {
                         AssignmentScreen screen = new AssignmentScreen(users[0], users[4]);
@@ -150,7 +154,10 @@ public class LoginScreen extends Application {
 
                 PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(members, true)), true);
                 writer.print(String.format("%s, %s, %s, %s, %d\r\n",
-                        usernameSign.getText().trim(), pwdSign.getText(), classSign.getText(), email.getText(),
+                        usernameSign.getText().trim(),
+                        CryptographyHelper.encodeUserPassword(pwdSign.getText(), SECURE_SALT),
+                        classSign.getText(),
+                        email.getText(),
                         AvatarScreenFX.getSelectedAvatarID()));
                 writer.close();
                 errorText.setText("SUCCESS! Go to the next tab.");
@@ -216,7 +223,7 @@ public class LoginScreen extends Application {
     private EventHandler<WindowEvent> saveToCloudStorageOnClose() {
         return (windowEvent) -> {
             CloudStorageConfig cloudConfig = new CloudStorageConfig();
-            if(!cloudConfig.isLocalStorageEmpty()) cloudConfig.saveLocalStorage();
+            if (!cloudConfig.isLocalStorageEmpty()) cloudConfig.saveLocalStorage();
         };
     }
 

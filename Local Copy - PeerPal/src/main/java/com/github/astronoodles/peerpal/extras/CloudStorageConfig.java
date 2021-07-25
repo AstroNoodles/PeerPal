@@ -10,7 +10,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CloudStorageConfig {
-    private static final String CONNECT_STRING = "<connection-string-here>";
+    // Find a way to secure this later (via KeyVault)
+    private static final String CONNECT_STRING = "DefaultEndpointsProtocol=https;" +
+            "AccountName=peerpalblobstorage;AccountKey=08/ZzWL/P8P6k2PwJV65KMjbR5Qi05BtXq2CG" +
+            "cHdURNVEYXsGB97vUX02n7OGpgYfbv5rQCBB3iGcoHMfOl1cA==;EndpointSuffix=core.windows.net";
     private static final String STORAGE_NAME = "peerpal";
 
     public CloudStorageConfig() {

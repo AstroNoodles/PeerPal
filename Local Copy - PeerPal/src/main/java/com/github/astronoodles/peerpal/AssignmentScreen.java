@@ -25,7 +25,6 @@ import java.io.ObjectOutputStream;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -129,7 +128,7 @@ public class AssignmentScreen {
 
         refreshButton.setOnAction((event) -> {
             CloudStorageConfig config = new CloudStorageConfig();
-            if(!config.isCloudStorageEmpty()) config.downloadCloudStorage();
+            if (!config.isCloudStorageEmpty()) config.downloadCloudStorage();
         });
 
         Label heading = new Label("NOW VIEWING: Home Page");

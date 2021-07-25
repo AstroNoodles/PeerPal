@@ -1,8 +1,6 @@
 package com.github.astronoodles.peerpal.extras;
 
-import com.github.astronoodles.peerpal.AvatarScreenFX;
 import com.github.astronoodles.peerpal.LoginScreen;
-import com.github.astronoodles.peerpal.base.Assignment;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -10,15 +8,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,7 +30,9 @@ public class StageHelper {
     public static final String SAMPLE_CODE = "SPANISH3";
     private static final StageHelper helper = new StageHelper();
 
-    private StageHelper() { }
+    private StageHelper() {
+    }
+
     /**
      * Singleton pattern for this class. There is only one instance to hold the key information needed.
      *
@@ -84,6 +80,7 @@ public class StageHelper {
      * Closes the current window. Most commonly used when a new screen is opened and only 1 screen needs to be active
      * at a time.
      * This may be useful at a later time.
+     *
      * @param loadedNode The current screen.
      */
     public static void closeCurrentWindow(Node loadedNode) {
@@ -100,6 +97,7 @@ public class StageHelper {
      * to show the teacher's avatar while completing a lesson. <br>
      * This method reads the members.csv file and records the user's name and the link to their avatar in the
      * resources/avatars folder.
+     *
      * @return A mapping between the user's name and their avatar from the available avatars in the program so far.
      */
     public static Map<String, String> getUserAvatarMapping() {
@@ -109,14 +107,14 @@ public class StageHelper {
         Path membersPath = Paths.get(LoginScreen.CSV_PATH);
 
         try {
-           Files.lines(membersPath).forEach(line -> {
-               String[] components = line.split(", ");
-               String username = components[0];
-               String imageURL = StageHelper.class.getResource(
-                       String.format("/avatars/D%d.png", Integer.parseInt(components[4]))).toExternalForm();
-               userAvatarMap.put(username, imageURL);
-           });
-        } catch(IOException e) {
+            Files.lines(membersPath).forEach(line -> {
+                String[] components = line.split(", ");
+                String username = components[0];
+                String imageURL = StageHelper.class.getResource(
+                        String.format("/avatars/D%d.png", Integer.parseInt(components[4]))).toExternalForm();
+                userAvatarMap.put(username, imageURL);
+            });
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
