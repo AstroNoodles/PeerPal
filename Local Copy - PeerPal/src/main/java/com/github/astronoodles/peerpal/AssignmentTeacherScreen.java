@@ -31,14 +31,12 @@ import java.util.stream.Stream;
 public class AssignmentTeacherScreen {
 
     private final String name;
-    private final String modelPath; // TODO add to assignment screen?
     public List<StudentAssignment> updatedStudentAssignments = new ArrayList<>(10);
 
 
-    public AssignmentTeacherScreen(String name, String modelPath) {
+    public AssignmentTeacherScreen(String name) {
         super();
         this.name = name;
-        this.modelPath = modelPath;
     }
 
     private final List<Assignment> backedList = new ArrayList<>(Assignment.getAssignmentCount());

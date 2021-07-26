@@ -97,7 +97,7 @@ public class LoginScreen extends Application {
                     if (!cloudConfig.isCloudStorageEmpty()) cloudConfig.downloadCloudStorage();
 
                     if (classCodeEntries > 1) {
-                        AssignmentScreen screen = new AssignmentScreen(users[0], users[4]);
+                        AssignmentScreen screen = new AssignmentScreen(users[0]);
                         Scene scene = new Scene(screen.loadStage());
 
                         Stage stage = new Stage();
@@ -109,7 +109,7 @@ public class LoginScreen extends Application {
                         hasUser = true;
                         break;
                     } else {
-                        AssignmentTeacherScreen screen = new AssignmentTeacherScreen(users[0], users[4]);
+                        AssignmentTeacherScreen screen = new AssignmentTeacherScreen(users[0]);
                         Scene s = new Scene(screen.loadStage());
 
                         Stage st = new Stage();

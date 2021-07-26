@@ -1,13 +1,16 @@
 package com.github.astronoodles.peerpal;
 
 import com.github.astronoodles.peerpal.base.Assignment;
+import com.github.astronoodles.peerpal.base.LanguageTextEditor;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 import com.github.astronoodles.peerpal.dialogs.AssignmentDialog;
 import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
-import com.github.astronoodles.peerpal.extras.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -32,11 +35,9 @@ import java.util.stream.Collectors;
 public class AssignmentScreen {
 
     private final String name;
-    private final String modelPath; // TODO Add to assignment screen?
 
-    public AssignmentScreen(String name, String modelPath) {
+    public AssignmentScreen(String name) {
         this.name = name;
-        this.modelPath = modelPath;
     }
 
     private final ObservableList<StudentAssignment> data = FXCollections.observableArrayList();
@@ -91,8 +92,24 @@ public class AssignmentScreen {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     if (!(idLabel.getText().indexOf("Assignment") == 0)) {
-                        StageHelper.loadSceneFXML("The Language Learn App", 600, 500,
-                                "/main_screen.fxml", "/main_screen.css");
+                        try {
+                            FXMLLoader dialogLoader = new FXMLLoader(getClass().getResource("/main_screen.fxml"));
+
+                            Parent root = dialogLoader.load();
+
+                            LanguageTextEditor languageEditor = dialogLoader.getController();
+                            languageEditor.connectToUser(name);
+
+                            Scene scene = new Scene(root, 600, 500);
+                            scene.getStylesheets().add(getClass().getResource("/main_screen.css").toExternalForm());
+
+                            Stage stage = new Stage();
+                            stage.setScene(scene);
+                            stage.setTitle("The Language Learn App");
+                            stage.showAndWait();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
                     createContextMenu(row.getItem()).
@@ -124,18 +141,32 @@ public class AssignmentScreen {
         ImageView refreshIcon = new ImageView(
                 new Image(AssignmentScreen.class.getResourceAsStream("/refresh.png"), 50, 50, true, true));
         Button refreshButton = new Button("", refreshIcon);
-        refreshButton.setPrefWidth(50);
-        refreshButton.setPrefHeight(50);
+        refreshButton.setPrefWidth(30);
+        refreshButton.setTooltip(new Tooltip("Click here to refresh current assignments."));
+        refreshButton.setPrefHeight(30);
 
-        refreshButton.setOnAction((event) -> {
-            CloudStorageConfig config = new CloudStorageConfig();
-            if (!config.isCloudStorageEmpty()) config.downloadCloudStorage();
-        });
+        Label refreshText = new Label("Refresh in progress...");
+        refreshText.setStyle("-fx-background-color: #42a5f5; -fx-font-size: 13;");
+        refreshText.setVisible(false);
 
         Label heading = new Label("NOW VIEWING: Home Page");
+
+        refreshButton.setOnAction((event) -> {
+            String pastStyle = refreshButton.getStyle();
+            refreshButton.setStyle("-fx-background-color: #90caf9;");
+            refreshText.setVisible(true);
+
+            CloudStorageConfig config = new CloudStorageConfig();
+            if (!config.isCloudStorageEmpty()) config.downloadCloudStorage();
+
+            refreshButton.setStyle(pastStyle);
+            refreshText.setVisible(false);
+        });
+
         grid.add(welcome, 0, 0, 2, 1);
         grid.add(refreshButton, 2, 0, 1, 1);
         grid.add(heading, 0, 2, 2, 1);
+        grid.add(refreshText, 0, 3, 2, 1);
 
         return grid;
     }
