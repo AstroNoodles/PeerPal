@@ -19,7 +19,7 @@ public class AvatarScreenFX {
     @FXML
     private ImageView selectedAvatar;
 
-    private static int avatarID = 0;
+    private static int avatarID = 2;
 
     @FXML
     private Button submitButton;

@@ -1,0 +1,94 @@
+{
+  "exercise1" : {
+    "question" : "Ana es _____",
+    "possibleAnswers" : [
+      "bueno",
+      "buena"
+    ],
+    "correctAnswer" : "buena",
+    "correctResponse" : "Congrats! That is the correct response because the feminine word 'buena' matches the feminine name Ana",
+    "wrongResponse" : "Unfortunately, this is wrong. Is 'Ana' masculine or feminine?"
+  },
+  "exercise2" : {
+    "question" : "Carlos y yo somos _____",
+    "possibleAnswers" : [
+      "inteligente",
+      "inteligentes"
+    ],
+    "correctAnswer" : "inteligentes",
+    "correctResponse" : "Congrats! That is the correct response because 'Carlos y yo' creates a plural subject, which matches with the plural adjective 'inteligentes'",
+    "wrongResponse" : "That is the wrong answer. Is 'Carlos y yo' singular or plural?"
+  },
+  "exercise3" : {
+    "question" : "Ella es ____",
+    "possibleAnswers" : [
+      "cómico", "cómica"
+    ],
+    "correctAnswer": "cómica",
+    "correctResponse" : "Congrats! That is the correct response because the feminine pronoun 'ella' matches with the feminine adjective 'cómica'",
+    "wrongResponse" : "That is the wrong response. Is 'ella' masculine or feminine?"
+  },
+  "exercise4" : {
+    "question" : "Pedro y Alejandro son _____",
+    "possibleAnswers" : [
+      "perezoso", "perezosa", "perezosos", "perezosas"
+    ],
+    "correctAnswer": "perezosos",
+    "correctResponse" : "Congrats! That is the correct response because 'Pedro y Alejandro' form a masculine plural subject, which matches with the masculine plural 'perezosos'",
+    "wrongResponse" : "This is the wrong response. Is 'Pedro y Alejandro' singular or plural? Is it masculine or feminine?"
+  },
+  "exercise5" : {
+    "question" : "Mi maestra es _____",
+    "possibleAnswers" : [
+      "bueno", "buena"
+    ],
+    "correctAnswer": "buena",
+    "correctResponse" : "Congrats! That is the correct response because the feminine 'buena' matches with the feminine 'maestra'",
+    "wrongResponse" : "This is the wrong response. Is 'maestra' masculine or feminine?"
+  },
+  "exercise6" : {
+    "question" : "Juan es _____",
+    "possibleAnswers" : [
+      "alto", "alta", "altos", "altas"
+    ],
+    "correctAnswer": "alto",
+    "correctResponse" : "Congrats! That is the correct response because the masculine and singular 'alto' matches with the masculine 'Juan'",
+    "wrongResponse" : "This is the wrong response. Is 'Juan' masculine or feminine and is it singular or plural?"
+  },
+  "exercise7" : {
+    "question" : "El perro es _____",
+    "possibleAnswers" : [
+      "malo", "mala", "malos", "malas"
+    ],
+    "correctAnswer": "malo",
+    "correctResponse" : "Congrats! That is the correct response because the masculine and singular 'perro' matches with the masculine 'perro'",
+    "wrongResponse" : "This is the wrong response. Is 'perro' masculine or feminine and is it singular or plural?"
+  },
+  "exercise8" : {
+    "question" : "La chica ____ está en la clase.",
+    "possibleAnswers" : [
+      "alto", "alta", "altos", "altas"
+    ],
+    "correctAnswer": "alta",
+    "correctResponse" : "Congrats! That is the correct response because the feminine 'chica' matches with the feminine adjective 'alta'",
+    "wrongResponse" : "This is the wrong response. Is 'chica' masculine or feminine and is it singular or plural?"
+  },
+  "exercise9" : {
+    "question" : "Hoy es un día _____",
+    "possibleAnswers" : [
+      "bonita", "bonito", "bonitas", "bonitos"
+    ],
+    "correctAnswer": "bonito",
+    "correctResponse" : "Congrats! That is the correct response because the MASCULINE 'día' matches with the masculine adjective 'bonito",
+    "wrongResponse" : "This is the wrong response. Is 'día' masculine or feminine and is it singular or plural? [Hint: It is an exception]"
+  },
+  "exercise10" : {
+    "question" : "TRANSLATE 'A Pleasant Woman' Into Spanish'",
+    "possibleAnswers" : [
+      "Una muchacha agradable", "Una muchacha agradabla"
+    ],
+    "correctAnswer": "Una muchacha agradabla",
+    "correctResponse" : "Congrats! That is the correct response because the feminine adjective 'agradabla' matches with the feminine noun 'muchacha'",
+    "wrongResponse" : "This is the wrong response. Can you make the noun and adjective agree in gender? Which are masculine and feminine?"
+  }
+}

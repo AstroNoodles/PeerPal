@@ -1,10 +1,14 @@
 package com.github.astronoodles.peerpal;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.astronoodles.peerpal.base.ErrorType;
 import com.github.astronoodles.peerpal.extras.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -14,15 +18,16 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LessonScreen {
 
@@ -40,26 +45,21 @@ public class LessonScreen {
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
         // handle obtaining the model ID out of the complete relative avatar path in the user avatar mapping
-        int modelID = 1;
-        String relativePath = userAvatarMap.get(username);
-        if (!relativePath.isEmpty()) {
-            Matcher digitMatcher = Pattern.compile("\\d+").matcher(relativePath);
-            digitMatcher.find();
-            modelID = Integer.parseInt(digitMatcher.group());
-        }
+        ImageView avatarView = new ImageView(new Image(userAvatarMap.get(username),
+                100, 100, true, true));
 
         for (int i = 0; i < lessonParts.length; i++) {
             WebView htmlText = new WebView();
             htmlText.setPrefHeight(500);
             htmlText.setPrefWidth(300);
             System.out.println(lessonParts[i]);
-            htmlText.getEngine().loadContent(String.format(lessonParts[i],
-                    modelID));
+            htmlText.getEngine().loadContent(lessonParts[i]);
             htmlText.getEngine().setUserStyleSheetLocation(getClass().getResource("/lessons.css").toString());
 
             String tabTitle = String.format("Part %d", i + 1).equals("Part 1") && lessonParts.length == 1 ? "Lesson"
                     : String.format("Part %d", i + 1);
-            Tab lessonPart = new Tab(tabTitle, htmlText);
+            Tab lessonPart = new Tab(tabTitle, new VBox(1, htmlText, avatarView));
+
             tabPane.getTabs().add(lessonPart);
         }
 
@@ -70,7 +70,7 @@ public class LessonScreen {
     }
 
 
-    private ScrollPane addDropdown(Map<String, ExerciseTriad> options) {
+    private ScrollPane addDropdown(List<LessonExercise> options) {
         VBox exercises = new VBox(2);
 
         Label title = new Label("Exercises");
@@ -85,34 +85,34 @@ public class LessonScreen {
         desc.setPadding(new Insets(10, 0, 10, 0));
 
         int i = 1;
-        for (Map.Entry<String, ExerciseTriad> entry : options.entrySet()) {
-            Label exerciseLabel = new Label(String.format("%d. %s", i, entry.getKey()));
+        for (LessonExercise exercise : options) {
+            Label exerciseLabel = new Label(String.format("%d. %s", i, exercise.question));
             exerciseLabel.setFont(Font.font("Verdana", 13));
             ComboBox<String> dropdown = new ComboBox<>(
-                    FXCollections.observableArrayList(entry.getValue().solutions));
-            HBox exercise = new HBox(9, exerciseLabel, dropdown);
+                    FXCollections.observableArrayList(exercise.possibleAnswers));
+            HBox exerciseBox = new HBox(9, exerciseLabel, dropdown);
 
-            Label solutionLabel = new Label(entry.getValue().wrongSolutionMsg);
+            Label solutionLabel = new Label(exercise.wrongResponse);
             solutionLabel.setMaxHeight(50);
             solutionLabel.setPadding(new Insets(10, 0, 15, 0));
-            solutionLabel.setPrefWidth(200);
+            solutionLabel.setPrefWidth(exercises.getWidth());
+            solutionLabel.setWrapText(true);
             solutionLabel.setVisible(false);
 
             dropdown.setOnAction((e) -> {
-                int solutionIndex = entry.getValue().solutionIndex;
-                if (dropdown.getValue().equals(entry.getValue().solutions[solutionIndex])) {
-                    solutionLabel.setText(entry.getValue().correctSolutionMsg);
+                if (dropdown.getValue().equals(exercise.correctAnswer)) {
+                    solutionLabel.setText(exercise.correctResponse);
                     solutionLabel.setTextFill(Color.GREEN);
                     solutionLabel.setFont(Font.font("Charter", 13));
                 } else {
-                    solutionLabel.setText(entry.getValue().wrongSolutionMsg);
+                    solutionLabel.setText(exercise.wrongResponse);
                     solutionLabel.setTextFill(Color.RED);
                     solutionLabel.setFont(Font.font("Charter", 12));
                 }
                 solutionLabel.setVisible(true);
             });
 
-            VBox exerciseSolution = new VBox(4, exercise, solutionLabel);
+            VBox exerciseSolution = new VBox(4, exerciseBox, solutionLabel);
             exercises.getChildren().add(exerciseSolution);
             i++;
         }
@@ -142,60 +142,59 @@ public class LessonScreen {
     }
 
     private ScrollPane addExerciseTab(ErrorType type) {
-        // TODO Find a better way to do this?
-        switch (type) {
-            case GEN:
-                return addDropdown(createGenderMap());
-            case ART:
-                return new ScrollPane(new VBox());
-        }
-
-        return new ScrollPane(new VBox()); // This should never happen
+        return addDropdown(readExercisesFromJSON(type));
     }
 
     // CREATE MAPS FOR EACH LESSON
-    private Map<String, ExerciseTriad> createGenderMap() {
-        String correctMessage1 = "This solution is correct!";
-        String wrongMessage1 = "This solution is incorrect!";
-        Map<String, ExerciseTriad> genderMap = new HashMap<>(10);
+    private List<LessonExercise> readExercisesFromJSON(ErrorType type) {
+        ObjectMapper mapper = new ObjectMapper(); // since I need to use JACKSON for Azure, why not use it here?
+        List<LessonExercise> exerciseList = new LinkedList<>();
+        File exerciseFile = new File(String.format("./src/main/java/com/github/astronoodles/peerpal/" +
+                "lessons/exercises/%s.json", type.getCodeName()));
 
-        genderMap.put("Ana es _____", new ExerciseTriad(
-                new String[]{"bueno", "buena"}, 0, correctMessage1, wrongMessage1));
-        genderMap.put("Carlos y yo somos _____", new ExerciseTriad(
-                new String[]{"inteligente", "inteligentes"}, 1, correctMessage1, wrongMessage1));
-        genderMap.put("Ella es ____", new ExerciseTriad(
-                new String[]{"cómico", "cómica"}, 1, correctMessage1, wrongMessage1));
-        genderMap.put("Pedro y Carmen son _____", new ExerciseTriad(
-                new String[]{"perezoso", "perezosos", "perezosa",
-                        "perezosas"}, 1, correctMessage1, wrongMessage1));
-        genderMap.put("Mi maestra es _____", new ExerciseTriad(new String[]{"bueno", "buena"},
-                1, correctMessage1, wrongMessage1));
-        genderMap.put("Juan es _____", new ExerciseTriad(new String[]{"alto", "alta", "altos", "altas"},
-                0, correctMessage1, wrongMessage1));
-        genderMap.put("El perro es _____", new ExerciseTriad(
-                new String[]{"malo", "mala", "malas", "malos"}, 0, correctMessage1, wrongMessage1));
-        genderMap.put("La chica ____ está en la clase.", new ExerciseTriad(
-                new String[]{"Alto", "Alta", "Altos", "Altas"}, 1, correctMessage1, wrongMessage1));
-        genderMap.put("Hoy es un día _____.", new ExerciseTriad(
-                new String[]{"bonito", "bonita", "bonitos", "bonitas"}, 1, correctMessage1, wrongMessage1));
-        genderMap.put("Translate \"One Pleasant Girl\" ",
-                new ExerciseTriad(new String[]{"Una muchacha agradable", "Una muchacha agradabla"}, 1, correctMessage1, wrongMessage1));
+        if (!exerciseFile.exists()) return exerciseList;
 
-        return genderMap;
-    }
+        try {
+            JsonNode exerciseTree = mapper.readTree(exerciseFile);
+            int exerciseCounter = 1;
 
-    private static class ExerciseTriad {
-        private final String[] solutions;
-        private final int solutionIndex;
-        private final String correctSolutionMsg;
-        private final String wrongSolutionMsg;
+            while (!exerciseTree.path(String.format("exercise%d", exerciseCounter)).isMissingNode()) {
+                JsonNode exerciseNode = exerciseTree.path(String.format("exercise%d", exerciseCounter));
+                System.out.printf("exercise%d%n", exerciseCounter);
+                String question = exerciseNode.path("question").textValue();
+                List<String> possibleAnswers = new ArrayList<>(6);
+                exerciseNode.path("possibleAnswers").elements().
+                        forEachRemaining(answer -> possibleAnswers.add(answer.textValue()));
+                String correctAnswer = exerciseNode.path("correctAnswer").textValue();
+                String correctResponse = exerciseNode.path("correctResponse").textValue();
+                String wrongResponse = exerciseNode.path("wrongResponse").textValue();
 
-        private ExerciseTriad(String[] solutions, int solutionIndex, String correctMsg, String wrongMsg) {
-            this.solutions = solutions;
-            this.solutionIndex = solutionIndex;
-            this.correctSolutionMsg = correctMsg;
-            this.wrongSolutionMsg = wrongMsg;
+                exerciseList.add(new LessonExercise(question, possibleAnswers, correctAnswer, correctResponse, wrongResponse));
+                //System.out.println(question + " " + correctAnswer);
+                exerciseCounter++;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
+        return exerciseList;
+    }
+
+    private static class LessonExercise {
+        private final String question;
+        private final List<String> possibleAnswers;
+        private final String correctAnswer;
+        private final String correctResponse;
+        private final String wrongResponse;
+
+
+        private LessonExercise(String question, List<String> possibleAnswers, String correctAnswer, String correctResponse, String wrongResponse) {
+            this.question = question;
+            this.possibleAnswers = possibleAnswers;
+            this.correctAnswer = correctAnswer;
+            this.correctResponse = correctResponse;
+            this.wrongResponse = wrongResponse;
+        }
     }
 }

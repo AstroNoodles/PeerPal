@@ -85,7 +85,7 @@
                     </padding>
                     <StackPane styleClass="avatarPane" maxHeight="200" maxWidth="200">
                         <ImageView fx:id="changedAvatar" fitHeight="128" fitWidth="128" preserveRatio="true">
-                            <Image url="@/avatars/D0.png"/>
+                            <Image url="@/avatars/D2.png"/>
                         </ImageView>
                     </StackPane>
                     <Button id="avatar" translateY="30" translateX="40"

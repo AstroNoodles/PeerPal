@@ -2,10 +2,13 @@ package com.github.astronoodles.peerpal.extras;
 
 import com.azure.storage.file.share.*;
 import com.azure.storage.file.share.models.ShareStorageException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,15 +22,26 @@ public class CloudStorageConfig {
     public CloudStorageConfig() {
         ShareClient mainClient = new ShareClientBuilder()
                 .connectionString(CONNECT_STRING).shareName("peerpal").buildClient();
-
-        if (mainClient.exists()) {
-            int maxStorageCap = mainClient.getProperties().getQuota() * 1100; // convert quota in TiB to GB
-            double adjustableLimit = 0.95; // adjustable limit (how far to go until storage is maxed out)
-            if (mainClient.getStatistics().getShareUsageInGB() > maxStorageCap * adjustableLimit) {
-                mainClient.delete();
+        try {
+            if (mainClient.exists()) {
+                int maxStorageCap = mainClient.getProperties().getQuota() * 1100; // convert quota in TiB to GB
+                double adjustableLimit = 0.95; // adjustable limit (how far to go until storage is maxed out)
+                if (mainClient.getStatistics().getShareUsageInGB() > maxStorageCap * adjustableLimit) {
+                    mainClient.delete();
+                }
+            } else {
+                mainClient.create();
             }
-        } else {
-            mainClient.create();
+        } catch(Exception internetException) {
+            // an internet problem happened
+            internetException.printStackTrace();
+            Alert internetAlert = new Alert(Alert.AlertType.INFORMATION, "Unfortunately, " +
+                    "your internet connection is unable to connect to the cloud storage service. \n " +
+                    "As a result, your progress will only get stored locally to this computer and will not be shared to" +
+                    "the teacher and other classmates.", ButtonType.OK);
+            internetAlert.setTitle("Unable To Connect");
+            internetAlert.setHeaderText("Internet Connection Error");
+            internetAlert.showAndWait();
         }
     }
 

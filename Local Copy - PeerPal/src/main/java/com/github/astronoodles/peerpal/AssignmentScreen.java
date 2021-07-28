@@ -5,6 +5,7 @@ import com.github.astronoodles.peerpal.base.LanguageTextEditor;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 import com.github.astronoodles.peerpal.dialogs.AssignmentDialog;
 import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -16,10 +17,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
@@ -135,7 +138,8 @@ public class AssignmentScreen {
 
         //Top Heading Label
 
-        Label welcome = new Label(String.format("Welcome %s", name));
+        Label welcome = new Label(String.format("Welcome %s. Please find or create or wait for " +
+                "your assignment to begin!", name));
         welcome.setFont(new Font("Cambria", 15));
 
         ImageView refreshIcon = new ImageView(
@@ -146,21 +150,36 @@ public class AssignmentScreen {
         refreshButton.setPrefHeight(30);
 
         Label refreshText = new Label("Refresh in progress...");
-        refreshText.setStyle("-fx-background-color: #42a5f5; -fx-font-size: 13;");
+        refreshText.setStyle("-fx-text-fill: #42a5f5; -fx-font-size: 13;");
         refreshText.setVisible(false);
 
         Label heading = new Label("NOW VIEWING: Home Page");
 
+        Background originalBG = refreshButton.getBackground();
+        // Border originalBorder = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,
+        //        new CornerRadii(1), new BorderWidths(1)));
+
+        Background pressedBG = new Background(new BackgroundFill(Color.web("#90caf9"),
+                new CornerRadii(1), new Insets(3)));
+        Border pressedBorder = new Border(new BorderStroke(Color.web("#1565c0"),
+                BorderStrokeStyle.SOLID, new CornerRadii(1), new BorderWidths(2)));
+
+        PauseTransition bgTransition = new PauseTransition(Duration.seconds(6));
+        bgTransition.setOnFinished(event -> {
+            refreshButton.setBackground(originalBG);
+            refreshButton.setDefaultButton(true);
+            refreshText.setVisible(false);
+        });
+
         refreshButton.setOnAction((event) -> {
-            String pastStyle = refreshButton.getStyle();
-            refreshButton.setStyle("-fx-background-color: #90caf9;");
+            refreshButton.setBackground(pressedBG);
+            refreshButton.setBorder(pressedBorder);
             refreshText.setVisible(true);
 
             CloudStorageConfig config = new CloudStorageConfig();
             if (!config.isCloudStorageEmpty()) config.downloadCloudStorage();
 
-            refreshButton.setStyle(pastStyle);
-            refreshText.setVisible(false);
+            bgTransition.playFromStart();
         });
 
         grid.add(welcome, 0, 0, 2, 1);
