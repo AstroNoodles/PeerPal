@@ -1,5 +1,6 @@
 package com.github.astronoodles.peerpal.dialogs;
 
+import com.github.astronoodles.peerpal.LoginScreen;
 import com.github.astronoodles.peerpal.base.Assignment;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 import com.github.astronoodles.peerpal.extras.StageHelper;
@@ -21,15 +22,17 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
-import java.awt.*;
-import java.io.*;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +48,7 @@ public class StudentAssignmentGrid {
 
         // TODO I want to remove all of the students if they did not submit their assignments on this page
         List<StudentAssignment> refreshedAssignments = refreshStudents(studentNames);
+        Map<String, Integer> studentAvatarMap = StageHelper.getUserAvatarMapping();
 
         if (imageID < 1 || imageID > 6) imageID = 0;
         if (refreshedAssignments.size() != studentNames.size()) return null;
@@ -71,7 +75,7 @@ public class StudentAssignmentGrid {
 
         if (studentRows > refreshedAssignments.size()) studentRows = refreshedAssignments.size();
 
-        Map<String, String> userAvatarMap = StageHelper.getUserAvatarMapping();
+        Map<String, Integer> userAvatarMap = StageHelper.getUserAvatarMapping();
 
         // the length of the assignments array is a proxy for the number of students in the class
         for (int i = 0; i < studentRows; i++) {
@@ -82,11 +86,10 @@ public class StudentAssignmentGrid {
                 Label nameLabel = new Label(studentNames.get(i));
                 nameLabel.setPrefWidth(200);
                 nameLabel.setFont(gridFont);
-
                 nameLabel.setAlignment(Pos.CENTER);
-
                 Image avatarImage = new Image(
-                        userAvatarMap.get(studentNames.get(curRow)),
+                        getClass().getResource(String.format("/avatars/D%d.png",
+                                studentAvatarMap.getOrDefault(studentNames.get(curRow), 2))).toExternalForm(),
                         100, 100, true, true);
                 ImageView avatarView = new ImageView(avatarImage);
 
@@ -127,8 +130,8 @@ public class StudentAssignmentGrid {
     private List<StudentAssignment> refreshStudents(List<String> studentNames) {
         List<StudentAssignment> completedAssignments = new ArrayList<>(studentNames.size() / 2);
 
-        for(int i = 0; i < assignments.size(); i++) {
-            if(assignments.get(i).getStatus() != StudentAssignment.AssignmentStatus.MISSING) {
+        for (int i = 0; i < assignments.size(); i++) {
+            if (assignments.get(i).getStatus() != StudentAssignment.AssignmentStatus.MISSING) {
                 completedAssignments.add(assignments.get(i));
             } else {
                 studentNames.remove(i);

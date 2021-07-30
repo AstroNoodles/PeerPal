@@ -16,7 +16,7 @@
     <HBox prefHeight="500" prefWidth="Infinity" spacing="10">
         <StackPane id="selectedAvatar" maxHeight="200" prefHeight="200" prefWidth="200" translateY="40">
             <ImageView fx:id="selectedAvatar" fitHeight="200" fitWidth="200" pickOnBounds="true" preserveRatio="true">
-                <Image url="@/avatars/D0.png" />
+                <Image url="@/avatars/D2.png" />
             </ImageView>
         </StackPane>
 

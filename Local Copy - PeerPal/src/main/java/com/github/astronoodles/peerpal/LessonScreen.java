@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.astronoodles.peerpal.base.ErrorType;
 import com.github.astronoodles.peerpal.extras.StageHelper;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -16,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
+import javafx.util.Duration;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,12 +45,36 @@ public class LessonScreen {
 
     public TabPane loadScene(ErrorType type) {
         TabPane tabPane = new TabPane();
-        Map<String, String> userAvatarMap = StageHelper.getUserAvatarMapping();
+        Map<String, Integer> studentAvatarMap = StageHelper.getUserAvatarMapping();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
-        // handle obtaining the model ID out of the complete relative avatar path in the user avatar mapping
-        ImageView avatarView = new ImageView(new Image(userAvatarMap.get(username),
-                100, 100, true, true));
+
+        ImageView avatarView = new ImageView(new Image(getClass().getResource(String.format("/avatars/D%d.png",
+                studentAvatarMap.getOrDefault(username, 2))).toExternalForm(),
+                200, 200, true, true));
+
+        Label avatarSpeak = new Label("Hey I'm back! Remember to take notes on these lessons " +
+                "and to do your best on the exercises. Think before you click an answer. " +
+                "I know you will get 100% and learn from your mistakes!");
+        avatarSpeak.setWrapText(true);
+        avatarSpeak.setPrefWidth(400);
+        avatarSpeak.setPrefHeight(200);
+        avatarSpeak.setPadding(new Insets(2, 5, 5, 20));
+        avatarSpeak.setStyle("-fx-font-size: 14; " +
+                "-fx-font-family: \"Avenir Next\", Helvetica, Arial, sans-serif;");
+
+        Timeline avatarTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(avatarSpeak.textFillProperty(), Color.web("#1565c0"))),
+                new KeyFrame(Duration.ZERO, new KeyValue(avatarSpeak.opacityProperty(), 0.05)),
+                new KeyFrame(Duration.seconds(3), new KeyValue(avatarSpeak.opacityProperty(), 1)),
+                new KeyFrame(Duration.seconds(6), new KeyValue(avatarSpeak.textFillProperty(), Color.web("#6a1b9a")))
+        );
+        avatarTimeline.setAutoReverse(true);
+        avatarTimeline.playFromStart();
+
+        //FillTransition speakFill = new FillTransition(Duration.seconds(10), Color.web("#1565c0"), Color.web("#6a1b9a"));
+
+        HBox avatarArea = new HBox(4, avatarView, avatarSpeak);
 
         for (int i = 0; i < lessonParts.length; i++) {
             WebView htmlText = new WebView();
@@ -58,7 +86,7 @@ public class LessonScreen {
 
             String tabTitle = String.format("Part %d", i + 1).equals("Part 1") && lessonParts.length == 1 ? "Lesson"
                     : String.format("Part %d", i + 1);
-            Tab lessonPart = new Tab(tabTitle, new VBox(1, htmlText, avatarView));
+            Tab lessonPart = new Tab(tabTitle, new VBox(1, htmlText, avatarArea));
 
             tabPane.getTabs().add(lessonPart);
         }
@@ -93,7 +121,7 @@ public class LessonScreen {
             HBox exerciseBox = new HBox(9, exerciseLabel, dropdown);
 
             Label solutionLabel = new Label(exercise.wrongResponse);
-            solutionLabel.setMaxHeight(50);
+            solutionLabel.setMaxHeight(200);
             solutionLabel.setPadding(new Insets(10, 0, 15, 0));
             solutionLabel.setPrefWidth(exercises.getWidth());
             solutionLabel.setWrapText(true);

@@ -81,20 +81,24 @@
 
                 <HBox spacing="10" prefWidth="150" prefHeight="150">
                     <padding>
-                        <Insets left="10" right="10" bottom="20"/>
+                        <Insets left="10" right="10" bottom="2"/>
                     </padding>
                     <StackPane styleClass="avatarPane" maxHeight="200" maxWidth="200">
                         <ImageView fx:id="changedAvatar" fitHeight="128" fitWidth="128" preserveRatio="true">
                             <Image url="@/avatars/D2.png"/>
                         </ImageView>
                     </StackPane>
-                    <Button id="avatar" translateY="30" translateX="40"
-                            onAction="#changeAvatar" prefHeight="50" prefWidth="150" text="Change Avatar"/>
+                    <Label id="avatarSpeak" fx:id="avatarText" wrapText="true" prefWidth="500" prefHeight="200"
+                           text="Hello there! I'm your avatar and I'll be helping you out with learning some of the kinks of the language you are learning today!! Don't fret if you are a beginner as I'll assist you the best I know how.">
+                        <padding>
+                            <Insets left="20" top="4"/>
+                        </padding>
+                    </Label>
                 </HBox>
-                <Label styleClass="login_plain" wrapText="true" prefWidth="500" prefHeight="200"
-                       text="If you would like to do so, you may change the avatar associated with your account. This avatar will save between sessions when you login. Do not fret if the previous avatar you selected is not in the box above.">
+                    <Label styleClass="login_plain" wrapText="true" prefWidth="500" prefHeight="200"
+                           text="If your teacher has not created a class code for your class yet, please ask him or her to create it to get started with your PeerPal experience!">
                     <padding>
-                        <Insets left="10" top="10"/>
+                        <Insets left="10"/>
                     </padding>
                 </Label>
                 <HBox spacing="10" prefHeight="150" prefWidth="150">

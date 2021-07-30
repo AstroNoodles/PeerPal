@@ -80,7 +80,6 @@ public class AssignmentScreen {
                 new PropertyValueFactory<>("grade")
         );
 
-        //data.addAll(StageHelper.obtainMissingAssignments(obtainAssignments(name), data));
         data.addAll(obtainAssignments(name));
         System.out.println("All assignments: " + data);
         table.setItems(data);
@@ -103,7 +102,7 @@ public class AssignmentScreen {
                             LanguageTextEditor languageEditor = dialogLoader.getController();
                             languageEditor.connectToUser(name);
 
-                            Scene scene = new Scene(root, 600, 500);
+                            Scene scene = new Scene(root, 800, 500);
                             scene.getStylesheets().add(getClass().getResource("/main_screen.css").toExternalForm());
 
                             Stage stage = new Stage();
@@ -138,9 +137,10 @@ public class AssignmentScreen {
 
         //Top Heading Label
 
-        Label welcome = new Label(String.format("Welcome %s. Please find or create or wait for " +
+        Label welcome = new Label(String.format("Welcome %s. \nPlease find or create or wait for " +
                 "your assignment to begin!", name));
         welcome.setFont(new Font("Cambria", 15));
+        welcome.setWrapText(true);
 
         ImageView refreshIcon = new ImageView(
                 new Image(AssignmentScreen.class.getResourceAsStream("/refresh.png"), 50, 50, true, true));
@@ -170,7 +170,6 @@ public class AssignmentScreen {
             refreshButton.setDefaultButton(true);
             refreshText.setVisible(false);
         });
-
         refreshButton.setOnAction((event) -> {
             refreshButton.setBackground(pressedBG);
             refreshButton.setBorder(pressedBorder);
@@ -183,7 +182,7 @@ public class AssignmentScreen {
         });
 
         grid.add(welcome, 0, 0, 2, 1);
-        grid.add(refreshButton, 2, 0, 1, 1);
+        grid.add(refreshButton, 3, 0, 1, 1);
         grid.add(heading, 0, 2, 2, 1);
         grid.add(refreshText, 0, 3, 2, 1);
 

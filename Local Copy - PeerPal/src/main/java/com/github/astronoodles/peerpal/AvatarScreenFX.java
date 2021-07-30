@@ -7,10 +7,8 @@ import javafx.animation.SequentialTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
@@ -24,12 +22,12 @@ public class AvatarScreenFX {
     @FXML
     private Button submitButton;
 
-    public static int getSelectedAvatarID(){
+    public static int getSelectedAvatarID() {
         return avatarID;
     }
 
     @FXML
-    private void onAvatarSelected(ActionEvent ae){
+    private void onAvatarSelected(ActionEvent ae) {
         /* All buttons that have this event triggered will have an ImageView graphic in them.
             If this is not true, double check the FXML. */
         Button avatarButton = (Button) ae.getSource();
@@ -47,12 +45,12 @@ public class AvatarScreenFX {
     }
 
     @FXML
-    private void onSubmitAvatar(){
+    private void onSubmitAvatar() {
         Stage currStage = (Stage) submitButton.getScene().getWindow();
         currStage.fireEvent(new WindowEvent(currStage, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
-    private SequentialTransition createFadeScaleTransition(ImageView oldImage){
+    private SequentialTransition createFadeScaleTransition(ImageView oldImage) {
         SequentialTransition st = new SequentialTransition();
 
         FadeTransition fadeIn = new FadeTransition(Duration.millis(1000), oldImage);

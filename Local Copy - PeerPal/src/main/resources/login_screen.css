@@ -4,8 +4,10 @@
     -fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
 }
 
-#classCodeField {
-
+#avatarSpeak {
+    -fx-text-fill: #1565c0;
+    -fx-font-size: 14;
+    -fx-font-family: "Avenir Next", Helvetica, Arial, sans-serif;
 }
 
 #classCodeIndicator {

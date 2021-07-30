@@ -3,6 +3,8 @@ package com.github.astronoodles.peerpal;
 import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
 import com.github.astronoodles.peerpal.extras.CryptographyHelper;
 import com.github.astronoodles.peerpal.extras.StageHelper;
+import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,8 +19,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import java.io.*;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -31,7 +35,7 @@ public class LoginScreen extends Application {
     private TextField email, usernameSign, pwdSign, repwdSign, classSign;
 
     @FXML
-    private Label errorText;
+    private Label errorText, avatarText;
 
     @FXML
     private TabPane tabPane;
@@ -51,6 +55,7 @@ public class LoginScreen extends Application {
             "extras/members.csv";
 
     public static final String SECURE_SALT = CryptographyHelper.getSecureSalt();
+
 
     public static void main(String[] args) {
         launch(args);
@@ -77,6 +82,8 @@ public class LoginScreen extends Application {
     private void enter() {
         boolean hasUser = false;
         int classCodeEntries = 0;
+        Map<String, Integer> studentAvatarMap = StageHelper.getUserAvatarMapping();
+        CloudStorageConfig cloudConfig = new CloudStorageConfig();
         try (BufferedReader reader = new BufferedReader(new FileReader(CSV_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -88,17 +95,20 @@ public class LoginScreen extends Application {
                 if (class_code.getText().equals(users[2])) {
                     classCodeEntries += 1;
                 }
-                //System.out.println(classCodeEntries);
-                if (username.getText().trim().equals(users[0]) &&
+                String usernameText = username.getText().trim();
+                if (usernameText.equals(users[0]) &&
                         CryptographyHelper.verifyPassword(pwd.getText(), users[1], SECURE_SALT)
                         && class_code.getText().equals(users[2])) {
 
-                    CloudStorageConfig cloudConfig = new CloudStorageConfig();
                     if (!cloudConfig.isCloudStorageEmpty()) cloudConfig.downloadCloudStorage();
+
+                    // edit the CSV file to change the new avatar
+                    // then add the text bubble to add avatar dialogue
+                    // add /n for certain text in JSON and for the welcome text in assignment page
 
                     if (classCodeEntries > 1) {
                         AssignmentScreen screen = new AssignmentScreen(users[0]);
-                        Scene scene = new Scene(screen.loadStage());
+                        Scene scene = new Scene(screen.loadStage(), 650, 600);
 
                         Stage stage = new Stage();
                         stage.setScene(scene);
@@ -110,7 +120,7 @@ public class LoginScreen extends Application {
                         break;
                     } else {
                         AssignmentTeacherScreen screen = new AssignmentTeacherScreen(users[0]);
-                        Scene s = new Scene(screen.loadStage());
+                        Scene s = new Scene(screen.loadStage(), 650, 600);
 
                         Stage st = new Stage();
                         st.setOnCloseRequest((event) -> {
@@ -121,7 +131,7 @@ public class LoginScreen extends Application {
                         st.show();
 
                         // Comment out below for debug purposes
-                        //StageHelper.closeCurrentWindow(username);
+                        StageHelper.closeCurrentWindow(username);
                         hasUser = true;
                         break;
                     }
@@ -212,6 +222,7 @@ public class LoginScreen extends Application {
         openAvatarScreen(onCloseFirstTab);
     }
 
+
     private EventHandler<WindowEvent> changeAvatarOnClose(ImageView view) {
         return (windowEvent) -> {
             System.out.println(AvatarScreenFX.getSelectedAvatarID());
@@ -239,13 +250,22 @@ public class LoginScreen extends Application {
 
         changedAvatar.setImage(new Image(imageURL,
                 175, 300, true, true));
+
+        FadeTransition textTransition = new FadeTransition(Duration.seconds(2), avatarText);
+        ScaleTransition textScaleTransition = new ScaleTransition(Duration.seconds(3.5), avatarText);
+
+        textTransition.setFromValue(0.04);
+        textTransition.setToValue(1);
+        textScaleTransition.setToX(1.07);
+        textScaleTransition.setToY(1.07);
+        textScaleTransition.setAutoReverse(true);
+        textScaleTransition.setCycleCount(2);
+
+        textTransition.playFromStart();
+        textScaleTransition.playFromStart();
+
     }
 
-    @FXML
-    private void changeAvatar() {
-        EventHandler<WindowEvent> onCloseSecondTab = changeAvatarOnClose(changedAvatar);
-        openAvatarScreen(onCloseSecondTab);
-    }
 
     private void openAvatarScreen(EventHandler<WindowEvent> onClose) {
         Stage as = StageHelper.loadSceneFXML("Choose Your Avatar!", 800, 400,

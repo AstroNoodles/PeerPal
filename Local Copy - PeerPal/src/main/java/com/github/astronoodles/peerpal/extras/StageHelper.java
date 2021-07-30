@@ -100,19 +100,18 @@ public class StageHelper {
      *
      * @return A mapping between the user's name and their avatar from the available avatars in the program so far.
      */
-    public static Map<String, String> getUserAvatarMapping() {
+    public static Map<String, Integer> getUserAvatarMapping() {
         // it is rare that this hashmap will be increased beyond capacity
         // (initial capacity is rough estimate of # of rows of hash map)
-        Map<String, String> userAvatarMap = new HashMap<>(40, 0.9f);
+        Map<String, Integer> userAvatarMap = new HashMap<>(40, 0.9f);
         Path membersPath = Paths.get(LoginScreen.CSV_PATH);
 
         try {
             Files.lines(membersPath).forEach(line -> {
                 String[] components = line.split(", ");
                 String username = components[0];
-                String imageURL = StageHelper.class.getResource(
-                        String.format("/avatars/D%d.png", Integer.parseInt(components[4]))).toExternalForm();
-                userAvatarMap.put(username, imageURL);
+                int imageID = Integer.parseInt(components[4]);
+                userAvatarMap.put(username, imageID);
             });
         } catch (IOException e) {
             e.printStackTrace();
