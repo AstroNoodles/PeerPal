@@ -25,7 +25,7 @@
 
     <MenuBar onKeyPressed="#shortcutAccentDialog">
         <Menu text="Utilities">
-            <MenuItem text="Open Character Map" onAction="#openAccentDialog">
+            <MenuItem text="Open Accent Dialog" onAction="#openAccentDialog">
                 <accelerator>
                     <KeyCodeCombination code="A" shift="DOWN" control="ANY" meta="ANY" alt="ANY" shortcut="ANY" />
                 </accelerator>
@@ -56,27 +56,30 @@
         </padding>
       <columnConstraints>
          <ColumnConstraints />
-         <ColumnConstraints maxWidth="260.0" minWidth="227.0" prefWidth="227.0" />
-         <ColumnConstraints maxWidth="113.0" minWidth="80.0" prefWidth="113.0" />
+         <ColumnConstraints maxWidth="260.0" minWidth="227.0" prefWidth="227.0" percentWidth="40" hgrow="SOMETIMES" />
+         <ColumnConstraints maxWidth="113.0" minWidth="80.0" prefWidth="113.0" percentWidth="40" hgrow="SOMETIMES" />
       </columnConstraints>
       <rowConstraints>
-         <RowConstraints />
-         <RowConstraints />
-         <RowConstraints />
-         <RowConstraints />
-         <RowConstraints />
-         <RowConstraints />
-         <RowConstraints />
+         <RowConstraints vgrow="SOMETIMES" />
+         <RowConstraints vgrow="SOMETIMES" />
+         <RowConstraints vgrow="SOMETIMES" />
+         <RowConstraints vgrow="SOMETIMES" />
+         <RowConstraints vgrow="SOMETIMES" />
+         <RowConstraints vgrow="SOMETIMES" />
+         <RowConstraints vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
-    <VBox prefHeight="400" prefWidth="215" spacing="3" maxWidth="Infinity">
+    <VBox prefHeight="350" prefWidth="400" spacing="3" maxWidth="Infinity" VBox.vgrow="SOMETIMES" HBox.hgrow="SOMETIMES">
         <padding>
             <Insets top="40" />
         </padding>
         <Region prefHeight="40"/>
-        <VBox id="errorBox" fx:id="errorBox" prefHeight="330" prefWidth="215" spacing="2">
-        <Label id="errorBarTitle" alignment="CENTER" text="Potential Errors" textAlignment="CENTER" />
+        <VBox id="errorBox" fx:id="errorBox" prefHeight="330" prefWidth="400" spacing="2" VBox.vgrow="SOMETIMES" HBox.hgrow="ALWAYS">
+        <Label id="errorBarTitle" alignment="CENTER" text="Potential Errors" textAlignment="CENTER" VBox.vgrow="SOMETIMES" />
         </VBox>
     </VBox>
     </HBox>
+    <Label styleClass="login_plain" prefHeight="200" prefWidth="300" VBox.vgrow="SOMETIMES" text="Welcome to the PeerPal language editor.
+    Click on a language in the dropdown to get started on your immersive language experience. Do your best with your language practice in the text area and don't worry! \n
+    If you make a mistake, your avatar will help you to learn the mistake with an interactive lesson and custom exercises. Get started now!" wrapText="true"/>
 </VBox>

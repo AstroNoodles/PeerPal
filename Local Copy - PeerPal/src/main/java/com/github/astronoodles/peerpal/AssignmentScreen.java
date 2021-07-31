@@ -124,6 +124,8 @@ public class AssignmentScreen {
 
         table.setItems(data);
         grid.add(table, 0, 1, 3, 1);
+        GridPane.setHgrow(table, Priority.SOMETIMES);
+        GridPane.setVgrow(table, Priority.SOMETIMES);
 
         return grid;
     }
@@ -141,6 +143,7 @@ public class AssignmentScreen {
                 "your assignment to begin!", name));
         welcome.setFont(new Font("Cambria", 15));
         welcome.setWrapText(true);
+        GridPane.setHgrow(welcome, Priority.SOMETIMES);
 
         ImageView refreshIcon = new ImageView(
                 new Image(AssignmentScreen.class.getResourceAsStream("/refresh.png"), 50, 50, true, true));
@@ -148,12 +151,15 @@ public class AssignmentScreen {
         refreshButton.setPrefWidth(30);
         refreshButton.setTooltip(new Tooltip("Click here to refresh current assignments."));
         refreshButton.setPrefHeight(30);
+//        GridPane.setHgrow(refreshButton, Priority.SOMETIMES);
+//        GridPane.setVgrow(refreshButton, Priority.SOMETIMES);
 
         Label refreshText = new Label("Refresh in progress...");
         refreshText.setStyle("-fx-text-fill: #42a5f5; -fx-font-size: 13;");
         refreshText.setVisible(false);
 
         Label heading = new Label("NOW VIEWING: Home Page");
+//        GridPane.setHgrow(heading, Priority.SOMETIMES);
 
         Background originalBG = refreshButton.getBackground();
         // Border originalBorder = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,

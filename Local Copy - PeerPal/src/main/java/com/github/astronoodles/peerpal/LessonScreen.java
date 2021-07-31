@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -75,6 +76,8 @@ public class LessonScreen {
         //FillTransition speakFill = new FillTransition(Duration.seconds(10), Color.web("#1565c0"), Color.web("#6a1b9a"));
 
         HBox avatarArea = new HBox(4, avatarView, avatarSpeak);
+        HBox.setHgrow(avatarView, Priority.SOMETIMES);
+        HBox.setHgrow(avatarSpeak, Priority.SOMETIMES);
 
         for (int i = 0; i < lessonParts.length; i++) {
             WebView htmlText = new WebView();
@@ -87,6 +90,8 @@ public class LessonScreen {
             String tabTitle = String.format("Part %d", i + 1).equals("Part 1") && lessonParts.length == 1 ? "Lesson"
                     : String.format("Part %d", i + 1);
             Tab lessonPart = new Tab(tabTitle, new VBox(1, htmlText, avatarArea));
+            VBox.setVgrow(htmlText, Priority.SOMETIMES);
+            VBox.setVgrow(avatarArea, Priority.SOMETIMES);
 
             tabPane.getTabs().add(lessonPart);
         }

@@ -11,7 +11,7 @@
         <Insets left="10" top="10" />
     </padding>
 
-    <Label id="chooseAvatar" prefHeight="100" prefWidth="300" text="Choose Your Avatar!" />
+    <Label id="chooseAvatar" prefHeight="100" prefWidth="300" text="Choose Your Avatar!" VBox.vgrow="SOMETIMES" />
 
     <HBox prefHeight="500" prefWidth="Infinity" spacing="10">
         <StackPane id="selectedAvatar" maxHeight="200" prefHeight="200" prefWidth="200" translateY="40">
@@ -65,9 +65,9 @@
                 </graphic>
             </Button>
          <columnConstraints>
-            <ColumnConstraints />
-            <ColumnConstraints />
-            <ColumnConstraints />
+            <ColumnConstraints percentWidth="20" hgrow="SOMETIMES" />
+            <ColumnConstraints percentWidth="20" hgrow="SOMETIMES" />
+            <ColumnConstraints percentWidth="20" hgrow="SOMETIMES" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints />

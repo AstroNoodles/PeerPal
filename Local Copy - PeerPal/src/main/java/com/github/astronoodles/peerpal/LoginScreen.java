@@ -2,6 +2,7 @@ package com.github.astronoodles.peerpal;
 
 import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
 import com.github.astronoodles.peerpal.extras.CryptographyHelper;
+import com.github.astronoodles.peerpal.extras.FullScreenChangeListener;
 import com.github.astronoodles.peerpal.extras.StageHelper;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
@@ -16,6 +17,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -64,8 +67,14 @@ public class LoginScreen extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/login_screen.fxml"));
+            Pane root = FXMLLoader.load(getClass().getResource("/login_screen.fxml"));
             Scene main = new Scene(root, 600, 700);
+
+//            FullScreenChangeListener onFullScreenChanged = new FullScreenChangeListener(main,
+//                    main.getWidth(), main.getHeight(), root);
+//            main.widthProperty().addListener(onFullScreenChanged);
+//            main.heightProperty().addListener(onFullScreenChanged);
+
             main.getStylesheets().addAll(getClass().getResource("/login_screen.css").
                     toExternalForm());
 
@@ -108,14 +117,15 @@ public class LoginScreen extends Application {
 
                     if (classCodeEntries > 1) {
                         AssignmentScreen screen = new AssignmentScreen(users[0]);
-                        Scene scene = new Scene(screen.loadStage(), 620, 600);
+                        GridPane pane = screen.loadStage();
+                        Scene scene = new Scene(pane, 620, 600);
 
                         Stage stage = new Stage();
                         stage.setScene(scene);
                         stage.show();
 
                         // Comment out below for debug purposes
-                        //StageHelper.closeCurrentWindow(username);
+                        StageHelper.closeCurrentWindow(username);
                         hasUser = true;
                         break;
                     } else {

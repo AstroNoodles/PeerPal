@@ -60,21 +60,21 @@
                             styleClass="login_plain" text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
 
                     <columnConstraints>
-                        <ColumnConstraints/>
-                        <ColumnConstraints/>
-                        <ColumnConstraints/>
+                        <ColumnConstraints />
+                        <ColumnConstraints percentWidth="30" hgrow="SOMETIMES"/>
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="30"/>
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                        <RowConstraints/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
                     </rowConstraints>
                 </GridPane>
                 <Separator styleClass="divider" prefWidth="Infinity"/>
@@ -83,26 +83,26 @@
                     <padding>
                         <Insets left="10" right="10" bottom="2"/>
                     </padding>
-                    <StackPane styleClass="avatarPane" maxHeight="200" maxWidth="200">
+                    <StackPane styleClass="avatarPane" maxHeight="200" maxWidth="200" HBox.hgrow="SOMETIMES">
                         <ImageView fx:id="changedAvatar" fitHeight="128" fitWidth="128" preserveRatio="true">
                             <Image url="@/avatars/D2.png"/>
                         </ImageView>
                     </StackPane>
-                    <Label id="avatarSpeak" fx:id="avatarText" wrapText="true" prefWidth="500" prefHeight="200"
+                    <Label id="avatarSpeak" fx:id="avatarText" wrapText="true" prefWidth="500" prefHeight="200" HBox.hgrow="ALWAYS"
                            text="Hello there! I'm your avatar and I'll be helping you out with learning some of the kinks of the language you are learning today!! Don't fret if you are a beginner as I'll assist you the best I know how.">
                         <padding>
                             <Insets left="20" top="4"/>
                         </padding>
                     </Label>
                 </HBox>
-                    <Label styleClass="login_plain" wrapText="true" prefWidth="500" prefHeight="200"
+                    <Label styleClass="login_plain" wrapText="true" prefWidth="500" prefHeight="200" VBox.vgrow="ALWAYS"
                            text="If your teacher has not created a class code for your class yet, please ask him or her to create it to get started with your PeerPal experience!">
                     <padding>
                         <Insets left="10"/>
                     </padding>
                 </Label>
                 <HBox spacing="10" prefHeight="150" prefWidth="150">
-                    <Label styleClass="login_plain" style="-fx-font-size: 10" text="Don't have an account?:">
+                    <Label styleClass="login_plain" style="-fx-font-size: 10" text="Don't have an account?:" HBox.hgrow="ALWAYS">
                         <padding>
                             <Insets left="10" top="10"/>
                         </padding>

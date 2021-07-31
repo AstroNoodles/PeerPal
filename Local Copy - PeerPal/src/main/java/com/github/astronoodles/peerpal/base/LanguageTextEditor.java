@@ -146,6 +146,12 @@ public class LanguageTextEditor extends Application {
 
     @FXML
     public void openAccentDialog() {
+
+        Label instructions = new Label("Click on a button to obtain the accent you need. \nRight click on a button to create a hotkey for an accent!");
+        instructions.setPrefWidth(300);
+        instructions.setPrefHeight(200);
+        instructions.setWrapText(true);
+
         GridPane gridButtons = new GridPane();
         gridButtons.setVgap(2);
         gridButtons.setHgap(3);
@@ -193,7 +199,9 @@ public class LanguageTextEditor extends Application {
         }
 
         Stage accentStage = new Stage();
-        accentStage.setScene(new Scene(gridButtons, 200, 100));
+        VBox accentBox = new VBox(2, instructions, gridButtons);
+
+        accentStage.setScene(new Scene(accentBox, 250, 100));
         accentStage.setTitle("Accent Dialog");
         accentStage.show();
     }
@@ -202,9 +210,12 @@ public class LanguageTextEditor extends Application {
     public void onEnterHotkey(KeyEvent ke) {
         String keyCodeName = ke.getCode().getName();
         for(Map.Entry<Character, Integer> entrySet : hotkeyMap.entrySet()) {
-            if(ke.isShiftDown() && Character.isDigit(keyCodeName.charAt(0))) {
+            if(ke.isControlDown() && Character.isDigit(keyCodeName.charAt(0))) {
                 if(entrySet.getValue() == Integer.parseInt(keyCodeName)) {
-                    area.setText(area.getText() + entrySet.getKey());
+                    int caretPos = area.getCaretPosition();
+                    area.setText(area.getText(0, caretPos) + entrySet.getKey() +
+                            area.getText(caretPos, area.getText().length()));
+                    area.positionCaret(caretPos + 1);
                 }
             } else break;
         }
@@ -225,8 +236,8 @@ public class LanguageTextEditor extends Application {
                 if(!hotkeyMap.containsKey(buttonChar)) {
                     hotkeyItem.setOnAction(event -> {
                         Alert hotkeyAlert = new Alert(Alert.AlertType.INFORMATION, "Do you want to create a hotkey for this accent?" +
-                                "\nBy creating a hotkey, you can easily type an accent by clicking Shift + 1-9.\n" +
-                                "Your hotkeys will reset when you restart PeerPal", ButtonType.YES, ButtonType.NO);
+                                "\n\nBy creating a hotkey, you can easily type an accent by clicking the Control key + a digit from 1-9 simultaneously.\n\n" +
+                                "Your hotkeys will reset when you restart PeerPal.", ButtonType.YES, ButtonType.NO);
                         hotkeyAlert.setTitle("Hotkey Alert");
                         hotkeyAlert.setHeaderText("What is a hotkey?");
 
@@ -236,11 +247,12 @@ public class LanguageTextEditor extends Application {
                             hotkeyMap.put(buttonChar, hotkeyID);
 
                             Alert hotKeyInsert = new Alert(Alert.AlertType.INFORMATION,
-                                    String.format("Your new hotkey for %c is set to Shift + %d!", buttonChar, hotkeyID), ButtonType.OK);
+                                    String.format("Your new hotkey for %c is set to <Ctrl + %d>!", buttonChar, hotkeyID), ButtonType.OK);
                             hotKeyInsert.setHeaderText("Hotkey Created!");
                             hotKeyInsert.setTitle("Hotkey Update");
                             hotKeyInsert.showAndWait();
 
+                            StageHelper.closeCurrentWindow(charMapButton);
                             hotkeyID++;
                         }
                     });
@@ -252,14 +264,14 @@ public class LanguageTextEditor extends Application {
                 } else {
                     hotkeyItem.setOnAction(event -> {
                         Alert alreadyHaveHotkey = new Alert(Alert.AlertType.WARNING, String.format("You already have a hotkey for this accent." +
-                                "\nIt is set to the key press Shift + %d.", hotkeyMap.get(buttonChar)), ButtonType.OK);
+                                "\nIt is set to the key combo <Ctrl + %d>.", hotkeyMap.get(buttonChar)), ButtonType.OK);
                         alreadyHaveHotkey.setHeaderText("You Already Have This Hotkey On!");
                         alreadyHaveHotkey.setTitle("Activated Hotkey!");
                         alreadyHaveHotkey.showAndWait();
                     });
                 }
                 ContextMenu hotkeyMenu = new ContextMenu(hotkeyItem);
-                hotkeyMenu.show(charMapButton, mouseEvent.getX(), mouseEvent.getY());
+                hotkeyMenu.show(charMapButton, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             }
         });
 
@@ -312,9 +324,8 @@ public class LanguageTextEditor extends Application {
 
     public VBox createErrorCard(ErrorType type, String explanation, List<String> errors, ReplacementTriad triad){
         VBox errorCard = new VBox();
-        errorCard.setPrefHeight(350);
-        errorCard.setPrefWidth(600);
-        errorCard.setMaxWidth(Double.MAX_VALUE);
+        errorCard.setPrefHeight(500);
+        errorCard.setPrefWidth(400);
         errorCard.setSpacing(3);
         errorCard.setBorder(errorCardBorder());
 
@@ -328,40 +339,44 @@ public class LanguageTextEditor extends Application {
         title.getStyleClass().add("login_plain");
 
         Label text = new Label(explanation);
-        text.setMaxWidth(Double.MAX_VALUE);
         text.setPrefWidth(200);
         text.setPrefHeight(100);
         text.getStyleClass().add("login_plain");
         text.setWrapText(true);
 
-        ButtonBar errorButtons = new ButtonBar();
-        errorButtons.setPrefHeight(200);
-        errorButtons.setMaxWidth(Double.MAX_VALUE);
-        errorButtons.setPrefWidth(100);
-        errorButtons.getStyleClass().add("login_plain");
-        errorButtons.setStyle("-fx-background-color: aliceblue");
+        GridPane errorButtonGrid = new GridPane();
+        final int rowMax = 7;
+
+        errorButtonGrid.setPrefHeight(200);
+        errorButtonGrid.setPrefWidth(400);
+        errorButtonGrid.setHgap(3);
+        errorButtonGrid.setVgap(2);
+        errorButtonGrid.getStyleClass().add("login_plain");
+        errorButtonGrid.setStyle("-fx-background-color: aliceblue");
 
         if(errors.size() > 0) {
-            for (String error : errors) {
-                Button errorButton = new Button(error);
-                errorButton.setPrefWidth(50);
-                errorButton.setMaxWidth(Double.MAX_VALUE);
+            for (int i = 0; i < errors.size(); i++) {
+                Button errorButton = new Button(errors.get(i));
+                errorButton.setPrefWidth(70);
                 errorButton.setWrapText(true);
+                errorButton.setTooltip(new Tooltip(errors.get(i)));
                 errorButton.setAlignment(Pos.CENTER);
                 errorButton.setPrefHeight(30);
                 errorButton.getStyleClass().add("login_plain");
+
+                int finalI = i;
                 errorButton.setOnAction((event) -> {
-                    area.replaceText(triad.startPos, triad.endPos, error);
+                    area.replaceText(triad.startPos, triad.endPos, errors.get(finalI));
                     lang_dialog.setVisible(false);
                     notice.setVisible(false);
-                    errorBox.getChildren().remove(errorButtons.getParent());
+                    errorBox.getChildren().remove(errorButtonGrid.getParent());
                 });
-                errorButtons.getButtons().add(errorButton);
+                errorButtonGrid.add(errorButton, i % rowMax, Math.floorDiv(i, rowMax));
             }
         } else {
             Button quitButton = new Button("Recheck?");
             quitButton.setPrefWidth(200);
-            quitButton.setMaxWidth(Double.MAX_VALUE);
+            quitButton.setTooltip(new Tooltip("Recheck?"));
             quitButton.setWrapText(true);
             quitButton.setPrefHeight(20);
             quitButton.setAlignment(Pos.CENTER);
@@ -369,9 +384,9 @@ public class LanguageTextEditor extends Application {
             quitButton.setOnAction((event -> {
                 lang_dialog.setVisible(false);
                 notice.setVisible(false);
-                errorBox.getChildren().remove(errorButtons.getParent());
+                errorBox.getChildren().remove(errorButtonGrid.getParent());
             }));
-            errorButtons.getButtons().add(quitButton);
+            errorButtonGrid.add(quitButton, 0, 0);
         }
         Region space = new Region();
         space.setPrefWidth(30);
@@ -380,6 +395,7 @@ public class LanguageTextEditor extends Application {
         Button learnMore = new Button("Learn More");
         learnMore.setPrefHeight(20);
         learnMore.setPrefWidth(100);
+        VBox.setVgrow(learnMore, Priority.SOMETIMES);
         learnMore.getStyleClass().add("login_plain");
         learnMore.setTextAlignment(TextAlignment.CENTER);
         VBox.setVgrow(learnMore, Priority.ALWAYS);
@@ -393,7 +409,7 @@ public class LanguageTextEditor extends Application {
             s.show();
         });
 
-        errorCard.getChildren().addAll(title, text, errorButtons, space, learnMore);
+        errorCard.getChildren().addAll(title, text, errorButtonGrid, space, learnMore);
 
         return errorCard;
     }

@@ -16,8 +16,8 @@ import java.time.Duration;
 
 public class CloudStorageConfig {
     // Find a way to secure this later (via KeyVault)
-    private static final String CONNECT_STRING = "<connect-string>";
-    private static final String STORAGE_NAME = "peerpal";
+    private static final String CONNECT_STRING = "DefaultEndpointsProtocol=https;AccountName=peerpalblobstorage;AccountKey=MjpvbphVLs0Q7NvNoEjFXK5wGIM7nNvIK" +
+            "flOveXPsRFcsWbvb8ekf3WJaTVwefs/I5/gN7DOpmO8oSK0HwP1XQ==;EndpointSuffix=core.windows.net";    private static final String STORAGE_NAME = "peerpal";
     private static boolean hasInternetConnection = true;
 
     public CloudStorageConfig() {

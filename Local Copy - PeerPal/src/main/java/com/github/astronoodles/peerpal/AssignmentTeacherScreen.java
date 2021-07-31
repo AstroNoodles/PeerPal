@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -140,6 +141,9 @@ public class AssignmentTeacherScreen {
 
         createAssign.setDisable(!data.isEmpty());
         grid.add(table, 0, 1, 3, 1);
+        GridPane.setVgrow(table, Priority.SOMETIMES);
+        GridPane.setHgrow(table, Priority.ALWAYS);
+
         return grid;
     }
 
