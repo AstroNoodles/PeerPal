@@ -16,7 +16,24 @@
 
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<HBox prefHeight="600.0" prefWidth="800.0" maxWidth="Infinity" spacing="2" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.base.LanguageTextEditor">
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<VBox prefHeight="600.0" prefWidth="800.0" maxWidth="Infinity"
+      spacing="5" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.base.LanguageTextEditor">
+
+    <MenuBar onKeyPressed="#shortcutAccentDialog">
+        <Menu text="Utilities">
+            <MenuItem text="Open Character Map" onAction="#openAccentDialog">
+                <accelerator>
+                    <KeyCodeCombination code="A" shift="DOWN" control="ANY" meta="ANY" alt="ANY" shortcut="ANY" />
+                </accelerator>
+            </MenuItem>
+        </Menu>
+    </MenuBar>
+
+    <HBox spacing="2">
     <GridPane alignment="CENTER" hgap="10" prefHeight="500" maxWidth="Infinity" prefWidth="500" vgap="10" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="200">
         <Text id="title_text" text="Welcome to LanguageEditor" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         <ComboBox id="languages" fx:id="languages" prefHeight="20" prefWidth="300" promptText="Choose a Language" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -28,7 +45,8 @@
                 </FXCollections>
             </items>
         </ComboBox>
-        <TextArea id="main_area" fx:id="area" prefHeight="300" prefWidth="300" promptText="Enter text here" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2" />
+        <TextArea id="main_area" fx:id="area" prefHeight="300" prefWidth="300" promptText="Enter text here" onKeyPressed="#onEnterHotkey"
+                  wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2" />
         <Button id="main_button" fx:id="button" onAction="#checkLanguage" styleClass="border" text="Grammar Check" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
         <Button id="submit" onAction="#submitAssignment" prefHeight="27.0" prefWidth="112.0" styleClass="border" text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="5" />
         <Label id="notice" fx:id="notice" prefHeight="100" prefWidth="250" text="Either grammatical or spelling mistakes were found. Would you like to fix them?" visible="false" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
@@ -60,4 +78,5 @@
         <Label id="errorBarTitle" alignment="CENTER" text="Potential Errors" textAlignment="CENTER" />
         </VBox>
     </VBox>
-</HBox>
+    </HBox>
+</VBox>

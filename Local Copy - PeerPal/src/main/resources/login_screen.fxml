@@ -10,7 +10,7 @@
       spacing="5" prefHeight="800" prefWidth="600">
 
     <MenuBar onKeyPressed="#handleShortcuts">
-        <Menu text="Customize">
+        <Menu text="File">
             <MenuItem text="About" onAction="#showAboutDialog"/>
         </Menu>
         <Menu text="Teacher">

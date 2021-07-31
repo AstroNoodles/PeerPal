@@ -6,7 +6,7 @@
       "buena"
     ],
     "correctAnswer" : "buena",
-    "correctResponse" : "Congrats! That is the correct response because the feminine word 'buena' matches the feminine name Ana",
+    "correctResponse" : "Congrats! That is the correct response because the \nfeminine word 'buena' matches the feminine name Ana",
     "wrongResponse" : "Unfortunately, this is wrong. Is 'Ana' masculine or feminine?"
   },
   "exercise2" : {
@@ -16,7 +16,7 @@
       "inteligentes"
     ],
     "correctAnswer" : "inteligentes",
-    "correctResponse" : "Congrats! That is the correct response because 'Carlos y yo' creates a plural subject, which matches with the plural adjective 'inteligentes'",
+    "correctResponse" : "Congrats! That is the correct response because 'Carlos y yo' creates a plural subject, \nwhich matches with the plural adjective 'inteligentes'",
     "wrongResponse" : "That is the wrong answer. Is 'Carlos y yo' singular or plural?"
   },
   "exercise3" : {
@@ -25,7 +25,7 @@
       "cómico", "cómica"
     ],
     "correctAnswer": "cómica",
-    "correctResponse" : "Congrats! That is the correct response because the feminine pronoun 'ella' matches with the feminine adjective 'cómica'",
+    "correctResponse" : "Congrats! That is the correct response because the feminine pronoun 'ella' \nmatches with the feminine adjective 'cómica'",
     "wrongResponse" : "That is the wrong response. Is 'ella' masculine or feminine?"
   },
   "exercise4" : {
@@ -34,7 +34,7 @@
       "perezoso", "perezosa", "perezosos", "perezosas"
     ],
     "correctAnswer": "perezosos",
-    "correctResponse" : "Congrats! That is the correct response because 'Pedro y Alejandro' form a masculine plural subject, which matches with the masculine plural 'perezosos'",
+    "correctResponse" : "Congrats! That is the correct response because 'Pedro y Alejandro' form a masculine plural subject\n, which matches with the masculine plural 'perezosos'",
     "wrongResponse" : "This is the wrong response. Is 'Pedro y Alejandro' singular or plural? Is it masculine or feminine?"
   },
   "exercise5" : {
@@ -43,7 +43,7 @@
       "bueno", "buena"
     ],
     "correctAnswer": "buena",
-    "correctResponse" : "Congrats! That is the correct response because the feminine 'buena' matches with the feminine 'maestra'",
+    "correctResponse" : "Congrats! That is the correct response because the feminine 'buena'\n matches with the feminine 'maestra'",
     "wrongResponse" : "This is the wrong response. Is 'maestra' masculine or feminine?"
   },
   "exercise6" : {
@@ -52,7 +52,7 @@
       "alto", "alta", "altos", "altas"
     ],
     "correctAnswer": "alto",
-    "correctResponse" : "Congrats! That is the correct response because the masculine and singular 'alto' matches with the masculine 'Juan'",
+    "correctResponse" : "Congrats! That is the correct response because the masculine and singular 'alto' \nmatches with the masculine 'Juan'",
     "wrongResponse" : "This is the wrong response. Is 'Juan' masculine or feminine and is it singular or plural?"
   },
   "exercise7" : {
@@ -61,7 +61,7 @@
       "malo", "mala", "malos", "malas"
     ],
     "correctAnswer": "malo",
-    "correctResponse" : "Congrats! That is the correct response because the masculine and singular 'perro' matches with the masculine 'perro'",
+    "correctResponse" : "Congrats! That is the correct response because the masculine and singular 'perro' \nmatches with the masculine 'perro'",
     "wrongResponse" : "This is the wrong response. Is 'perro' masculine or feminine and is it singular or plural?"
   },
   "exercise8" : {
@@ -70,7 +70,7 @@
       "alto", "alta", "altos", "altas"
     ],
     "correctAnswer": "alta",
-    "correctResponse" : "Congrats! That is the correct response because the feminine 'chica' matches with the feminine adjective 'alta'",
+    "correctResponse" : "Congrats! That is the correct response because the feminine 'chica' \nmatches with the feminine adjective 'alta'",
     "wrongResponse" : "This is the wrong response. Is 'chica' masculine or feminine and is it singular or plural?"
   },
   "exercise9" : {
@@ -79,7 +79,7 @@
       "bonita", "bonito", "bonitas", "bonitos"
     ],
     "correctAnswer": "bonito",
-    "correctResponse" : "Congrats! That is the correct response because the MASCULINE 'día' matches with the masculine adjective 'bonito",
+    "correctResponse" : "Congrats! That is the correct response because the MASCULINE 'día' \nmatches with the masculine adjective 'bonito",
     "wrongResponse" : "This is the wrong response. Is 'día' masculine or feminine and is it singular or plural? [Hint: It is an exception]"
   },
   "exercise10" : {
@@ -88,7 +88,7 @@
       "Una muchacha agradable", "Una muchacha agradabla"
     ],
     "correctAnswer": "Una muchacha agradabla",
-    "correctResponse" : "Congrats! That is the correct response because the feminine adjective 'agradabla' matches with the feminine noun 'muchacha'",
+    "correctResponse" : "Congrats! That is the correct response because the feminine adjective 'agradabla' \nmatches with the feminine noun 'muchacha'",
     "wrongResponse" : "This is the wrong response. Can you make the noun and adjective agree in gender? Which are masculine and feminine?"
   }
 }

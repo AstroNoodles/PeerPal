@@ -108,7 +108,7 @@ public class LoginScreen extends Application {
 
                     if (classCodeEntries > 1) {
                         AssignmentScreen screen = new AssignmentScreen(users[0]);
-                        Scene scene = new Scene(screen.loadStage(), 650, 600);
+                        Scene scene = new Scene(screen.loadStage(), 620, 600);
 
                         Stage stage = new Stage();
                         stage.setScene(scene);
@@ -120,7 +120,7 @@ public class LoginScreen extends Application {
                         break;
                     } else {
                         AssignmentTeacherScreen screen = new AssignmentTeacherScreen(users[0]);
-                        Scene s = new Scene(screen.loadStage(), 650, 600);
+                        Scene s = new Scene(screen.loadStage(), 620, 600);
 
                         Stage st = new Stage();
                         st.setOnCloseRequest((event) -> {

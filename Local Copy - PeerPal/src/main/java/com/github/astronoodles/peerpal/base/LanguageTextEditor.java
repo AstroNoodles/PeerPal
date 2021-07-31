@@ -8,6 +8,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -29,6 +32,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class LanguageTextEditor extends Application {
 
@@ -49,6 +54,8 @@ public class LanguageTextEditor extends Application {
     public VBox errorBox;
 
     private String username;
+    private static int hotkeyID = 0;
+    private final Map<Character, Integer> hotkeyMap = new HashMap<>(10);
 
     public static void main(String[] args){
         launch(args);
@@ -128,6 +135,136 @@ public class LanguageTextEditor extends Application {
         enterMistakes();
     }
 
+    // Menu Items
+
+    @FXML
+    public void shortcutAccentDialog(KeyEvent ke) {
+       if(ke.isShiftDown() && ke.getCode().equals(KeyCode.A)){
+           openAccentDialog();
+       }
+    }
+
+    @FXML
+    public void openAccentDialog() {
+        GridPane gridButtons = new GridPane();
+        gridButtons.setVgap(2);
+        gridButtons.setHgap(3);
+        int rowMax = 7;
+
+        String languageSelected = languages.getValue();
+
+        if(languageSelected == null) {
+            Alert nullLangAlert = new Alert(Alert.AlertType.WARNING, "No language has been selected in the dropdown. " +
+                    "\nPlease select a language so that the correct accents can be loaded for your language.", ButtonType.OK);
+            nullLangAlert.setHeaderText("No Language Selected");
+            nullLangAlert.setTitle("Cannot Load Accent Dialog");
+            nullLangAlert.showAndWait();
+            return;
+        }
+
+        switch(languages.getValue()) {
+            case "Spanish":
+                char[] spanishChars = new char[] {'Á', 'É', 'Í', 'Ó', 'Ú', 'Ü', 'Ñ', '¿', '¡'};
+                int gridArea = 0;
+                for (char spanishChar : spanishChars) {
+                    Button charButton = createCharacterMapButton(spanishChar, area);
+
+                    gridButtons.add(charButton, gridArea % rowMax, Math.floorDiv(gridArea, rowMax));
+
+                    char lowerChar = Character.toLowerCase(spanishChar);
+
+                    if (lowerChar != spanishChar) {
+                        Button lowerCharButton = createCharacterMapButton(lowerChar, area);
+                        gridButtons.add(lowerCharButton, (gridArea + 1) % rowMax, Math.floorDiv(gridArea + 1, rowMax));
+                        gridArea += 2;
+                    } else gridArea++;
+                }
+                break;
+            case "Russian":
+            case "Korean":
+            case "Urdu":
+            default:
+                Button nothingYet = new Button("Not implemented yet. Hold on maestro.");
+                nothingYet.setPrefWidth(100);
+                nothingYet.setPrefHeight(100);
+                nothingYet.getStyleClass().add("avatarPick");
+                gridButtons.add(nothingYet, 0, 0, 2, 1);
+                break;
+        }
+
+        Stage accentStage = new Stage();
+        accentStage.setScene(new Scene(gridButtons, 200, 100));
+        accentStage.setTitle("Accent Dialog");
+        accentStage.show();
+    }
+
+    @FXML
+    public void onEnterHotkey(KeyEvent ke) {
+        String keyCodeName = ke.getCode().getName();
+        for(Map.Entry<Character, Integer> entrySet : hotkeyMap.entrySet()) {
+            if(ke.isShiftDown() && Character.isDigit(keyCodeName.charAt(0))) {
+                if(entrySet.getValue() == Integer.parseInt(keyCodeName)) {
+                    area.setText(area.getText() + entrySet.getKey());
+                }
+            } else break;
+        }
+    }
+
+    private Button createCharacterMapButton(char charText, TextArea area) {
+        Button charMapButton = new Button(String.valueOf(charText));
+        charMapButton.setPrefHeight(40);
+        charMapButton.setPrefWidth(40);
+        charMapButton.getStyleClass().add("avatarPick");
+
+        charMapButton.setOnAction(event -> area.setText(area.getText() + charMapButton.getText()));
+
+        charMapButton.setOnMouseClicked(mouseEvent -> {
+            if(mouseEvent.getButton() == MouseButton.SECONDARY) {
+                MenuItem hotkeyItem = new MenuItem("Create Hotkey");
+                char buttonChar = charMapButton.getText().charAt(0);
+                if(!hotkeyMap.containsKey(buttonChar)) {
+                    hotkeyItem.setOnAction(event -> {
+                        Alert hotkeyAlert = new Alert(Alert.AlertType.INFORMATION, "Do you want to create a hotkey for this accent?" +
+                                "\nBy creating a hotkey, you can easily type an accent by clicking Shift + 1-9.\n" +
+                                "Your hotkeys will reset when you restart PeerPal", ButtonType.YES, ButtonType.NO);
+                        hotkeyAlert.setTitle("Hotkey Alert");
+                        hotkeyAlert.setHeaderText("What is a hotkey?");
+
+                        Optional<ButtonType> hotkeyOptional = hotkeyAlert.showAndWait();
+
+                        if (hotkeyOptional.isPresent() && hotkeyOptional.get() == ButtonType.YES) {
+                            hotkeyMap.put(buttonChar, hotkeyID);
+
+                            Alert hotKeyInsert = new Alert(Alert.AlertType.INFORMATION,
+                                    String.format("Your new hotkey for %c is set to Shift + %d!", buttonChar, hotkeyID), ButtonType.OK);
+                            hotKeyInsert.setHeaderText("Hotkey Created!");
+                            hotKeyInsert.setTitle("Hotkey Update");
+                            hotKeyInsert.showAndWait();
+
+                            hotkeyID++;
+                        }
+                    });
+                } else if(hotkeyMap.size() == 10) {
+                    Alert hotKeyFull = new Alert(Alert.AlertType.WARNING, "Only 10 Hotkeys Are Allowed At A Time.",ButtonType.OK);
+                    hotKeyFull.setHeaderText("Too Many Hotkeys!");
+                    hotKeyFull.setTitle("Hotkey List Filled!");
+                    hotKeyFull.showAndWait();
+                } else {
+                    hotkeyItem.setOnAction(event -> {
+                        Alert alreadyHaveHotkey = new Alert(Alert.AlertType.WARNING, String.format("You already have a hotkey for this accent." +
+                                "\nIt is set to the key press Shift + %d.", hotkeyMap.get(buttonChar)), ButtonType.OK);
+                        alreadyHaveHotkey.setHeaderText("You Already Have This Hotkey On!");
+                        alreadyHaveHotkey.setTitle("Activated Hotkey!");
+                        alreadyHaveHotkey.showAndWait();
+                    });
+                }
+                ContextMenu hotkeyMenu = new ContextMenu(hotkeyItem);
+                hotkeyMenu.show(charMapButton, mouseEvent.getX(), mouseEvent.getY());
+            }
+        });
+
+        return charMapButton;
+    }
 
     private void successDialog(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
