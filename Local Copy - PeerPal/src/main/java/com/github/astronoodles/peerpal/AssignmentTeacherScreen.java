@@ -88,6 +88,7 @@ public class AssignmentTeacherScreen {
 
                 Stage stage = new Stage();
                 stage.setScene(scene);
+                stage.initOwner(createAssign.getScene().getWindow());
                 stage.setTitle("Create An Assignment");
                 stage.showAndWait();
 
@@ -134,7 +135,7 @@ public class AssignmentTeacherScreen {
             return row;
         });
         data.addAll(AssignmentScreen.obtainAssignments(name));
-        clearUpAssignments();
+        //clearUpAssignments();
 
         System.out.println("Queried Data: " + data);
         table.setItems(data);
@@ -170,6 +171,7 @@ public class AssignmentTeacherScreen {
 
         assignGridDialog.setScene(sc);
         assignGridDialog.setTitle("Student Assignments");
+        assignGridDialog.setResizable(false);
         assignGridDialog.showAndWait();
 
         // Add all assignments that have updated grades plus
@@ -277,8 +279,9 @@ public class AssignmentTeacherScreen {
         // delete the assignments for both studentAssignments.dat (all students) and assignments.dat
         // This info will still remain online but will be deleted on local machine
         if (LocalDate.now().isEqual(date) || LocalDate.now().isAfter(date)) {
-            try (Stream<Path> dirWalk = Files.walk(Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                    "storage"))) {
+            Path storagePath = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+                    "storage");
+            try (Stream<Path> dirWalk = Files.walk(storagePath)) {
                 Path assignmentsPath = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
                         "storage", "assignments.dat");
                 Files.delete(assignmentsPath);
@@ -289,6 +292,7 @@ public class AssignmentTeacherScreen {
                         .forEach(File::delete);
 
                 data.clear();
+                Files.createDirectory(storagePath);
             } catch (IOException e) {
                 e.printStackTrace(); // i hate these errors
             }

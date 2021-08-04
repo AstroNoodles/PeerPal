@@ -6,8 +6,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class AssignmentDialog {
@@ -17,7 +15,7 @@ public class AssignmentDialog {
 
     @FXML
     private TextArea assignDesc;
-    
+
     @FXML
     private DatePicker assignStart;
 
@@ -27,7 +25,6 @@ public class AssignmentDialog {
     @FXML
     private ComboBox<String> comboExtensions;
 
-    //private final List<Assignment> teacherAssignments = new LinkedList<>();
     private Assignment curAssignment;
     private String teacherName;
 
@@ -35,8 +32,9 @@ public class AssignmentDialog {
         this.teacherName = teacherName;
     }
 
-    //public List<Assignment> getTeacherAssignments() {return teacherAssignments;}
-    public Assignment getCurAssignment() {return curAssignment;}
+    public Assignment getCurAssignment() {
+        return curAssignment;
+    }
 
 
     @FXML

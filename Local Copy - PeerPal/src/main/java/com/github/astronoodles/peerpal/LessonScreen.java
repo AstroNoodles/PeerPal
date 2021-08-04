@@ -52,7 +52,7 @@ public class LessonScreen {
 
         ImageView avatarView = new ImageView(new Image(getClass().getResource(String.format("/avatars/D%d.png",
                 studentAvatarMap.getOrDefault(username, 2))).toExternalForm(),
-                200, 200, true, true));
+                100, 100, true, true));
 
         Label avatarSpeak = new Label("Hey I'm back! Remember to take notes on these lessons " +
                 "and to do your best on the exercises. Think before you click an answer. " +

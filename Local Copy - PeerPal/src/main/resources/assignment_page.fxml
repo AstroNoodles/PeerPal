@@ -6,12 +6,12 @@
 
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
-<AnchorPane prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.dialogs.AssignmentDialog">
-    <VBox prefHeight="300" prefWidth="400" spacing="1">
+<VBox prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.dialogs.AssignmentDialog" spacing="1">
         <padding>
             <Insets left="10" top="15" />
         </padding>
-        <Label id="assignmentTitle" prefHeight="10" prefWidth="300" text="Create A New Assignment" textAlignment="CENTER" />
+        <Label id="assignmentTitle" prefHeight="10" prefWidth="300" text="Create A New Assignment" textAlignment="CENTER" VBox.vgrow="SOMETIMES" />
         <GridPane hgap="20" prefHeight="274.0" prefWidth="399.0" vgap="10">
             <Label prefHeight="20" prefWidth="500" styleClass="login_plain" text="Assignment Name*: " wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField id="assignStyle" fx:id="assignName" prefHeight="10.0" prefWidth="20" GridPane.columnIndex="2" GridPane.rowIndex="2" />
@@ -35,13 +35,12 @@
                 </items>
             </ComboBox>
 
-
             <Label id="requiredNote" prefHeight="25" prefWidth="500" text="All fields with (*) are required!" GridPane.columnIndex="2" GridPane.rowIndex="8" />
-            <Button onAction="#createAssignment" prefHeight="20" prefWidth="100" text="Create" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Button onAction="#createAssignment" prefHeight="20" prefWidth="100" text="Create" GridPane.columnIndex="1" GridPane.rowIndex="9" GridPane.hgrow="SOMETIMES" GridPane.vgrow="SOMETIMES" />
          <columnConstraints>
             <ColumnConstraints />
-            <ColumnConstraints maxWidth="156.0" minWidth="129.0" prefWidth="156.0" />
-            <ColumnConstraints maxWidth="221.0" minWidth="194.0" prefWidth="200.0" />
+            <ColumnConstraints maxWidth="156.0" minWidth="129.0" prefWidth="156.0" percentWidth="30" />
+            <ColumnConstraints maxWidth="221.0" minWidth="194.0" prefWidth="200.0" percentWidth="30" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" />
@@ -60,6 +59,3 @@
 
         </GridPane>
     </VBox>
-
-
-</AnchorPane>

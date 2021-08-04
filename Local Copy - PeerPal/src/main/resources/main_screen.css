@@ -16,6 +16,12 @@
     -fx-text-fill: black;
 }
 
+#introductionEditor {
+    -fx-font-size: 12;
+    -fx-font-family: "Cambria", "DejaVu Sans", "Helvetica Neue", Helvetica, sans-serif;
+    -fx-text-fill: black;
+}
+
 #wordButton {
     -fx-border-radius: 30;
     -fx-background-color: #c3c4c4;

@@ -1,6 +1,5 @@
 package com.github.astronoodles.peerpal.dialogs;
 
-import com.github.astronoodles.peerpal.LoginScreen;
 import com.github.astronoodles.peerpal.base.Assignment;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 import com.github.astronoodles.peerpal.extras.StageHelper;
@@ -20,6 +19,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 import java.awt.Desktop;
@@ -65,6 +65,7 @@ public class StudentAssignmentGrid {
             noStudents.setAlignment(Pos.CENTER);
             noStudents.setPrefHeight(200);
             noStudents.setFont(gridFont);
+            VBox.setVgrow(noStudents, Priority.ALWAYS);
 
             VBox emptyContainer = new VBox(2, noStudents);
             emptyContainer.setAlignment(Pos.CENTER);
@@ -74,8 +75,6 @@ public class StudentAssignmentGrid {
         }
 
         if (studentRows > refreshedAssignments.size()) studentRows = refreshedAssignments.size();
-
-        Map<String, Integer> userAvatarMap = StageHelper.getUserAvatarMapping();
 
         // the length of the assignments array is a proxy for the number of students in the class
         for (int i = 0; i < studentRows; i++) {
@@ -102,15 +101,20 @@ public class StudentAssignmentGrid {
                         ex.printStackTrace();
                     }
                 });
+                GridPane.setHgrow(viewAssignment, Priority.SOMETIMES);
+                GridPane.setVgrow(viewAssignment, Priority.SOMETIMES);
 
                 Button updateGrade = new Button("Update Grade");
                 updateGrade.setPrefWidth(150);
+                GridPane.setVgrow(updateGrade, Priority.SOMETIMES);
+                GridPane.setHgrow(updateGrade, Priority.SOMETIMES);
 
                 // double check the math is right on this... (see below)
                 updateGrade.setOnAction(e -> {
-                    updateAssignmentGrade(refreshedAssignments.get(curRow * curCol));
-                    // TODO showGradeTransition(updateGrade).play();
+                    updateAssignmentGrade(updateGrade.getScene().getWindow(),
+                            refreshedAssignments.get(curRow * curCol));
                 });
+
 
                 VBox container = new VBox(2, nameLabel, avatarView, viewAssignment, updateGrade);
                 container.setAlignment(Pos.CENTER);
@@ -118,7 +122,11 @@ public class StudentAssignmentGrid {
                         new CornerRadii(1), new BorderWidths(1));
                 container.setBorder(new Border(containerStroke));
 
-                pane.add(container, i, j);
+                ScrollPane containerScroller = new ScrollPane(container);
+                containerScroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                containerScroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+                pane.add(containerScroller, i, j);
             }
         }
         return pane;
@@ -175,12 +183,13 @@ public class StudentAssignmentGrid {
         }
     }
 
-    private void updateAssignmentGrade(StudentAssignment curAssignment) {
+    private void updateAssignmentGrade(Window srcWindow, StudentAssignment curAssignment) {
         TextInputDialog gradeInput = new TextInputDialog();
         gradeInput.setTitle("Input Assignment Grade");
         gradeInput.setHeaderText("Add Student's Grade");
         gradeInput.setContentText("Now that you've read the student's assignment, " +
                 "please insert their grade in the input box below.");
+        gradeInput.initOwner(srcWindow);
 
         final Button okButton = (Button) gradeInput.getDialogPane().lookupButton(ButtonType.OK);
         final TextField textField = gradeInput.getEditor();

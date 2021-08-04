@@ -1,42 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.github.astronoodles.peerpal.dialogs.ClassCodeDialog"
-            prefHeight="400.0" prefWidth="600.0">
-    <VBox prefWidth="400" prefHeight="300" spacing="2">
-        <HBox prefWidth="400" prefHeight="50" spacing="2">
-            <padding>
-                <Insets top="20" left="5" right="5" bottom="10" />
-            </padding>
-            <Label prefHeight="20" prefWidth="300" id="classCodeTitle"
-                   text="Enter class details below" />
-            <Button onAction="#createCode" fx:id="codeButton" styleClass="login_plain" text="Generate" />
-        </HBox>
-        <GridPane hgap="10" prefHeight="300" prefWidth="600" vgap="10">
-            <Label styleClass="login_plain" text="              Teacher Name:" GridPane.columnIndex="1"
-                   GridPane.rowIndex="2"/>
-            <TextField fx:id="teacherName" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-            <Label styleClass="login_plain" text="              Room #:" GridPane.columnIndex="1"
-                   GridPane.rowIndex="3"/>
-            <TextField fx:id="roomNum" GridPane.columnIndex="2" GridPane.rowIndex="3"  />
-            <Label styleClass="login_plain" text="              Language:" GridPane.columnIndex="1"
-                   GridPane.rowIndex="4"/>
-            <TextField fx:id="languageSelect" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <TextField fx:id="classCode" editable="false"
-                       id="classCodeField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <Label id="classCodeIndicator" GridPane.columnIndex="2" GridPane.rowIndex="6" text="Generated Class Code" />
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
+<VBox prefHeight="400.0" prefWidth="600.0" spacing="2" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.dialogs.ClassCodeDialog">
+        <HBox prefHeight="50" prefWidth="400" spacing="2" VBox.vgrow="SOMETIMES">
+            <padding>
+                <Insets bottom="10" left="5" right="5" top="20" />
+            </padding>
+            <Label id="classCodeTitle" prefHeight="20" prefWidth="300" text="Enter class details below" HBox.hgrow="SOMETIMES" VBox.vgrow="SOMETIMES" />
+            <Button fx:id="codeButton" onAction="#createCode" styleClass="login_plain" text="Generate" HBox.hgrow="SOMETIMES" VBox.vgrow="SOMETIMES" />
+        </HBox>
+        <GridPane hgap="10" prefHeight="300" prefWidth="600" vgap="10" VBox.vgrow="ALWAYS">
+            <Label styleClass="login_plain" text="Teacher Name:" GridPane.columnIndex="1" />
+            <TextField fx:id="teacherName" GridPane.columnIndex="2" />
+            <Label styleClass="login_plain" text="Room #:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="roomNum" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label styleClass="login_plain" text="Language:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="languageSelect" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <TextField id="classCodeField" fx:id="classCode" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Label id="classCodeIndicator" text="Generated Class Code" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+
+            <columnConstraints>
+                <ColumnConstraints percentWidth="10.0" />
+         <ColumnConstraints percentWidth="30.0" />
+         <ColumnConstraints percentWidth="40.0" />
+            </columnConstraints>
+
+            <rowConstraints>
+                <RowConstraints percentHeight="15.0" />
+         <RowConstraints percentHeight="15.0" />
+         <RowConstraints percentHeight="15.0" />
+         <RowConstraints />
+         <RowConstraints percentHeight="10.0" />
+         <RowConstraints percentHeight="15.0" />
+         <RowConstraints />
+            </rowConstraints>
 
         </GridPane>
     </VBox>
-
-
-</AnchorPane>

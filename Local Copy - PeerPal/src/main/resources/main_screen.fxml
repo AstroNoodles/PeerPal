@@ -6,36 +6,35 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.input.KeyCodeCombination?>
-<VBox prefHeight="600.0" prefWidth="800.0" maxWidth="Infinity"
-      spacing="5" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.base.LanguageTextEditor">
+<VBox maxWidth="Infinity" prefHeight="600.0" prefWidth="800.0" spacing="5" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.base.LanguageTextEditor">
 
     <MenuBar onKeyPressed="#shortcutAccentDialog">
         <Menu text="Utilities">
-            <MenuItem text="Open Accent Dialog" onAction="#openAccentDialog">
+            <MenuItem onAction="#openAccentDialog" text="Open Accent Dialog">
                 <accelerator>
-                    <KeyCodeCombination code="A" shift="DOWN" control="ANY" meta="ANY" alt="ANY" shortcut="ANY" />
+                    <KeyCodeCombination alt="ANY" code="A" control="ANY" meta="ANY" shift="DOWN" shortcut="ANY" />
                 </accelerator>
             </MenuItem>
         </Menu>
     </MenuBar>
 
     <HBox spacing="2">
-    <GridPane alignment="CENTER" hgap="10" prefHeight="500" maxWidth="Infinity" prefWidth="500" vgap="10" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="200">
-        <Text id="title_text" text="Welcome to LanguageEditor" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <GridPane alignment="CENTER" hgap="6.0" maxWidth="Infinity" prefHeight="500" prefWidth="400.0" vgap="10" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="200" HBox.hgrow="SOMETIMES">
+        <Text id="title_text" text="Welcome to The PeerPal Language Editor!" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         <ComboBox id="languages" fx:id="languages" prefHeight="20" prefWidth="300" promptText="Choose a Language" GridPane.columnIndex="1" GridPane.rowIndex="2">
             <items>
                 <FXCollections fx:factory="observableArrayList">
@@ -45,8 +44,7 @@
                 </FXCollections>
             </items>
         </ComboBox>
-        <TextArea id="main_area" fx:id="area" prefHeight="300" prefWidth="300" promptText="Enter text here" onKeyPressed="#onEnterHotkey"
-                  wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2" />
+        <TextArea id="main_area" fx:id="area" onKeyPressed="#onEnterHotkey" prefHeight="300" prefWidth="300" promptText="Enter text here" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2" />
         <Button id="main_button" fx:id="button" onAction="#checkLanguage" styleClass="border" text="Grammar Check" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
         <Button id="submit" onAction="#submitAssignment" prefHeight="27.0" prefWidth="112.0" styleClass="border" text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="5" />
         <Label id="notice" fx:id="notice" prefHeight="100" prefWidth="250" text="Either grammatical or spelling mistakes were found. Would you like to fix them?" visible="false" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
@@ -56,8 +54,8 @@
         </padding>
       <columnConstraints>
          <ColumnConstraints />
-         <ColumnConstraints maxWidth="260.0" minWidth="227.0" prefWidth="227.0" percentWidth="40" hgrow="SOMETIMES" />
-         <ColumnConstraints maxWidth="113.0" minWidth="80.0" prefWidth="113.0" percentWidth="40" hgrow="SOMETIMES" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="260.0" minWidth="227.0" percentWidth="40" prefWidth="227.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="80.0" percentWidth="40" prefWidth="113.0" />
       </columnConstraints>
       <rowConstraints>
          <RowConstraints vgrow="SOMETIMES" />
@@ -69,17 +67,19 @@
          <RowConstraints vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
-    <VBox prefHeight="350" prefWidth="400" spacing="3" maxWidth="Infinity" VBox.vgrow="SOMETIMES" HBox.hgrow="SOMETIMES">
-        <padding>
-            <Insets top="40" />
-        </padding>
-        <Region prefHeight="40"/>
-        <VBox id="errorBox" fx:id="errorBox" prefHeight="330" prefWidth="400" spacing="2" VBox.vgrow="SOMETIMES" HBox.hgrow="ALWAYS">
+    <VBox maxWidth="Infinity" prefHeight="359.0" prefWidth="231.0" spacing="3" HBox.hgrow="SOMETIMES" VBox.vgrow="SOMETIMES">
+        <Region prefHeight="40" />
+        <VBox id="errorBox" fx:id="errorBox" prefHeight="330" prefWidth="400" spacing="2" HBox.hgrow="ALWAYS" VBox.vgrow="SOMETIMES">
         <Label id="errorBarTitle" alignment="CENTER" text="Potential Errors" textAlignment="CENTER" VBox.vgrow="SOMETIMES" />
         </VBox>
+         <HBox.margin>
+            <Insets top="40.0" />
+         </HBox.margin>
     </VBox>
     </HBox>
-    <Label styleClass="login_plain" prefHeight="200" prefWidth="300" VBox.vgrow="SOMETIMES" text="Welcome to the PeerPal language editor.
-    Click on a language in the dropdown to get started on your immersive language experience. Do your best with your language practice in the text area and don't worry! \n
-    If you make a mistake, your avatar will help you to learn the mistake with an interactive lesson and custom exercises. Get started now!" wrapText="true"/>
+    <Label id="introductionEditor" prefHeight="250.0" prefWidth="500" text="Welcome to the PeerPal language editor. Click on a language in the dropdown to get started on your immersive language experience. Do your best with your language practice in the text area and don't worry! If you make a mistake, your avatar will help you to learn the mistake with an interactive lesson and custom exercises. Get started now!" wrapText="true" VBox.vgrow="SOMETIMES">
+      <VBox.margin>
+         <Insets bottom="30.0" left="70.0" />
+      </VBox.margin>
+    </Label>
 </VBox>

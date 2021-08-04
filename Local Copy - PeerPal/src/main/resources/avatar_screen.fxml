@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="800.0" spacing="3" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.AvatarScreenFX">
+<VBox prefHeight="400.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.AvatarScreenFX">
 
     <padding>
         <Insets left="10" top="10" />
@@ -13,14 +20,14 @@
 
     <Label id="chooseAvatar" prefHeight="100" prefWidth="300" text="Choose Your Avatar!" VBox.vgrow="SOMETIMES" />
 
-    <HBox prefHeight="500" prefWidth="Infinity" spacing="10">
-        <StackPane id="selectedAvatar" maxHeight="200" prefHeight="200" prefWidth="200" translateY="40">
+    <HBox prefHeight="500" prefWidth="Infinity" spacing="5.0">
+        <StackPane id="selectedAvatar" maxHeight="200" prefHeight="200" prefWidth="200" translateY="40" HBox.hgrow="ALWAYS">
             <ImageView fx:id="selectedAvatar" fitHeight="200" fitWidth="200" pickOnBounds="true" preserveRatio="true">
                 <Image url="@/avatars/D2.png" />
             </ImageView>
         </StackPane>
 
-        <GridPane id="gridAvatars" hgap="5" prefHeight="300" translateX="30" prefWidth="Infinity" translateY="20" vgap="5">
+        <GridPane id="gridAvatars" hgap="5" prefHeight="300" prefWidth="Infinity" translateX="30" translateY="20" vgap="5" HBox.hgrow="ALWAYS">
 
             <Button onAction="#onAvatarSelected" prefHeight="149.0" prefWidth="158.0" styleClass="avatarPick" GridPane.columnIndex="0" GridPane.rowIndex="0">
                 <graphic>
@@ -50,7 +57,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button onAction="#onAvatarSelected" prefHeight="150" prefWidth="150" styleClass="avatarPick" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Button onAction="#onAvatarSelected" prefHeight="150" prefWidth="130.0" styleClass="avatarPick" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <graphic>
                     <ImageView id="/avatars/D5.png" fitHeight="133.0" fitWidth="173.0" pickOnBounds="true" preserveRatio="true">
                         <Image url="@/avatars/D5.png" />
@@ -65,9 +72,9 @@
                 </graphic>
             </Button>
          <columnConstraints>
-            <ColumnConstraints percentWidth="20" hgrow="SOMETIMES" />
-            <ColumnConstraints percentWidth="20" hgrow="SOMETIMES" />
-            <ColumnConstraints percentWidth="20" hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="20.0" />
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="20" />
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="20" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints />
@@ -75,6 +82,6 @@
          </rowConstraints>
         </GridPane>
     </HBox>
-    <Button id="submitAvatar" fx:id='submitButton'
-            onAction="#onSubmitAvatar" translateY="-70" translateX="45" prefHeight="100" prefWidth="100" text="Submit" />
+    <Button id="submitAvatar" fx:id="submitButton" maxHeight="100.0" maxWidth="100.0" onAction="#onSubmitAvatar" prefHeight="100" prefWidth="100" text="Submit" translateX="40" translateY="-75" VBox.vgrow="NEVER">
+    </Button>
 </VBox>

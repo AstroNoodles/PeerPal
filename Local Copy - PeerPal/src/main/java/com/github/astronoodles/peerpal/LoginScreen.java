@@ -2,7 +2,6 @@ package com.github.astronoodles.peerpal;
 
 import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
 import com.github.astronoodles.peerpal.extras.CryptographyHelper;
-import com.github.astronoodles.peerpal.extras.FullScreenChangeListener;
 import com.github.astronoodles.peerpal.extras.StageHelper;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
@@ -10,7 +9,6 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -20,6 +18,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -56,6 +55,7 @@ public class LoginScreen extends Application {
 
     public static final String CSV_PATH = "./src/main/java/com/github/astronoodles/peerpal/" +
             "extras/members.csv";
+    private static Stage primaryStage;
 
     public static final String SECURE_SALT = CryptographyHelper.getSecureSalt();
 
@@ -67,6 +67,7 @@ public class LoginScreen extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            LoginScreen.primaryStage = primaryStage;
             Pane root = FXMLLoader.load(getClass().getResource("/login_screen.fxml"));
             Scene main = new Scene(root, 600, 700);
 
@@ -109,7 +110,9 @@ public class LoginScreen extends Application {
                         CryptographyHelper.verifyPassword(pwd.getText(), users[1], SECURE_SALT)
                         && class_code.getText().equals(users[2])) {
 
-                    if (!cloudConfig.isCloudStorageEmpty()) cloudConfig.downloadCloudStorage();
+                    System.out.println("Num Files: " + cloudConfig.countLocalStorage(1));
+                    if (!cloudConfig.isCloudStorageEmpty() && !cloudConfig.countLocalStorage(1))
+                            cloudConfig.downloadCloudStorage();
 
                     // edit the CSV file to change the new avatar
                     // then add the text bubble to add avatar dialogue
@@ -205,9 +208,13 @@ public class LoginScreen extends Application {
 
     @FXML
     private void createClassCode() {
-        StageHelper.loadSceneFXML("Generate Class Code", 400, 300,
+        Stage classCodeStage = StageHelper.loadSceneFXML("Generate Class Code", 400, 300,
                 "/create_class_code.fxml",
                 "/login_screen.css");
+        classCodeStage.initOwner(primaryStage.getScene().getWindow());
+        classCodeStage.setResizable(false);
+        classCodeStage.initModality(Modality.APPLICATION_MODAL);
+        classCodeStage.show();
     }
 
     @FXML
@@ -216,6 +223,7 @@ public class LoginScreen extends Application {
                 new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
         alertDialog.setTitle("About PeerPal");
         alertDialog.setHeaderText("What is PeerPal?");
+        alertDialog.initOwner(tabPane.getScene().getWindow());
         alertDialog.show();
     }
 
@@ -248,7 +256,7 @@ public class LoginScreen extends Application {
     private EventHandler<WindowEvent> saveToCloudStorageOnClose() {
         return (windowEvent) -> {
             CloudStorageConfig cloudConfig = new CloudStorageConfig();
-            if (!cloudConfig.isLocalStorageEmpty()) cloudConfig.saveLocalStorage();
+            if (!cloudConfig.countLocalStorage(0)) cloudConfig.saveLocalStorage();
         };
     }
 
@@ -282,6 +290,10 @@ public class LoginScreen extends Application {
                 "/avatar_screen.fxml", "/avatar_screen.css");
 
         as.setOnCloseRequest(onClose);
+        as.setResizable(false);
+        as.initOwner(primaryStage.getScene().getWindow());
+        as.initModality(Modality.APPLICATION_MODAL);
+        as.show();
     }
 
 

@@ -67,7 +67,6 @@ public class StageHelper {
 
             primaryStage.setScene(main);
             primaryStage.setTitle(title);
-            primaryStage.show();
 
             return primaryStage;
         } catch (IOException e) {

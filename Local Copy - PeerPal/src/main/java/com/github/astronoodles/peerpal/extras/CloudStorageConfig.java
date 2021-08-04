@@ -16,8 +16,8 @@ import java.time.Duration;
 
 public class CloudStorageConfig {
     // Find a way to secure this later (via KeyVault)
-    private static final String CONNECT_STRING = "DefaultEndpointsProtocol=https;AccountName=peerpalblobstorage;AccountKey=MjpvbphVLs0Q7NvNoEjFXK5wGIM7nNvIK" +
-            "flOveXPsRFcsWbvb8ekf3WJaTVwefs/I5/gN7DOpmO8oSK0HwP1XQ==;EndpointSuffix=core.windows.net";    private static final String STORAGE_NAME = "peerpal";
+    private static final String CONNECT_STRING = "<connect-string>";
+    private static final String STORAGE_NAME = "peerpal";
     private static boolean hasInternetConnection = true;
 
     public CloudStorageConfig() {
@@ -101,8 +101,13 @@ public class CloudStorageConfig {
                                 .shareName(STORAGE_NAME).resourcePath(cloudFile.getName()).buildDirectoryClient();
                         dirClient.listFilesAndDirectories().forEach(subCloudItem -> {
                             try {
+                                Path dirItem = Paths.get(rootPath.toString(), cloudItemName);
                                 Path folderItem = Paths.get(rootPath.toString(), cloudItemName, subCloudItem.getName());
                                 ShareFileClient subFileClient = dirClient.getFileClient(subCloudItem.getName());
+
+                                if(!Files.exists(dirItem)) Files.createDirectory(dirItem);
+                                if(!Files.exists(folderItem)) Files.createFile(folderItem);
+
                                 subFileClient.download(new FileOutputStream(folderItem.toFile()));
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -136,22 +141,25 @@ public class CloudStorageConfig {
         } else return false;
     }
 
-    public boolean isLocalStorageEmpty() {
+    public boolean countLocalStorage(int numFiles) {
         System.out.println(System.getProperty("user.dir"));
         Path storageDir = Paths.get("./src/main/java/com/github/astronoodles/peerpal", "storage");
+        int counter = 0;
 
         try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(storageDir)) {
             for (Path dirItem : dirStream) {
                 if (Files.isDirectory(dirItem)) {
-                    return dirItem.toFile().listFiles().length == 0;
+                    return dirItem.toFile().listFiles().length == numFiles;
                     // here's hoping that when deletion happens, all files inside the student directories are deleted as well
                     // if not, we need to use a counter here instead of a short circuit
+                } else {
+                    counter++;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return counter == numFiles;
     }
 
 

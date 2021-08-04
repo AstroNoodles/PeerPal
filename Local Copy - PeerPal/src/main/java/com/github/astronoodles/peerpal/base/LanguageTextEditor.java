@@ -15,7 +15,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
 import org.languagetool.language.AmericanEnglish;
@@ -35,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class LanguageTextEditor extends Application {
+public class LanguageTextEditor {
 
 
     @FXML
@@ -56,17 +58,7 @@ public class LanguageTextEditor extends Application {
     private String username;
     private static int hotkeyID = 0;
     private final Map<Character, Integer> hotkeyMap = new HashMap<>(10);
-
-    public static void main(String[] args){
-        launch(args);
-    }
-
-    @Override
-    // DEBUG ONLY. DELETE WHEN READY
-    public void start(Stage primaryStage) {
-        StageHelper.loadSceneFXML("The Language Learn App", 600, 500,
-                "/main_screen.fxml", "/main_screen.css");
-    }
+    private static final Map<String, ErrorType> explErrorMap = ErrorType.readExplanationsFromCSV();
 
     public void connectToUser(String username) {
         this.username = username;
@@ -92,7 +84,7 @@ public class LanguageTextEditor extends Application {
         try {
             JLanguageTool checker = textAreaCheck();
             if(checker != null) {
-                List<RuleMatch> errors = checker.check(area.getText());
+                List<RuleMatch> errors = checker.check(area.getText(), true, JLanguageTool.ParagraphHandling.ONLYPARA);
 
                 if (errors.size() == 0) {
                     notice.setVisible(false);
@@ -147,10 +139,12 @@ public class LanguageTextEditor extends Application {
     @FXML
     public void openAccentDialog() {
 
-        Label instructions = new Label("Click on a button to obtain the accent you need. \nRight click on a button to create a hotkey for an accent!");
-        instructions.setPrefWidth(300);
+        Label instructions = new Label("Click on a button to obtain the accent you need. Right click on a button to create a hotkey for an accent!");
+        instructions.setPrefWidth(500);
         instructions.setPrefHeight(200);
         instructions.setWrapText(true);
+
+        Window instructionWindow = area.getScene().getWindow();
 
         GridPane gridButtons = new GridPane();
         gridButtons.setVgap(2);
@@ -164,6 +158,7 @@ public class LanguageTextEditor extends Application {
                     "\nPlease select a language so that the correct accents can be loaded for your language.", ButtonType.OK);
             nullLangAlert.setHeaderText("No Language Selected");
             nullLangAlert.setTitle("Cannot Load Accent Dialog");
+            nullLangAlert.initOwner(instructionWindow);
             nullLangAlert.showAndWait();
             return;
         }
@@ -199,10 +194,12 @@ public class LanguageTextEditor extends Application {
         }
 
         Stage accentStage = new Stage();
-        VBox accentBox = new VBox(2, instructions, gridButtons);
+        VBox accentBox = new VBox(instructions, gridButtons);
 
-        accentStage.setScene(new Scene(accentBox, 250, 100));
+        accentStage.setScene(new Scene(accentBox, 400, 300));
+        accentStage.resizableProperty().setValue(false);
         accentStage.setTitle("Accent Dialog");
+        accentStage.initOwner(instructionWindow);
         accentStage.show();
     }
 
@@ -229,6 +226,8 @@ public class LanguageTextEditor extends Application {
 
         charMapButton.setOnAction(event -> area.setText(area.getText() + charMapButton.getText()));
 
+        final Window charMapButtonWindow = area.getScene().getWindow();
+
         charMapButton.setOnMouseClicked(mouseEvent -> {
             if(mouseEvent.getButton() == MouseButton.SECONDARY) {
                 MenuItem hotkeyItem = new MenuItem("Create Hotkey");
@@ -240,6 +239,7 @@ public class LanguageTextEditor extends Application {
                                 "Your hotkeys will reset when you restart PeerPal.", ButtonType.YES, ButtonType.NO);
                         hotkeyAlert.setTitle("Hotkey Alert");
                         hotkeyAlert.setHeaderText("What is a hotkey?");
+                        hotkeyAlert.initOwner(charMapButtonWindow);
 
                         Optional<ButtonType> hotkeyOptional = hotkeyAlert.showAndWait();
 
@@ -250,9 +250,11 @@ public class LanguageTextEditor extends Application {
                                     String.format("Your new hotkey for %c is set to <Ctrl + %d>!", buttonChar, hotkeyID), ButtonType.OK);
                             hotKeyInsert.setHeaderText("Hotkey Created!");
                             hotKeyInsert.setTitle("Hotkey Update");
-                            hotKeyInsert.showAndWait();
+                            hotKeyInsert.initOwner(charMapButtonWindow);
+                            hotKeyInsert.initModality(Modality.APPLICATION_MODAL);
+                            hotKeyInsert.show();
 
-                            StageHelper.closeCurrentWindow(charMapButton);
+                            //StageHelper.closeCurrentWindow(charMapButton);
                             hotkeyID++;
                         }
                     });
@@ -260,6 +262,7 @@ public class LanguageTextEditor extends Application {
                     Alert hotKeyFull = new Alert(Alert.AlertType.WARNING, "Only 10 Hotkeys Are Allowed At A Time.",ButtonType.OK);
                     hotKeyFull.setHeaderText("Too Many Hotkeys!");
                     hotKeyFull.setTitle("Hotkey List Filled!");
+                    hotKeyFull.initOwner(charMapButtonWindow);
                     hotKeyFull.showAndWait();
                 } else {
                     hotkeyItem.setOnAction(event -> {
@@ -267,6 +270,7 @@ public class LanguageTextEditor extends Application {
                                 "\nIt is set to the key combo <Ctrl + %d>.", hotkeyMap.get(buttonChar)), ButtonType.OK);
                         alreadyHaveHotkey.setHeaderText("You Already Have This Hotkey On!");
                         alreadyHaveHotkey.setTitle("Activated Hotkey!");
+                        alreadyHaveHotkey.initOwner(charMapButtonWindow);
                         alreadyHaveHotkey.showAndWait();
                     });
                 }
@@ -279,11 +283,12 @@ public class LanguageTextEditor extends Application {
     }
 
     private void successDialog(){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("Great Job!");
-        alert.setContentText("No mistakes were found. Keep going!");
-        alert.setTitle("Notice");
-        alert.show();
+        Alert noMistakeAlert = new Alert(Alert.AlertType.INFORMATION);
+        noMistakeAlert.setHeaderText("Great Job!");
+        noMistakeAlert.setContentText("No mistakes were found. Keep going!");
+        noMistakeAlert.setTitle("Notice");
+        noMistakeAlert.initOwner(area.getScene().getWindow());
+        noMistakeAlert.show();
     }
 
     private void enterMistakes(){
@@ -310,7 +315,7 @@ public class LanguageTextEditor extends Application {
     }
 
     public void addErrorCards(ReplacementTriad triad){
-        VBox card = createErrorCard(ErrorType.explanationToError(triad.message),
+        VBox card = createErrorCard(explanationToError(triad.message),
                 triad.message, triad.replacements, triad);
         errorBox.getChildren().add(card);
     }
@@ -321,6 +326,16 @@ public class LanguageTextEditor extends Application {
         return new Border(cardStroke);
     }
 
+    private static ErrorType explanationToError(String explanation) {
+
+        for (String keyWord : explErrorMap.keySet()) {
+            if (explanation.contains(keyWord)) {
+                return explErrorMap.get(keyWord);
+            }
+        }
+        return ErrorType.GEN;
+    }
+
 
     public VBox createErrorCard(ErrorType type, String explanation, List<String> errors, ReplacementTriad triad){
         VBox errorCard = new VBox();
@@ -328,8 +343,9 @@ public class LanguageTextEditor extends Application {
         errorCard.setPrefWidth(400);
         errorCard.setSpacing(3);
         errorCard.setBorder(errorCardBorder());
+        HBox.setMargin(errorCard, new Insets(0, 20, 5, 0));
 
-        Insets padding = new Insets(5, 0, 0, 10);
+        Insets padding = new Insets(5, 20, 0, 10);
         errorCard.setPadding(padding);
 
         Label title = new Label(type.getCodeName());
@@ -348,7 +364,7 @@ public class LanguageTextEditor extends Application {
         final int rowMax = 7;
 
         errorButtonGrid.setPrefHeight(200);
-        errorButtonGrid.setPrefWidth(400);
+        errorButtonGrid.setPrefWidth(500);
         errorButtonGrid.setHgap(3);
         errorButtonGrid.setVgap(2);
         errorButtonGrid.getStyleClass().add("login_plain");

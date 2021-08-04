@@ -42,8 +42,6 @@ public class ClassCodeDialog {
             String codeString = generateCode();
             classCode.setText(codeString);
             codeButton.setDisable(true);
-
-            createDatabase(teacherName.getText(), languageSelect.getText(), codeString);
         }
     }
 
@@ -57,10 +55,6 @@ public class ClassCodeDialog {
             code.append(CHARS.charAt(index));
         }
         return code.toString();
-    }
-
-    private void createDatabase(String teacher, String language, String classCode) {
-        // TODO once I have the database running
     }
 
 }

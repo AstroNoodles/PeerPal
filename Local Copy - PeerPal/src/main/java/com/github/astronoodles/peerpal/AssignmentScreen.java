@@ -31,6 +31,7 @@ import java.io.ObjectOutputStream;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -108,7 +109,7 @@ public class AssignmentScreen {
                             Stage stage = new Stage();
                             stage.setScene(scene);
                             stage.setTitle("The Language Learn App");
-                            stage.showAndWait();
+                            stage.show();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -124,7 +125,7 @@ public class AssignmentScreen {
 
         table.setItems(data);
         grid.add(table, 0, 1, 3, 1);
-        GridPane.setHgrow(table, Priority.SOMETIMES);
+        GridPane.setHgrow(table, Priority.ALWAYS);
         GridPane.setVgrow(table, Priority.SOMETIMES);
 
         return grid;
@@ -346,13 +347,20 @@ public class AssignmentScreen {
                         List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
                                 (List<StudentAssignment.SerializableStudentAssignment>) ois.readObject();
                         assignments.addAll(serializableStudentAssignments.parallelStream()
-                                .map(StudentAssignment::new).collect(Collectors.toList()));
+                                .map(StudentAssignment::new).filter(assign -> {
+                                    LocalDate expireDate = assign.getEndDate().plus(2, ChronoUnit.WEEKS);
+                                    return expireDate.isEqual(LocalDate.now()) || expireDate.isAfter(LocalDate.now());
+                                }).collect(Collectors.toList()));
                         assignments.forEach(assign -> retrievedAssignNames.add(assign.getFullName()));
                     } else { // assignments.dat
                         List<Assignment.SerializableAssignment> serializableAssignments =
                                 (List<Assignment.SerializableAssignment>) ois.readObject();
                         assignments.addAll(serializableAssignments.parallelStream().map(StudentAssignment::new)
-                                .filter(assign2 -> !retrievedAssignNames.contains(assign2.getFullName()))
+                                .filter(assign2 -> {
+                                    LocalDate assignExpireDate = assign2.getEndDate().plus(2, ChronoUnit.WEEKS);
+                                    return (assignExpireDate.isEqual(LocalDate.now()) || assignExpireDate.isAfter(LocalDate.now()))
+                                            && !retrievedAssignNames.contains(assign2.getFullName());
+                                })
                                 .collect(Collectors.toList()));
                     }
                 } catch (IOException | ClassNotFoundException e) {
