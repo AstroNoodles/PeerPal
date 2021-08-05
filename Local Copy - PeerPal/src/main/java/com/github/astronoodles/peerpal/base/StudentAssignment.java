@@ -3,6 +3,8 @@ package com.github.astronoodles.peerpal.base;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
+import java.util.Objects;
+
 public class StudentAssignment extends Assignment {
 
     private final SimpleFloatProperty grade;
@@ -44,6 +46,23 @@ public class StudentAssignment extends Assignment {
         super(serAssign);
         this.grade = new SimpleFloatProperty(0);
         this.status = new SimpleObjectProperty<>(AssignmentStatus.MISSING);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if(other == this) return true;
+        if(!(other instanceof StudentAssignment)) return false;
+        StudentAssignment studentAssign = (StudentAssignment) other;
+
+        return super.equals(other) && Objects.equals(getGrade(), studentAssign.getGrade())
+                && Objects.equals(getStatus(), studentAssign.getStatus())
+                && Objects.equals(assignPath, studentAssign.assignPath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFullName(), getDescription(), getInstructorName(),
+                getFileExtension(), getStartDate(), getEndDate(), getGrade(), getStatus(), assignPath);
     }
 
     @Override
@@ -103,7 +122,6 @@ public class StudentAssignment extends Assignment {
     public enum AssignmentStatus {
         MISSING("Missing"), UPLOADED("Uploaded"), GRADED("Graded"), LATE("Late");
 
-        AssignmentStatus(String statusText) {
-        }
+        AssignmentStatus(String statusText) {}
     }
 }

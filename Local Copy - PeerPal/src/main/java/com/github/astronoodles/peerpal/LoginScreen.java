@@ -111,29 +111,27 @@ public class LoginScreen extends Application {
                         && class_code.getText().equals(users[2])) {
 
                     System.out.println("Num Files: " + cloudConfig.countLocalStorage(1));
-                    if (!cloudConfig.isCloudStorageEmpty() && !cloudConfig.countLocalStorage(1))
-                            cloudConfig.downloadCloudStorage();
-
-                    // edit the CSV file to change the new avatar
-                    // then add the text bubble to add avatar dialogue
-                    // add /n for certain text in JSON and for the welcome text in assignment page
 
                     if (classCodeEntries > 1) {
                         AssignmentScreen screen = new AssignmentScreen(users[0]);
                         GridPane pane = screen.loadStage();
                         Scene scene = new Scene(pane, 620, 600);
 
+                        cloudConfig.downloadTeacherAssignments();
+
                         Stage stage = new Stage();
                         stage.setScene(scene);
                         stage.show();
 
                         // Comment out below for debug purposes
-                        StageHelper.closeCurrentWindow(username);
+                        //StageHelper.closeCurrentWindow(username);
                         hasUser = true;
                         break;
                     } else {
                         AssignmentTeacherScreen screen = new AssignmentTeacherScreen(users[0]);
                         Scene s = new Scene(screen.loadStage(), 620, 600);
+
+                        if(cloudConfig.isCloudStorageFull()) cloudConfig.downloadCloudStorage();
 
                         Stage st = new Stage();
                         st.setOnCloseRequest((event) -> {
@@ -144,7 +142,7 @@ public class LoginScreen extends Application {
                         st.show();
 
                         // Comment out below for debug purposes
-                        StageHelper.closeCurrentWindow(username);
+                        //StageHelper.closeCurrentWindow(username);
                         hasUser = true;
                         break;
                     }

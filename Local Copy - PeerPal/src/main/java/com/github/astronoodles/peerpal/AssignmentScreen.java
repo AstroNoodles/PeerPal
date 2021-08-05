@@ -31,7 +31,6 @@ import java.io.ObjectOutputStream;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -183,7 +182,7 @@ public class AssignmentScreen {
             refreshText.setVisible(true);
 
             CloudStorageConfig config = new CloudStorageConfig();
-            if (!config.isCloudStorageEmpty()) config.downloadCloudStorage();
+            if (config.isCloudStorageFull()) config.downloadCloudStorage();
 
             bgTransition.playFromStart();
         });
@@ -227,6 +226,7 @@ public class AssignmentScreen {
                             curAssignment.getDescription()), ButtonType.OK);
             descAlert.setHeaderText("Here is the description for your assignment!");
             descAlert.setTitle("Assignment Description");
+            descAlert.initOwner(table.getScene().getWindow());
             descAlert.show();
         });
 
@@ -348,7 +348,7 @@ public class AssignmentScreen {
                                 (List<StudentAssignment.SerializableStudentAssignment>) ois.readObject();
                         assignments.addAll(serializableStudentAssignments.parallelStream()
                                 .map(StudentAssignment::new).filter(assign -> {
-                                    LocalDate expireDate = assign.getEndDate().plus(2, ChronoUnit.WEEKS);
+                                    LocalDate expireDate = assign.getEndDate().plus(AssignmentTeacherScreen.EXPIRY_PERIOD);
                                     return expireDate.isEqual(LocalDate.now()) || expireDate.isAfter(LocalDate.now());
                                 }).collect(Collectors.toList()));
                         assignments.forEach(assign -> retrievedAssignNames.add(assign.getFullName()));
@@ -357,7 +357,7 @@ public class AssignmentScreen {
                                 (List<Assignment.SerializableAssignment>) ois.readObject();
                         assignments.addAll(serializableAssignments.parallelStream().map(StudentAssignment::new)
                                 .filter(assign2 -> {
-                                    LocalDate assignExpireDate = assign2.getEndDate().plus(2, ChronoUnit.WEEKS);
+                                    LocalDate assignExpireDate = assign2.getEndDate().plus(AssignmentTeacherScreen.EXPIRY_PERIOD);
                                     return (assignExpireDate.isEqual(LocalDate.now()) || assignExpireDate.isAfter(LocalDate.now()))
                                             && !retrievedAssignNames.contains(assign2.getFullName());
                                 })

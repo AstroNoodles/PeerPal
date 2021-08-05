@@ -80,6 +80,7 @@ public class CloudStorageConfig {
                         rootFileClient.uploadFromFile(storageItem.toString());
                     }
                 }
+                System.out.println("---UPLOADING TO CLOUD STORAGE SUCCESS!!---");
                 return true;
             } catch (IOException | ShareStorageException e) {
                 e.printStackTrace(); // either I/O error happened or could not save local storage
@@ -133,12 +134,31 @@ public class CloudStorageConfig {
         return false;
     }
 
-    public boolean isCloudStorageEmpty() {
+    // will download only the assignments.dat file from the cloud storage to find updated teacher assignments
+    public void downloadTeacherAssignments() {
+        if(hasInternetConnection) {
+            try {
+                ShareDirectoryClient rootClient = new ShareFileClientBuilder().connectionString(CONNECT_STRING)
+                        .shareName(STORAGE_NAME).resourcePath("").buildDirectoryClient();
+                File assignmentFile = new File("./src/main/java/com/github/astronoodles/peerpal/storage/assignments.dat");
+                ShareFileClient assignmentFileClient = rootClient.getFileClient("assignments.dat");
+
+                if (assignmentFileClient != null) {
+                    assignmentFileClient.download(new FileOutputStream(assignmentFile));
+                    System.out.println("---Successfully DOWNLOADED assignments.dat---");
+                }
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean isCloudStorageFull() {
         if(hasInternetConnection) {
             ShareDirectoryClient dirClient = new ShareFileClientBuilder().connectionString(CONNECT_STRING)
                     .shareName(STORAGE_NAME).resourcePath("").buildDirectoryClient();
-            return dirClient.listFilesAndDirectories().stream().count() == 0;
-        } else return false;
+            return dirClient.listFilesAndDirectories().stream().count() != 0;
+        } else return true;
     }
 
     public boolean countLocalStorage(int numFiles) {

@@ -32,7 +32,9 @@ import java.util.stream.Stream;
 public class AssignmentTeacherScreen {
 
     private final String name;
-    public List<StudentAssignment> updatedStudentAssignments = new ArrayList<>(10);
+    private List<StudentAssignment> updatedStudentAssignments = new ArrayList<>(10);
+    public List<StudentAssignment> curStudentAssignments = new ArrayList<>(10);
+    public static final Period EXPIRY_PERIOD = Period.ofDays(3);
 
 
     public AssignmentTeacherScreen(String name) {
@@ -140,7 +142,7 @@ public class AssignmentTeacherScreen {
         System.out.println("Queried Data: " + data);
         table.setItems(data);
 
-        createAssign.setDisable(!data.isEmpty());
+        //createAssign.setDisable(!data.isEmpty());
         grid.add(table, 0, 1, 3, 1);
         GridPane.setVgrow(table, Priority.SOMETIMES);
         GridPane.setHgrow(table, Priority.ALWAYS);
@@ -176,32 +178,33 @@ public class AssignmentTeacherScreen {
 
         // Add all assignments that have updated grades plus
         // assignments that still need to be stored in the student data file
+        List<StudentAssignment> updatedStudentAssign = sag.getUpdatedStudentAssignments();
+        System.out.println("BEFORE: " + updatedStudentAssign);
+        System.out.println("BEFORE OG LIST: " + updatedStudentAssignments);
 
-        System.out.println("BEFORE: " + sag.getUpdatedStudentAssignments());
-
-        for (StudentAssignment updatedAssign : sag.getUpdatedStudentAssignments()) {
-            if (!updatedStudentAssignments.contains(updatedAssign)) {
-                updatedStudentAssignments.add(updatedAssign);
-                break;
-            }
-
-            for (int i = 0; i < updatedStudentAssignments.size(); i++) {
-                if (updatedAssign.getFullName().equals(updatedStudentAssignments.get(i).getFullName())) {
-                    updatedAssign.setAssignmentPath(updatedStudentAssignments.get(i).getAssignmentPath());
-                    updatedStudentAssignments.set(i, updatedAssign);
+        if(updatedStudentAssignments.isEmpty()) {
+            updatedStudentAssignments.addAll(updatedStudentAssign);
+        } else {
+        for (StudentAssignment updatedAssign : updatedStudentAssign) {
+            for (StudentAssignment currentUpdatedAssign : updatedStudentAssignments) {
+                if (!updatedAssign.copyOf(currentUpdatedAssign)) {
+                    curStudentAssignments.add(updatedAssign);
+                    curStudentAssignments.add(currentUpdatedAssign);
                 }
             }
         }
 
-        System.out.println("Full Assignments To Update: " + updatedStudentAssignments);
+//            for (int i = 0; i < updatedStudentAssignments.size(); i++) {
+//                if (updatedAssign.equals(updatedStudentAssignments.get(i))) {
+//                    updatedAssign.setAssignmentPath(updatedStudentAssignments.get(i).getAssignmentPath());
+//                    updatedStudentAssignments.set(i, updatedAssign);
+//                }
+//            }
+        }
+        System.out.println("Full Assignments To Update: " + curStudentAssignments);
     }
 
     private ContextMenu createTeacherContextMenu(Assignment assign) {
-        MenuItem deleteItem = new MenuItem("Delete Assignment");
-        deleteItem.setOnAction((event -> {
-            data.remove(assign);
-        }));
-
         MenuItem descItem = new MenuItem("See Description");
         descItem.setOnAction((event) -> {
             Alert descAlert = new Alert(Alert.AlertType.INFORMATION,
@@ -210,7 +213,7 @@ public class AssignmentTeacherScreen {
             descAlert.setTitle(String.format("%s - Description", assign.getFullName()));
             descAlert.show();
         });
-        return new ContextMenu(deleteItem, descItem);
+        return new ContextMenu(descItem);
     }
 
     private List<StudentAssignment> isolateAssignments(
@@ -262,19 +265,18 @@ public class AssignmentTeacherScreen {
     }
 
     /**
-     * Clears all assignments 3 days after the maximum end date of the assignments.
+     * Clears all assignments (@link {AssignmentTeacherScreen#EXPIRY_PERIOD} days after the maximum end date of the assignments.
      * At this point, the teacher can add more assignments due to the data list being empty
      */
     private void clearUpAssignments() {
-        Period gradingPeriod = Period.ofDays(3);
-        // find the maximum end date of the assignments + add 3 days for grading
+        // find the maximum end date of the assignments + add EXPIRY_PERIOD days for grading
         LocalDate date = LocalDate.MIN;
         for (Assignment assignment : data) {
             if (assignment.getEndDate().isAfter(date)) {
                 date = assignment.getEndDate();
             }
         }
-        date = date.plus(gradingPeriod);
+        date = date.plus(EXPIRY_PERIOD);
 
         // delete the assignments for both studentAssignments.dat (all students) and assignments.dat
         // This info will still remain online but will be deleted on local machine
@@ -306,11 +308,11 @@ public class AssignmentTeacherScreen {
     public void updateGridStudentAssignments() {
 
         // NOTE - assert that all student assignments are saved to the same path
-        if (!updatedStudentAssignments.isEmpty()) {
-            String assignmentPath = updatedStudentAssignments.get(0).getAssignmentPath();
+        if (!curStudentAssignments.isEmpty()) {
+            String assignmentPath = curStudentAssignments.get(0).getAssignmentPath();
 
             List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
-                    updatedStudentAssignments.parallelStream().map(StudentAssignment.SerializableStudentAssignment::new).
+                    curStudentAssignments.parallelStream().map(StudentAssignment.SerializableStudentAssignment::new).
                             collect(Collectors.toList());
 
             try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get(assignmentPath),
@@ -322,45 +324,6 @@ public class AssignmentTeacherScreen {
         }
     }
 
-    /**
-     * Obtains all assignments that the teacher has created from the assignments.dat file in the storage folder.
-     * These assignments are bare-bones (they do not have a grade on them or any student effort attached)
-     * All assignments are read from a list format saved in the assignments.dat file.
-     *
-     * @return A list containing all bare-bones assignments read from the assignments.dat file
-     */
-//    @SuppressWarnings("unchecked")
-//    protected static List<Assignment> obtainAssignments() {
-//        List<Assignment> assignments = new ArrayList<>(10);
-//
-//        try {
-//            // the general path of the assignments.dat file.
-//            Path assignmentsLoc =
-//                    Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-//                            "storage", "assignments.dat");
-//
-//            // skip the running time of the file reading process if the file itself doesn't exist yet
-//            if (!Files.exists(assignmentsLoc)) {
-//                return assignments;
-//            }
-//
-//            try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(assignmentsLoc,
-//                    StandardOpenOption.READ))) {
-//
-//                // all assignments are read are going to be part of a specific list
-//                List<Assignment.SerializableAssignment> serializableAssignments =
-//                        (List<Assignment.SerializableAssignment>) ois.readObject();
-//
-//                assignments.addAll(serializableAssignments.stream().map(
-//                        (Assignment::new)).collect(Collectors.toList()));
-//            }
-//
-//        } catch (IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return assignments;
-//    }
     private TableColumn<Assignment, String> addSimilarColumns() {
         TableColumn<Assignment, String> schoolCol = new TableColumn<>("School: Bronx Science");
 

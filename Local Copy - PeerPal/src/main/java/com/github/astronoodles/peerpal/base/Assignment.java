@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Assignment {
 
@@ -109,6 +110,31 @@ public class Assignment {
 
     public HashMap<String, Boolean> getSpellSettings() {
         return spellSettings;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if(other == this) return true;
+        if(!(other instanceof Assignment)) return false;
+
+        Assignment otherAssign = (Assignment) other;
+
+        return Objects.equals(getFullName(), otherAssign.getFullName()) &&
+                Objects.equals(getDescription(), otherAssign.getDescription()) &&
+                Objects.equals(getInstructorName(), otherAssign.getInstructorName()) &&
+                Objects.equals(getFileExtension(), otherAssign.getFileExtension()) &&
+                Objects.equals(getStartDate(), otherAssign.getStartDate()) &&
+                Objects.equals(getEndDate(), otherAssign.getEndDate());
+    }
+
+    public boolean copyOf(Assignment other) {
+        return Objects.equals(getFullName(), other.getFullName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFullName(), getDescription(), getInstructorName(),
+                getFileExtension(), getStartDate(), getEndDate());
     }
 
     @Override
