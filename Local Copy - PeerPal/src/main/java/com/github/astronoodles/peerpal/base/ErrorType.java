@@ -42,8 +42,6 @@ public enum ErrorType {
             List<String> csvLines = Files.readAllLines(explanationsPath);
             csvLines.stream().forEach((explanationError) -> {
                 String[] explanationErrorArray = explanationError.split(", ");
-                System.out.println(explanationErrorArray[0]);
-                System.out.println(explanationErrorArray[1]);
                 explErrorMap.put(explanationErrorArray[0], ErrorType.valueOf(explanationErrorArray[1].trim()));
             });
         } catch (IOException e) {

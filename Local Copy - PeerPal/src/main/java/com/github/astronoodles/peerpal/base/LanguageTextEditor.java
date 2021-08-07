@@ -3,9 +3,12 @@ package com.github.astronoodles.peerpal.base;
 import com.github.astronoodles.peerpal.LessonScreen;
 import com.github.astronoodles.peerpal.extras.StageHelper;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -13,11 +16,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
+import javafx.stage.*;
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
 import org.languagetool.language.AmericanEnglish;
@@ -39,7 +41,6 @@ import java.util.Optional;
 
 public class LanguageTextEditor {
 
-
     @FXML
     public TextArea area;
 
@@ -47,7 +48,7 @@ public class LanguageTextEditor {
     public Button button, lang_dialog;
 
     @FXML
-    public Label notice;
+    public Label notice, errorBarTitle;
 
     @FXML
     public ComboBox<String> languages;
@@ -141,7 +142,7 @@ public class LanguageTextEditor {
 
         Label instructions = new Label("Click on a button to obtain the accent you need. Right click on a button to create a hotkey for an accent!");
         instructions.setPrefWidth(500);
-        instructions.setPrefHeight(200);
+        instructions.setPrefHeight(100);
         instructions.setWrapText(true);
 
         Window instructionWindow = area.getScene().getWindow();
@@ -296,18 +297,27 @@ public class LanguageTextEditor {
             JLanguageTool checker = textAreaCheck();
             if(checker != null) {
                 List<RuleMatch> errors = checker.check(area.getText());
-                System.out.println(errors.size() + " " + area.getText());
+                System.out.println("look at this: " + errors.size() + " " + area.getText());
                 for (RuleMatch error : errors) {
 
                     ReplacementTriad triad = new ReplacementTriad(error.getFromPos(), error.getToPos(),
                             error.getSuggestedReplacements());
                     triad.setMessage(error.getMessage());
-                    System.out.println(triad);
 
-                    if(errorBox.getChildren().size() > 0) errorBox.getChildren().clear();
-                    addErrorCards(triad);
+                    boolean mistakeRepeatFlag = false;
+                    for(Node mistakeNode : errorBox.getChildren()) {
+                        if(mistakeNode instanceof Label) {
+                            Label mistakeText = (Label) mistakeNode;
+                            if(mistakeText.getText().contains(triad.message)) {
+                                mistakeRepeatFlag = true;
+                            }
+                        }
+                    }
 
+                    if(errorBox.getChildren().size() == 3) break;
+                    if(!mistakeRepeatFlag) addErrorCards(triad);
                 }
+                System.out.println("full amount of errors: " + errorBox.getChildren().size());
             }
         } catch(IOException e){
             e.printStackTrace();
@@ -317,6 +327,17 @@ public class LanguageTextEditor {
     public void addErrorCards(ReplacementTriad triad){
         VBox card = createErrorCard(explanationToError(triad.message),
                 triad.message, triad.replacements, triad);
+        card.setOnMouseClicked(mouseEvent -> {
+            Stage errorCardDialog = new Stage(StageStyle.UTILITY);
+            Scene errorCardScene = new Scene(new VBox(card.getSpacing(),
+                    card.getChildrenUnmodifiable().toArray(new Node[]{})), card.getWidth() + 100, card.getHeight() + 100);
+            errorCardDialog.setScene(errorCardScene);
+            errorCardDialog.setTitle("Possible Writing Mistake");
+            errorCardDialog.setResizable(false);
+            errorCardDialog.initOwner(card.getScene().getWindow());
+            errorCardDialog.show();
+        });
+
         errorBox.getChildren().add(card);
     }
 
@@ -328,9 +349,9 @@ public class LanguageTextEditor {
 
     private static ErrorType explanationToError(String explanation) {
 
-        for (String keyWord : explErrorMap.keySet()) {
-            if (explanation.contains(keyWord)) {
-                return explErrorMap.get(keyWord);
+        for (String keyPhrase : explErrorMap.keySet()) {
+            if (explanation.toLowerCase().contains(keyPhrase)) {
+                return explErrorMap.get(keyPhrase);
             }
         }
         return ErrorType.GEN;
@@ -339,26 +360,45 @@ public class LanguageTextEditor {
 
     public VBox createErrorCard(ErrorType type, String explanation, List<String> errors, ReplacementTriad triad){
         VBox errorCard = new VBox();
+        Border errorCardBorder = errorCardBorder();
+
         errorCard.setPrefHeight(500);
         errorCard.setPrefWidth(400);
         errorCard.setSpacing(3);
-        errorCard.setBorder(errorCardBorder());
-        HBox.setMargin(errorCard, new Insets(0, 20, 5, 0));
+        errorCard.setBorder(errorCardBorder);
+        VBox.setVgrow(errorCard, Priority.NEVER);
+        VBox.setMargin(errorCard, new Insets(5, 10, 5, 0));
 
-        Insets padding = new Insets(5, 20, 0, 10);
-        errorCard.setPadding(padding);
+        Font curFont = errorBarTitle.getFont();
+        errorCard.hoverProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) {
+                area.selectRange(triad.startPos, triad.endPos);
+                errorBarTitle.setTextFill(Color.web("#1565c0"));
+                errorBarTitle.setFont(Font.font(curFont.getFamily(), FontWeight.EXTRA_BOLD, curFont.getSize()));
+            } else {
+                errorBarTitle.setTextFill(Color.BLACK);
+                errorBarTitle.setFont(curFont);
+            }
+        });
 
         Label title = new Label(type.getCodeName());
         title.setPrefHeight(20);
         title.setPrefWidth(100);
         title.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
         title.getStyleClass().add("login_plain");
+        VBox.setMargin(title, new Insets(5, 0, 5, 5));
 
-        Label text = new Label(explanation);
-        text.setPrefWidth(200);
-        text.setPrefHeight(100);
+        // preprocess the explanation message here to make sure it does not look like code when presented to the user
+        String processedExplanation = explanation.replace("<suggestion>", "'")
+                .replace("</suggestion>", "'.");
+
+        Label text = new Label(processedExplanation);
+        text.setPrefWidth(600);
+        text.setMaxHeight(170);
+        text.setPrefHeight(Control.USE_COMPUTED_SIZE + 100);
         text.getStyleClass().add("login_plain");
         text.setWrapText(true);
+        VBox.setMargin(text, new Insets(5, 0, 5, 5));
 
         GridPane errorButtonGrid = new GridPane();
         final int rowMax = 7;
@@ -373,34 +413,37 @@ public class LanguageTextEditor {
         if(errors.size() > 0) {
             for (int i = 0; i < errors.size(); i++) {
                 Button errorButton = new Button(errors.get(i));
-                errorButton.setPrefWidth(70);
+                errorButton.setPrefWidth(Control.USE_COMPUTED_SIZE);
                 errorButton.setWrapText(true);
                 errorButton.setTooltip(new Tooltip(errors.get(i)));
                 errorButton.setAlignment(Pos.CENTER);
                 errorButton.setPrefHeight(30);
                 errorButton.getStyleClass().add("login_plain");
+                GridPane.setMargin(errorButton, new Insets(5, 5, 0, 5));
 
                 int finalI = i;
                 errorButton.setOnAction((event) -> {
                     area.replaceText(triad.startPos, triad.endPos, errors.get(finalI));
                     lang_dialog.setVisible(false);
                     notice.setVisible(false);
-                    errorBox.getChildren().remove(errorButtonGrid.getParent());
+                    errorBox.getChildren().remove(errorCard);
                 });
                 errorButtonGrid.add(errorButton, i % rowMax, Math.floorDiv(i, rowMax));
             }
         } else {
             Button quitButton = new Button("Recheck?");
-            quitButton.setPrefWidth(200);
+            quitButton.setPrefWidth(Control.USE_COMPUTED_SIZE);
             quitButton.setTooltip(new Tooltip("Recheck?"));
             quitButton.setWrapText(true);
             quitButton.setPrefHeight(20);
             quitButton.setAlignment(Pos.CENTER);
             quitButton.getStyleClass().add("login_plain");
+            GridPane.setMargin(quitButton, new Insets(5, 5, 0, 5));
+
             quitButton.setOnAction((event -> {
                 lang_dialog.setVisible(false);
                 notice.setVisible(false);
-                errorBox.getChildren().remove(errorButtonGrid.getParent());
+                errorBox.getChildren().remove(errorCard);
             }));
             errorButtonGrid.add(quitButton, 0, 0);
         }
@@ -411,10 +454,9 @@ public class LanguageTextEditor {
         Button learnMore = new Button("Learn More");
         learnMore.setPrefHeight(20);
         learnMore.setPrefWidth(100);
-        VBox.setVgrow(learnMore, Priority.SOMETIMES);
         learnMore.getStyleClass().add("login_plain");
         learnMore.setTextAlignment(TextAlignment.CENTER);
-        VBox.setVgrow(learnMore, Priority.ALWAYS);
+        VBox.setVgrow(learnMore, Priority.SOMETIMES);
         learnMore.setOnAction((e) -> {
             Stage s = new Stage();
             LessonScreen ls = new LessonScreen(username, String.format("./src/main/java/com/github/astronoodles/" +
@@ -424,6 +466,7 @@ public class LanguageTextEditor {
             s.setTitle(String.format("%s Lesson", type.getErrorName()));
             s.show();
         });
+        VBox.setMargin(learnMore, new Insets(5, 0, 5, 5));
 
         errorCard.getChildren().addAll(title, text, errorButtonGrid, space, learnMore);
 

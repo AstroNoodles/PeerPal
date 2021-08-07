@@ -15,12 +15,11 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxWidth="Infinity" prefHeight="600.0" prefWidth="800.0" spacing="5" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.base.LanguageTextEditor">
+<VBox maxWidth="Infinity" prefHeight="600.0" prefWidth="800.0" spacing="7.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.base.LanguageTextEditor">
 
     <MenuBar onKeyPressed="#shortcutAccentDialog">
         <Menu text="Utilities">
@@ -32,9 +31,9 @@
         </Menu>
     </MenuBar>
 
-    <HBox spacing="2">
+    <HBox prefHeight="900.0" spacing="1">
     <GridPane alignment="CENTER" hgap="6.0" maxWidth="Infinity" prefHeight="500" prefWidth="400.0" vgap="10" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="200" HBox.hgrow="SOMETIMES">
-        <Text id="title_text" text="Welcome to The PeerPal Language Editor!" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Text id="title_text" text="Welcome to The PeerPal Language Editor!" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="NEVER" />
         <ComboBox id="languages" fx:id="languages" prefHeight="20" prefWidth="300" promptText="Choose a Language" GridPane.columnIndex="1" GridPane.rowIndex="2">
             <items>
                 <FXCollections fx:factory="observableArrayList">
@@ -47,15 +46,15 @@
         <TextArea id="main_area" fx:id="area" onKeyPressed="#onEnterHotkey" prefHeight="300" prefWidth="300" promptText="Enter text here" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2" />
         <Button id="main_button" fx:id="button" onAction="#checkLanguage" styleClass="border" text="Grammar Check" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
         <Button id="submit" onAction="#submitAssignment" prefHeight="27.0" prefWidth="112.0" styleClass="border" text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-        <Label id="notice" fx:id="notice" prefHeight="100" prefWidth="250" text="Either grammatical or spelling mistakes were found. Would you like to fix them?" visible="false" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-        <Button id="lang_dialog" fx:id="lang_dialog" onAction="#fixErrors" prefHeight="27.0" prefWidth="54.0" styleClass="border" text="Fix?" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+        <Label id="notice" fx:id="notice" prefHeight="70.0" prefWidth="250" text="Either grammatical or spelling mistakes were found. Would you like to fix them?" visible="false" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Button id="lang_dialog" fx:id="lang_dialog" onAction="#fixErrors" prefHeight="27.0" prefWidth="56.0" styleClass="border" text="Fix?" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="6" />
         <padding>
-            <Insets left="10" right="30" />
+            <Insets left="10.0" right="30.0" />
         </padding>
       <columnConstraints>
          <ColumnConstraints />
-         <ColumnConstraints hgrow="SOMETIMES" maxWidth="260.0" minWidth="227.0" percentWidth="40" prefWidth="227.0" />
-         <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="80.0" percentWidth="40" prefWidth="113.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="260.0" minWidth="227.0" percentWidth="50.0" prefWidth="227.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="80.0" percentWidth="50.0" prefWidth="113.0" />
       </columnConstraints>
       <rowConstraints>
          <RowConstraints vgrow="SOMETIMES" />
@@ -67,19 +66,18 @@
          <RowConstraints vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
-    <VBox maxWidth="Infinity" prefHeight="359.0" prefWidth="231.0" spacing="3" HBox.hgrow="SOMETIMES" VBox.vgrow="SOMETIMES">
-        <Region prefHeight="40" />
-        <VBox id="errorBox" fx:id="errorBox" prefHeight="330" prefWidth="400" spacing="2" HBox.hgrow="ALWAYS" VBox.vgrow="SOMETIMES">
-        <Label id="errorBarTitle" alignment="CENTER" text="Potential Errors" textAlignment="CENTER" VBox.vgrow="SOMETIMES" />
+        <VBox maxHeight="Infinity" prefWidth="231.0" spacing="3" HBox.hgrow="SOMETIMES" VBox.vgrow="ALWAYS">
+            <Label id="errorBarTitle" fx:id="errorBarTitle" alignment="CENTER" text="Potential Errors" textAlignment="CENTER" VBox.vgrow="SOMETIMES">
+            <VBox.margin>
+               <Insets left="80.0" />
+            </VBox.margin></Label>
+                <VBox id="errorBox" fx:id="errorBox" prefHeight="500" prefWidth="500" spacing="2" HBox.hgrow="ALWAYS" VBox.vgrow="SOMETIMES">
+                </VBox>
         </VBox>
-         <HBox.margin>
-            <Insets top="40.0" />
-         </HBox.margin>
-    </VBox>
     </HBox>
-    <Label id="introductionEditor" prefHeight="250.0" prefWidth="500" text="Welcome to the PeerPal language editor. Click on a language in the dropdown to get started on your immersive language experience. Do your best with your language practice in the text area and don't worry! If you make a mistake, your avatar will help you to learn the mistake with an interactive lesson and custom exercises. Get started now!" wrapText="true" VBox.vgrow="SOMETIMES">
+    <Label id="introductionEditor" minHeight="90.0" prefHeight="200.0" prefWidth="500" text="Welcome to the PeerPal language editor. Click on a language in the dropdown to get started on your immersive language experience. Do your best with your language practice in the text area and don't worry! If you make a mistake, your avatar will help you to learn the mistake with an interactive lesson and custom exercises. Get started now!" wrapText="true" VBox.vgrow="SOMETIMES">
       <VBox.margin>
-         <Insets bottom="30.0" left="70.0" />
+         <Insets bottom="30.0" left="15.0" />
       </VBox.margin>
     </Label>
 </VBox>

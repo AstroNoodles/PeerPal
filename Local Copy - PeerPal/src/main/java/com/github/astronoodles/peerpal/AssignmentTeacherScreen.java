@@ -183,7 +183,7 @@ public class AssignmentTeacherScreen {
         System.out.println("BEFORE OG LIST: " + updatedStudentAssignments);
 
         if(updatedStudentAssignments.isEmpty()) {
-            updatedStudentAssignments.addAll(updatedStudentAssign);
+            curStudentAssignments.addAll(updatedStudentAssign);
         } else {
         for (StudentAssignment updatedAssign : updatedStudentAssign) {
             for (StudentAssignment currentUpdatedAssign : updatedStudentAssignments) {
@@ -192,15 +192,13 @@ public class AssignmentTeacherScreen {
                     curStudentAssignments.add(currentUpdatedAssign);
                 }
             }
+            }
         }
 
-//            for (int i = 0; i < updatedStudentAssignments.size(); i++) {
-//                if (updatedAssign.equals(updatedStudentAssignments.get(i))) {
-//                    updatedAssign.setAssignmentPath(updatedStudentAssignments.get(i).getAssignmentPath());
-//                    updatedStudentAssignments.set(i, updatedAssign);
-//                }
-//            }
-        }
+//        for(StudentAssignment curStudentAssign : curStudentAssignments) {
+//            curStudentAssign.setAssignmentPath(studentData.get(0).getAssignmentPath());
+//        }
+
         System.out.println("Full Assignments To Update: " + curStudentAssignments);
     }
 
@@ -310,6 +308,7 @@ public class AssignmentTeacherScreen {
         // NOTE - assert that all student assignments are saved to the same path
         if (!curStudentAssignments.isEmpty()) {
             String assignmentPath = curStudentAssignments.get(0).getAssignmentPath();
+            System.out.println("Saving items to: " + assignmentPath);
 
             List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
                     curStudentAssignments.parallelStream().map(StudentAssignment.SerializableStudentAssignment::new).

@@ -3,9 +3,12 @@ género, VP
 falta de concordancia de número, NUM
 Error de concordancia, ART
 falta de concordancia de persona, VP
-Pronombre átono sin verbo, VF
+pronombre átono sin verbo, VF
 mayúsculo, ORT
 mayúscula, ORT
 posible error de ortografía, ORT
 tilde, AC
-símbolo, ADD
+cuando precede a palabras que comienzan por, ART
+símbolo desparejado, ADD
+la expresíon no existe, PREP
+expresíon errónea, AC

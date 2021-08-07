@@ -11,13 +11,14 @@
 }
 
 #notice {
-    -fx-font-size: 14;
+    -fx-font-size: 15;
     -fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans, sans-serif;
     -fx-text-fill: black;
+    -fx-font-weight: bold;
 }
 
 #introductionEditor {
-    -fx-font-size: 12;
+    -fx-font-size: 13;
     -fx-font-family: "Cambria", "DejaVu Sans", "Helvetica Neue", Helvetica, sans-serif;
     -fx-text-fill: black;
 }

@@ -102,7 +102,7 @@ public class AssignmentScreen {
                             LanguageTextEditor languageEditor = dialogLoader.getController();
                             languageEditor.connectToUser(name);
 
-                            Scene scene = new Scene(root, 800, 500);
+                            Scene scene = new Scene(root, 1000, 650);
                             scene.getStylesheets().add(getClass().getResource("/main_screen.css").toExternalForm());
 
                             Stage stage = new Stage();
@@ -253,7 +253,7 @@ public class AssignmentScreen {
 
                     Files.copy(selectedFile.toPath(), userLoc, StandardCopyOption.REPLACE_EXISTING);
 
-                    Period latePeriod = Period.ofWeeks(2); // adjustable
+                    Period latePeriod = AssignmentTeacherScreen.EXPIRY_PERIOD;
                     LocalDate lateDate = curAssignment.getEndDate().plus(latePeriod);
 
                     if (LocalDate.now().isAfter(lateDate)) {
