@@ -62,7 +62,7 @@ public class AssignmentDialog {
             extensionAlert.show();
         } else {
             String extension = comboExtensions.getValue().split("-")[0].trim().toLowerCase();
-            curAssignment = new Assignment(assignName.getText(), teacherName,
+            curAssignment = new Assignment(assignName.getText().trim(), teacherName,
                     assignDesc.getText(), extension, assignStart.getValue(),
                     assignEnd.getValue());
             //teacherAssignments.add(newAssign);

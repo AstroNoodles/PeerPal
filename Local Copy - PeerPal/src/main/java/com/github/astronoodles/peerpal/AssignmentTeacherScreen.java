@@ -85,7 +85,7 @@ public class AssignmentTeacherScreen {
                 AssignmentDialog assignDialog = dialogLoader.getController();
                 assignDialog.connectAssignmentTable(name);
 
-                Scene scene = new Scene(root, 500, 400);
+                Scene scene = new Scene(root, 500, 550);
                 scene.getStylesheets().add(getClass().getResource("/assignment_styles.css").toExternalForm());
 
                 Stage stage = new Stage();

@@ -35,12 +35,12 @@
             </columnConstraints>
 
             <rowConstraints>
-                <RowConstraints percentHeight="15.0" />
-         <RowConstraints percentHeight="15.0" />
-         <RowConstraints percentHeight="15.0" />
+                <RowConstraints percentHeight="20.0" />
+         <RowConstraints percentHeight="20.0" />
+         <RowConstraints percentHeight="20.0" />
          <RowConstraints />
-         <RowConstraints percentHeight="10.0" />
-         <RowConstraints percentHeight="15.0" />
+         <RowConstraints percentHeight="20.0" />
+         <RowConstraints percentHeight="20.0" />
          <RowConstraints />
             </rowConstraints>
 

@@ -270,7 +270,18 @@ public class AssignmentScreen {
             }
         });
 
-        return new ContextMenu(descItem, uploadItem);
+        MenuItem feedbackItem = new MenuItem("See Teacher Feedback");
+        feedbackItem.setOnAction(event -> {
+            Alert feedbackAlert = new Alert(Alert.AlertType.INFORMATION, curAssignment.getAssignmentFeedback(), ButtonType.OK);
+            feedbackAlert.initOwner(table.getScene().getWindow());
+            feedbackAlert.setTitle("Teacher Feedback Notice");
+            feedbackAlert.setHeaderText("See Your Teacher's Feedback");
+            feedbackAlert.show();
+        });
+
+        if(curAssignment.getStatus() != StudentAssignment.AssignmentStatus.GRADED) {
+            return new ContextMenu(descItem, uploadItem);
+        } else return new ContextMenu(descItem, feedbackItem);
     }
 
     /**

@@ -35,6 +35,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class StudentAssignmentGrid {
     private final List<StudentAssignment> assignments;
@@ -115,8 +116,18 @@ public class StudentAssignmentGrid {
                             refreshedAssignments.get(curRow * curCol));
                 });
 
+                Button giveFeedback = new Button("Give Feedback");
+                giveFeedback.setPrefWidth(150);
+                giveFeedback.setTextFill(Color.web("#0277bd"));
+                GridPane.setVgrow(giveFeedback, Priority.SOMETIMES);
+                GridPane.setHgrow(giveFeedback, Priority.SOMETIMES);
 
-                VBox container = new VBox(2, nameLabel, avatarView, viewAssignment, updateGrade);
+                giveFeedback.setOnAction(e -> {
+                    createFeedbackDialog(updateGrade.getScene().getWindow(), studentNames.get(curRow), avatarImage,
+                            refreshedAssignments.get(curRow * curCol));
+                });
+
+                VBox container = new VBox(2, nameLabel, avatarView, viewAssignment, updateGrade, giveFeedback);
                 container.setAlignment(Pos.CENTER);
                 BorderStroke containerStroke = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,
                         new CornerRadii(1), new BorderWidths(1));
@@ -205,12 +216,42 @@ public class StudentAssignmentGrid {
         okButton.disableProperty().bind(integerBinding);
         showGradeTransition(okButton);
 
+
         okButton.setOnAction(event -> {
             curAssignment.setGrade(Float.parseFloat(textField.getText()));
             curAssignment.setStatus(StudentAssignment.AssignmentStatus.GRADED);
         });
 
         gradeInput.showAndWait();
+    }
+
+    private void createFeedbackDialog(Window srcWindow, String studentName, Image avatarImage, StudentAssignment curAssign) {
+        Dialog<String> feedbackDialog = new Dialog<>();
+        feedbackDialog.setTitle("Assignment Feedback Dialog");
+        feedbackDialog.setHeaderText("Insert Assignment Feedback for " + studentName + " here!");
+        feedbackDialog.initOwner(srcWindow);
+
+        TextArea feedbackArea = new TextArea();
+        feedbackArea.setPrefHeight(300);
+        feedbackArea.setPrefWidth(300);
+        feedbackArea.setBorder(new Border(new BorderStroke(Color.web("#3f51b5"), BorderStrokeStyle.SOLID,
+                new CornerRadii(2), new BorderWidths(1))));
+        feedbackArea.setWrapText(true);
+
+        feedbackDialog.getDialogPane().setContent(feedbackArea);
+        feedbackDialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+
+        final Button okButton = (Button) feedbackDialog.getDialogPane().lookupButton(ButtonType.OK);
+
+        final BooleanBinding feedbackBinding = Bindings.createBooleanBinding(() -> feedbackArea.getText().isEmpty(),
+                feedbackArea.textProperty());
+        okButton.disableProperty().bind(feedbackBinding);
+
+        okButton.setOnAction(event -> curAssign.setAssignmentFeedback(feedbackArea.getText()));
+
+        feedbackDialog.setGraphic(new ImageView(avatarImage));
+
+        feedbackDialog.showAndWait();
     }
 
     private SequentialTransition showGradeTransition(Button gradeButton) {

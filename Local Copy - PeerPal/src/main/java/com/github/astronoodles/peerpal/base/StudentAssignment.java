@@ -2,6 +2,7 @@ package com.github.astronoodles.peerpal.base;
 
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.util.Objects;
 
@@ -9,13 +10,15 @@ public class StudentAssignment extends Assignment {
 
     private final SimpleFloatProperty grade;
     private final SimpleObjectProperty<AssignmentStatus> status;
+    private final SimpleStringProperty feedback;
     private String assignPath;
 
-    public StudentAssignment(Assignment otherAssign, String assignPath, float grade) {
+    public StudentAssignment(Assignment otherAssign, String assignPath, float grade, String feedback) {
         super(otherAssign.getFullName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
                 otherAssign.getDescription(), otherAssign.getStartDate(), otherAssign.getEndDate());
         this.grade = new SimpleFloatProperty(grade);
         this.status = new SimpleObjectProperty<>(AssignmentStatus.MISSING);
+        this.feedback = new SimpleStringProperty(feedback);
         this.assignPath = assignPath;
     }
 
@@ -24,14 +27,17 @@ public class StudentAssignment extends Assignment {
                 otherAssign.getDescription(), otherAssign.getStartDate(), otherAssign.getEndDate());
         this.grade = new SimpleFloatProperty(0);
         this.status = new SimpleObjectProperty<>(AssignmentStatus.MISSING);
+        this.feedback = new SimpleStringProperty("");
         this.assignPath = assignPath;
     }
 
-    public StudentAssignment(Assignment otherAssign, String assignPath, float grade, AssignmentStatus status) {
+    public StudentAssignment(Assignment otherAssign, String assignPath, float grade, String feedback,
+                             AssignmentStatus status) {
         super(otherAssign.getFullName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
                 otherAssign.getDescription(), otherAssign.getStartDate(), otherAssign.getEndDate());
         this.grade = new SimpleFloatProperty(grade);
         this.status = new SimpleObjectProperty<>(status);
+        this.feedback = new SimpleStringProperty(feedback);
         this.assignPath = assignPath;
     }
 
@@ -39,6 +45,7 @@ public class StudentAssignment extends Assignment {
         super(serAssign);
         this.grade = new SimpleFloatProperty(serAssign.serGrade);
         this.status = new SimpleObjectProperty<>(serAssign.serStatus);
+        this.feedback = new SimpleStringProperty(serAssign.assignFeedback);
         this.assignPath = serAssign.serAssignPath;
     }
 
@@ -46,6 +53,7 @@ public class StudentAssignment extends Assignment {
         super(serAssign);
         this.grade = new SimpleFloatProperty(0);
         this.status = new SimpleObjectProperty<>(AssignmentStatus.MISSING);
+        this.feedback = new SimpleStringProperty("");
     }
 
     @Override
@@ -56,13 +64,15 @@ public class StudentAssignment extends Assignment {
 
         return super.equals(other) && Objects.equals(getGrade(), studentAssign.getGrade())
                 && Objects.equals(getStatus(), studentAssign.getStatus())
+                && Objects.equals(getAssignmentFeedback(), studentAssign.getAssignmentFeedback())
                 && Objects.equals(assignPath, studentAssign.assignPath);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getFullName(), getDescription(), getInstructorName(),
-                getFileExtension(), getStartDate(), getEndDate(), getGrade(), getStatus(), assignPath);
+                getFileExtension(), getStartDate(), getEndDate(), getGrade(), getAssignmentFeedback(),
+                getStatus(), assignPath);
     }
 
     @Override
@@ -103,17 +113,25 @@ public class StudentAssignment extends Assignment {
         return status;
     }
 
+    public SimpleStringProperty feedbackProperty() {return feedback;}
+
+    public void setAssignmentFeedback(String feedback) {this.feedback.set(feedback);}
+
+    public String getAssignmentFeedback() {return feedback.get(); }
+
     // INNER CLASS
     public static class SerializableStudentAssignment extends SerializableAssignment {
         protected final float serGrade;
         protected final String serAssignPath;
         protected final AssignmentStatus serStatus;
+        protected final String assignFeedback;
         private static final long serialVersionUID = 23456789L;
 
         public SerializableStudentAssignment(StudentAssignment studentAssign) {
             super(studentAssign);
             serGrade = studentAssign.getGrade();
             serStatus = studentAssign.getStatus();
+            assignFeedback = studentAssign.getAssignmentFeedback();
             serAssignPath = studentAssign.getAssignmentPath();
         }
     }
