@@ -10,7 +10,7 @@
     -fx-font-weight: bold;
 }
 
-#assignStyle {
+.assignStyle {
     -fx-font-size: 14;
     -fx-font-weight: bold;
 }

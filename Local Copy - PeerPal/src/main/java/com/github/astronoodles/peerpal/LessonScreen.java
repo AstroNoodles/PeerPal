@@ -126,9 +126,9 @@ public class LessonScreen {
             HBox exerciseBox = new HBox(9, exerciseLabel, dropdown);
 
             Label solutionLabel = new Label(exercise.wrongResponse);
-            solutionLabel.setMaxHeight(200);
-            solutionLabel.setPadding(new Insets(10, 0, 15, 0));
-            solutionLabel.setPrefWidth(exercises.getWidth());
+            //solutionLabel.setPrefHeight(200);
+            solutionLabel.setPrefWidth(500);
+            solutionLabel.setPadding(new Insets(2, 0, 5, 0));
             solutionLabel.setWrapText(true);
             solutionLabel.setVisible(false);
 

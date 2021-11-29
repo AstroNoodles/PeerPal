@@ -21,7 +21,7 @@
         <Label id="assignmentTitle" prefHeight="10" prefWidth="300" text="Create A New Assignment" textAlignment="CENTER" VBox.vgrow="SOMETIMES" />
         <GridPane hgap="20" prefHeight="274.0" prefWidth="399.0" vgap="10">
             <Label prefHeight="20" prefWidth="500" styleClass="login_plain" text="Assignment Name*: " wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField id="assignStyle" fx:id="assignName" prefHeight="10.0" prefWidth="20" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <TextField styleClass="assignStyle" fx:id="assignName" prefHeight="10.0" prefWidth="20" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Label prefWidth="600" styleClass="login_plain" text="Assignment Description:" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextArea fx:id="assignDesc" prefHeight="100" prefWidth="700" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Label prefHeight="20" prefWidth="200" styleClass="login_plain" text="Start*:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
