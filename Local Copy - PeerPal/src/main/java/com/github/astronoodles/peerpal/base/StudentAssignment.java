@@ -3,7 +3,9 @@ package com.github.astronoodles.peerpal.base;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.paint.Color;
 
+import java.util.List;
 import java.util.Objects;
 
 public class StudentAssignment extends Assignment {
@@ -56,6 +58,13 @@ public class StudentAssignment extends Assignment {
         this.feedback = new SimpleStringProperty("");
     }
 
+    public StudentAssignment(Assignment baseAssign) {
+        super(baseAssign);
+        this.grade = new SimpleFloatProperty(0);
+        this.status = new SimpleObjectProperty<>(AssignmentStatus.MISSING);
+        this.feedback = new SimpleStringProperty("");
+    }
+
     @Override
     public boolean equals(Object other) {
         if(other == this) return true;
@@ -67,6 +76,25 @@ public class StudentAssignment extends Assignment {
                 && Objects.equals(getAssignmentFeedback(), studentAssign.getAssignmentFeedback())
                 && Objects.equals(assignPath, studentAssign.assignPath);
     }
+
+    public boolean assignmentEquals(Assignment other) {
+        return Objects.equals(getFullName(), other.getFullName()) &&
+                Objects.equals(getDescription(), other.getDescription()) &&
+                Objects.equals(getInstructorName(), other.getInstructorName()) &&
+                Objects.equals(getFileExtension(), other.getFileExtension()) &&
+                Objects.equals(getStartDate(), other.getStartDate()) &&
+                Objects.equals(getEndDate(), other.getEndDate());
+    }
+
+    public static boolean assignmentContains(List<StudentAssignment> assignmentList, Assignment generalAssign) {
+        for(StudentAssignment assignment : assignmentList){
+            if(assignment.assignmentEquals(generalAssign)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public int hashCode() {
@@ -138,8 +166,17 @@ public class StudentAssignment extends Assignment {
 
     // INNER CLASS
     public enum AssignmentStatus {
-        MISSING("Missing"), UPLOADED("Uploaded"), GRADED("Graded"), LATE("Late");
+        MISSING("Missing", Color.web("#e53935")),
+        UPLOADED("Uploaded", Color.web("#1e88e5")),
+        GRADED("Graded", Color.web("#388e3c")),
+        LATE("Late", Color.web("#b71c1c"));
 
-        AssignmentStatus(String statusText) {}
+        private final Color statusColor;
+
+        AssignmentStatus(String statusText, Color statusColor) {
+            this.statusColor = statusColor;
+        }
+
+        public Color getStatusColor() {return statusColor;}
     }
 }

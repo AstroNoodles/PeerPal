@@ -135,8 +135,8 @@ public class LoginScreen extends Application {
 
                         Stage st = new Stage();
                         st.setOnCloseRequest((event) -> {
-                            screen.backUpAssignments();
-                            screen.updateGridStudentAssignments();
+                            //screen.backUpAssignments();
+                            //screen.updateGridStudentAssignments();
                         });
                         st.setScene(s);
                         st.show();

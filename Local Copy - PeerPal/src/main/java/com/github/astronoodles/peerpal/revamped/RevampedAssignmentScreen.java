@@ -2,17 +2,28 @@ package com.github.astronoodles.peerpal.revamped;
 
 import com.github.astronoodles.peerpal.AssignmentTeacherScreen;
 import com.github.astronoodles.peerpal.base.Assignment;
+import com.github.astronoodles.peerpal.base.AssignmentIO;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
+import com.github.astronoodles.peerpal.dialogs.CreateAssignmentDialog;
+import com.github.astronoodles.peerpal.dialogs.MainAssignmentScreen;
 import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
+import javafx.animation.FillTransition;
 import javafx.animation.PauseTransition;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -39,21 +50,26 @@ public class RevampedAssignmentScreen {
     public Button refreshButton;
 
     public String studentName;
-    public List<StudentAssignment> data;
+    public boolean user;
+    public List<Assignment> generalAssignments;
+    public List<StudentAssignment> data = new LinkedList<>();
 
-    public RevampedAssignmentScreen(String studentName) {
+    public RevampedAssignmentScreen(String studentName, boolean user) {
         this.studentName = studentName;
+        this.user = user;
         introText.setText(String.format(introText.getText(), studentName));
 
         try {
-            populateAssignments(studentName);
+            assignmentContainer.getChildren().addAll(populateAssignments(studentName));
         } catch(IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void populateAssignments(String studentName) throws IOException {
-        data = obtainAssignments(studentName);
+    private List<Node> populateAssignments(String studentName) throws IOException {
+        List<Node> assignmentCards = new LinkedList<>();
+        data = AssignmentIO.obtainAssignments(studentName);
+        generalAssignments.addAll(AssignmentIO.obtainAssignments(studentName));
         if(data.isEmpty()) {
             Label emptyDataLabel = new Label("No assignments are currently active. Contact your professor " +
                     "to add some assignments and then you'll find them here!");
@@ -62,23 +78,87 @@ public class RevampedAssignmentScreen {
             emptyDataLabel.setPrefWidth(200);
             emptyDataLabel.setPrefHeight(100);
             emptyDataLabel.setWrapText(true);
-            assignmentContainer.getChildren().add(emptyDataLabel);
+            assignmentCards.add(emptyDataLabel);
         } else {
+            Color changeColor = Color.web("#ede7f6");
             for(StudentAssignment assignment : data) {
                 Parent card = FXMLLoader.load(getClass().getResource("/assignment_card.fxml"));
+                HBox cardBox = (HBox) card.lookup("#assignmentCard");
                 Label assignmentOpening = (Label) card.lookup("#textAssignmentCard");
                 Label assignmentTitle = (Label) card.lookup("#cardAssignmentTitle");
                 Label startDateLabel = (Label) card.lookup("#startDateLabel");
                 Label endDateLabel = (Label) card.lookup("#endDateLabel");
+
+                Color originalBGColor = (Color) cardBox.getBackground().getFills().get(0).getFill();
+
+                FillTransition fillTransition = new FillTransition(Duration.seconds(3), cardBox.getShape(), originalBGColor, changeColor);
+                FillTransition oppositeTransition = new FillTransition(Duration.seconds(3), cardBox.getShape(), changeColor, originalBGColor);
 
                 assignmentOpening.setText(String.format(assignmentOpening.getText(), studentName));
                 assignmentTitle.setText(String.format(assignmentTitle.getText(), assignment.getFullName()));
                 startDateLabel.setText(String.format(startDateLabel.getText(), assignment.getStartDate()));
                 endDateLabel.setText(String.format(endDateLabel.getText(), assignment.getEndDate()));
 
-                assignmentContainer.getChildren().add(card);
+                card.setOnMousePressed(e -> {
+                    fillTransition.playFromStart();
+                });
+
+                // just some fancy transitions on the BG color when the button is pressed ^^
+                // then I just get rid of the text to be formatted with the actual text of the assignment
+
+                card.setOnMouseReleased(e -> {
+                    oppositeTransition.playFromStart();
+                    openAssignmentDialog(assignment);
+                });
+
+                assignmentCards.add(card);
             }
         }
+        return assignmentCards;
+    }
+
+    @FXML
+    public void onAnnounce(ActionEvent ae) {
+        String menuStyle = "-fx-font-family: Charter, Arial, Times, sans-serif; -fx-text-fill: #607d8b";
+        MenuItem ctxCreateAssign = new MenuItem("Create Assignment!");
+        ctxCreateAssign.setStyle(menuStyle);
+        ctxCreateAssign.setOnAction(ev -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/create_assignment_page.fxml"));
+                Parent assignScreen = loader.load();
+
+                CreateAssignmentDialog assignDialog = loader.getController();
+                // note that in this case studentName will be the teacher's name because the only one
+                // accessing this menu item will be the teacher
+                assignDialog.connectAssignmentTable(studentName);
+
+                Scene assignDialogScene = new Scene(assignScreen, 300, 400, true);
+                assignDialogScene.getStylesheets().add(getClass().getResource("/assignment_styles.css").toExternalForm());
+                Stage assignDialogStage = new Stage();
+                assignDialogStage.setScene(assignDialogScene);
+                assignDialogStage.setTitle("Create An Assignment!");
+                assignDialogStage.initOwner(introText.getScene().getWindow());
+
+                assignDialogStage.showAndWait();
+
+
+
+                if(assignDialog.getCurAssignment() != null &&
+                        !StudentAssignment.assignmentContains(data, assignDialog.getCurAssignment())) {
+                    generalAssignments.add(assignDialog.getCurAssignment());
+                }
+
+            } catch(IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        MenuItem ctxCreateInquiry = new MenuItem("Make Announcement!");
+        ctxCreateInquiry.setStyle(menuStyle);
+        ctxCreateInquiry.setOnAction(ev -> {
+            TextInputDialog textDialog = new TextInputDialog();
+
+        });
     }
 
     @FXML
@@ -106,102 +186,30 @@ public class RevampedAssignmentScreen {
         bgTransition.playFromStart();
     }
 
-    /**
-     * Backs up all student assignments into their appropriate storage folder given by the student's name.
-     * The student assignments will be saved in a LIST format so ensure that you read the assignments by
-     * reading a list!
-     *
-     * @param assignments The list of student assignments to be saved for a particular student
-     * @param studentName The student's name (the name of the student's folder)
-     */
-    private void backUpAssignments(List<StudentAssignment> assignments, String studentName) {
+    private void openAssignmentDialog(StudentAssignment assignment) {
         try {
-            Path assignmentsLoc =
-                    Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                            "storage", "assignments.dat");
+            // more lookups but this time of the assignment dialog before it gets loaded in response
+            // to wanting to open the assignment.
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/assignment_dialog.fxml"));
+            Parent assignDialog = loader.load();
+            
+            MainAssignmentScreen assignmentScreen = loader.getController();
+            assignmentScreen.formatAssignmentText(assignment);
 
-            if (assignments.stream().anyMatch((assign) ->
-                    assign.getStatus() == StudentAssignment.AssignmentStatus.UPLOADED ||
-                            assign.getStatus() == StudentAssignment.AssignmentStatus.LATE)) {
-                assignmentsLoc = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                        "storage", studentName, "studentAssignments.dat");
-            }
+            Scene dialogScene = new Scene(assignDialog, 300, 300);
+            dialogScene.getStylesheets().add(getClass().getResource("/assignment_styles.css").toExternalForm());
+            Stage dialogStage = new Stage();
+            dialogStage.setScene(dialogScene);
+            dialogStage.setTitle(String.format("'%s' Assignment", assignment.getFullName()));
+            dialogStage.setResizable(true);
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(introText.getScene().getWindow());
+            dialogStage.show();
 
-            if (!Files.exists(assignmentsLoc)) Files.createFile(assignmentsLoc);
-
-            final Path finalAssignmentsLoc = assignmentsLoc;
-            assignments.forEach(assign -> assign.setAssignmentPath(finalAssignmentsLoc.toString()));
-
-            List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
-                    assignments.parallelStream()
-                            .map(StudentAssignment.SerializableStudentAssignment::new)
-                            .collect(Collectors.toList());
-
-            try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(assignmentsLoc,
-                    StandardOpenOption.WRITE))) {
-                oos.writeObject(serializableStudentAssignments);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch(IOException ex) {
+            ex.printStackTrace();
         }
     }
 
-    /**
-     * This method retrieves all of the student assignments from the respective student folder as indicated by
-     * the studentName property specified in the method.
-     * Make sure to read the assignments from a LIST rather than individually as they are inputted as a LIST
-     * in the above method.
-     *
-     * @param studentName The student name and name of the folder to retrieve the student names from.
-     * @return A list of all of the student assignments that the student specified
-     */
-    @SuppressWarnings("unchecked")
-    protected static List<StudentAssignment> obtainAssignments(String studentName) {
-        // ENSURE that the general assignments file are read first AND then read the student assignments!
-        List<StudentAssignment> assignments = new LinkedList<>();
-
-        // Read both the student assignments and the general assignments path to see current assignments
-        // and new teacher assignments
-
-        // Only read a path if it exists (the studentAssignments will not exist in the beginning)
-        Path[] allAssignmentPaths = new Path[]{Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                "storage", studentName, "studentAssignments.dat"),
-                Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                        "storage", "assignments.dat")};
-        List<String> retrievedAssignNames = new LinkedList<>();
-
-        for (Path assignmentPath : allAssignmentPaths) {
-            if (Files.exists(assignmentPath)) {
-                try (ObjectInputStream ois =
-                             new ObjectInputStream(Files.newInputStream(assignmentPath, StandardOpenOption.READ))) {
-                    if (assignmentPath.getFileName().toString().equals("studentAssignments.dat")) {
-                        // I know what I am doing with these casts
-                        List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
-                                (List<StudentAssignment.SerializableStudentAssignment>) ois.readObject();
-                        assignments.addAll(serializableStudentAssignments.parallelStream()
-                                .map(StudentAssignment::new).filter(assign -> {
-                                    LocalDate expireDate = assign.getEndDate().plus(AssignmentTeacherScreen.EXPIRY_PERIOD);
-                                    return expireDate.isEqual(LocalDate.now()) || expireDate.isAfter(LocalDate.now());
-                                }).collect(Collectors.toList()));
-                        assignments.forEach(assign -> retrievedAssignNames.add(assign.getFullName()));
-                    } else { // assignments.dat
-                        List<Assignment.SerializableAssignment> serializableAssignments =
-                                (List<Assignment.SerializableAssignment>) ois.readObject();
-                        assignments.addAll(serializableAssignments.parallelStream().map(StudentAssignment::new)
-                                .filter(assign2 -> {
-                                    LocalDate assignExpireDate = assign2.getEndDate().plus(AssignmentTeacherScreen.EXPIRY_PERIOD);
-                                    return (assignExpireDate.isEqual(LocalDate.now()) || assignExpireDate.isAfter(LocalDate.now()))
-                                            && !retrievedAssignNames.contains(assign2.getFullName());
-                                })
-                                .collect(Collectors.toList()));
-                    }
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return assignments;
-    }
 
 }

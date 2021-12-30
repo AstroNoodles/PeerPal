@@ -51,7 +51,17 @@ public class Assignment {
         this.endDate = new SimpleObjectProperty<>(serAssign.serEndDate);
         this.spellSettings = serAssign.serSettings;
         assignmentCount++;
+    }
 
+    public Assignment(Assignment other) {
+        this.fullName = new SimpleStringProperty(other.getFullName());
+        this.instructorName = new SimpleStringProperty(other.getInstructorName());
+        this.assignDesc = new SimpleStringProperty(other.getDescription());
+        this.assignExtension = new SimpleStringProperty(other.getFileExtension());
+        this.startDate = new SimpleObjectProperty<>(other.getStartDate());
+        this.endDate = new SimpleObjectProperty<>(other.getEndDate());
+        this.spellSettings = other.spellSettings;
+        assignmentCount++;
     }
 
     // Getters and Setters Below

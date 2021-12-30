@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AssignmentDialog {
+public class CreateAssignmentDialog {
 
     @FXML
     private TextField assignName;

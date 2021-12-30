@@ -1,5 +1,6 @@
 package com.github.astronoodles.peerpal;
 
+import com.github.astronoodles.peerpal.base.AssignmentIO;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class CloudAssignmentParser {
         try(DirectoryStream<Path> dstream = Files.newDirectoryStream(storagePath, Files::isDirectory)) {
             for(Path entry : dstream) {
                 String studentName = entry.getFileName().toString();
-                List<StudentAssignment> assignments = AssignmentScreen.obtainAssignments(studentName);
+                List<StudentAssignment> assignments = AssignmentIO.obtainAssignments(studentName);
                 studentAssignments.put(studentName, assignments);
                 // NOTE: This might be a HUGE Bottleneck
             }

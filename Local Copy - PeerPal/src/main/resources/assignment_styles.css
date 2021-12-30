@@ -64,3 +64,25 @@ all interactions with assignments.
     -fx-text-fill: #ff00ff;
     -fx-font-family: Helvetica, Times, sans-serif;
 }
+
+.announceButton {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e53935;
+    -fx-border-color: black;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-font-family: Charter, Arial, Times, sans-serif;
+}
+
+#dialogDateBox {
+    -fx-border-style: none none dashed none;
+    -fx-border-color: grey;
+    -fx-border-width: 1;
+}
+
+.dialogBox {
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-border-radius: 1;
+}

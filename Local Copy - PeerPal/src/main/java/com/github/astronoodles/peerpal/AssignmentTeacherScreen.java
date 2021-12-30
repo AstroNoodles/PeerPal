@@ -1,8 +1,9 @@
 package com.github.astronoodles.peerpal;
 
 import com.github.astronoodles.peerpal.base.Assignment;
+import com.github.astronoodles.peerpal.base.AssignmentIO;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
-import com.github.astronoodles.peerpal.dialogs.AssignmentDialog;
+import com.github.astronoodles.peerpal.dialogs.CreateAssignmentDialog;
 import com.github.astronoodles.peerpal.dialogs.StudentAssignmentGrid;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -78,11 +79,11 @@ public class AssignmentTeacherScreen {
 
         createAssign.setOnAction(e -> {
             try {
-                FXMLLoader dialogLoader = new FXMLLoader(getClass().getResource("/assignment_page.fxml"));
+                FXMLLoader dialogLoader = new FXMLLoader(getClass().getResource("/create_assignment_page.fxml"));
 
                 Parent root = dialogLoader.load();
 
-                AssignmentDialog assignDialog = dialogLoader.getController();
+                CreateAssignmentDialog assignDialog = dialogLoader.getController();
                 assignDialog.connectAssignmentTable(name);
 
                 Scene scene = new Scene(root, 500, 550);
@@ -136,7 +137,7 @@ public class AssignmentTeacherScreen {
             });
             return row;
         });
-        data.addAll(AssignmentScreen.obtainAssignments(name));
+        data.addAll(AssignmentIO.obtainAssignments(name));
         //clearUpAssignments();
 
         System.out.println("Queried Data: " + data);
@@ -237,30 +238,7 @@ public class AssignmentTeacherScreen {
         return assignments;
     }
 
-    /**
-     * Backs up all assignments that the teacher has created to the assignments.dat
-     * It saves these assignments in a LIST format so all reads from this folder must be done
-     * with the consideration that the assignments are saved in a list.
-     */
-    protected void backUpAssignments() {
-        try {
-            Path assignmentsLoc =
-                    Paths.get("./src/main/java/com/github/astronoodles/peerpal",
-                            "storage", "assignments.dat");
 
-            if (!Files.exists(assignmentsLoc)) Files.createFile(assignmentsLoc);
-            List<Assignment.SerializableAssignment> serializableAssignments =
-                    data.parallelStream().map(Assignment.SerializableAssignment::new).collect(Collectors.toList());
-
-            try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(assignmentsLoc,
-                    StandardOpenOption.WRITE))) {
-                oos.writeObject(serializableAssignments);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Clears all assignments (@link {AssignmentTeacherScreen#EXPIRY_PERIOD} days after the maximum end date of the assignments.
