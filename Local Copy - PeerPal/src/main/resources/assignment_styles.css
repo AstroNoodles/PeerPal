@@ -86,3 +86,9 @@ all interactions with assignments.
     -fx-border-color: black;
     -fx-border-radius: 1;
 }
+
+#cardAssignmentText {
+    -fx-font-size: 13;
+    -fx-font-weight: #757575;
+    -fx-font-family: Arial, Times, sans-serif;
+}

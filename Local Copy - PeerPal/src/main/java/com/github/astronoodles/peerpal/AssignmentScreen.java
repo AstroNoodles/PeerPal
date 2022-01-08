@@ -1,6 +1,5 @@
 package com.github.astronoodles.peerpal;
 
-import com.github.astronoodles.peerpal.base.Assignment;
 import com.github.astronoodles.peerpal.base.LanguageTextEditor;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 import com.github.astronoodles.peerpal.dialogs.CreateAssignmentDialog;
@@ -26,14 +25,9 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class AssignmentScreen {
 
@@ -146,7 +140,7 @@ public class AssignmentScreen {
         GridPane.setHgrow(welcome, Priority.SOMETIMES);
 
         ImageView refreshIcon = new ImageView(
-                new Image(AssignmentScreen.class.getResourceAsStream("/refresh.png"), 50, 50, true, true));
+                new Image(AssignmentScreen.class.getResourceAsStream("/icons/refresh.png"), 50, 50, true, true));
         Button refreshButton = new Button("", refreshIcon);
         refreshButton.setPrefWidth(30);
         refreshButton.setTooltip(new Tooltip("Click here to refresh current assignments."));
@@ -182,7 +176,7 @@ public class AssignmentScreen {
             refreshText.setVisible(true);
 
             CloudStorageConfig config = new CloudStorageConfig();
-            if (config.isCloudStorageFull()) config.downloadCloudStorage();
+            if (config.isCloudStorageAvailable()) config.downloadCloudStorage();
 
             bgTransition.playFromStart();
         });
@@ -244,7 +238,7 @@ public class AssignmentScreen {
                 try {
                     Path userLoc = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
                             "storage", name, String.format("%s.%s",
-                                    curAssignment.getFullName().trim(), curAssignment.getFileExtension()));
+                                    curAssignment.getAssignmentName().trim(), curAssignment.getFileExtension()));
 
                     if (!Files.exists(userLoc)) {
                         Files.createDirectories(userLoc.getParent());

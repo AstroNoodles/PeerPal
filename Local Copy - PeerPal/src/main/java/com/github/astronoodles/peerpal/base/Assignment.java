@@ -1,116 +1,98 @@
 package com.github.astronoodles.peerpal.base;
 
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Assignment {
+public class Assignment implements Serializable {
 
-    protected final SimpleStringProperty fullName;
-    protected final SimpleStringProperty assignDesc;
-    protected final SimpleStringProperty instructorName;
-    protected final SimpleStringProperty assignExtension;
-    protected final SimpleObjectProperty<LocalDate> startDate;
-    protected final SimpleObjectProperty<LocalDate> endDate;
+    protected final String assignmentName;
+    protected final String assignDesc;
+    protected final String instructorName;
+    protected final String assignExtension;
+    protected final LocalDate startDate;
+    protected final LocalDate endDate;
+    protected final AssignmentType assignType;
 
     protected HashMap<String, Boolean> spellSettings;
     protected static int assignmentCount = 0;
 
     public Assignment(String name, String instructorName, String assignExtension,
                       LocalDate startDate, LocalDate endDate) {
-        this.fullName = new SimpleStringProperty(name);
-        this.instructorName = new SimpleStringProperty(instructorName);
-        this.assignDesc = new SimpleStringProperty("");
-        this.assignExtension = new SimpleStringProperty(assignExtension);
-        this.startDate = new SimpleObjectProperty<>(startDate);
-        this.endDate = new SimpleObjectProperty<>(endDate);
+        this.assignmentName = name;
+        this.instructorName = instructorName;
+        this.assignDesc = "";
+        this.assignExtension = assignExtension;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.assignType = AssignmentType.NORMAL;
+        assignmentCount++;
+    }
+
+    public Assignment(AssignmentType type, String name, String instructorName, String assignDesc, String assignExtension,
+                      LocalDate startDate, LocalDate endDate) {
+        this.assignmentName = name;
+        this.instructorName = instructorName;
+        this.assignDesc = assignDesc;
+        this.assignExtension = assignExtension;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.assignType = type;
         assignmentCount++;
     }
 
     public Assignment(String name, String instructorName, String assignDesc, String assignExtension,
                       LocalDate startDate, LocalDate endDate) {
-        this.fullName = new SimpleStringProperty(name);
-        this.instructorName = new SimpleStringProperty(instructorName);
-        this.assignDesc = new SimpleStringProperty(assignDesc);
-        this.assignExtension = new SimpleStringProperty(assignExtension);
-        this.startDate = new SimpleObjectProperty<>(startDate);
-        this.endDate = new SimpleObjectProperty<>(endDate);
-        assignmentCount++;
-    }
-
-    public Assignment(SerializableAssignment serAssign) {
-        this.fullName = new SimpleStringProperty(serAssign.serFullName);
-        this.instructorName = new SimpleStringProperty(serAssign.serInstructorName);
-        this.assignDesc = new SimpleStringProperty(serAssign.serDesc);
-        this.assignExtension = new SimpleStringProperty(serAssign.serExtension);
-        this.startDate = new SimpleObjectProperty<>(serAssign.serStartDate);
-        this.endDate = new SimpleObjectProperty<>(serAssign.serEndDate);
-        this.spellSettings = serAssign.serSettings;
+        this.assignType = AssignmentType.NORMAL;
+        this.assignmentName = name;
+        this.instructorName = instructorName;
+        this.assignDesc = assignDesc;
+        this.assignExtension = assignExtension;
+        this.startDate = startDate;
+        this.endDate = endDate;
         assignmentCount++;
     }
 
     public Assignment(Assignment other) {
-        this.fullName = new SimpleStringProperty(other.getFullName());
-        this.instructorName = new SimpleStringProperty(other.getInstructorName());
-        this.assignDesc = new SimpleStringProperty(other.getDescription());
-        this.assignExtension = new SimpleStringProperty(other.getFileExtension());
-        this.startDate = new SimpleObjectProperty<>(other.getStartDate());
-        this.endDate = new SimpleObjectProperty<>(other.getEndDate());
+        this.assignmentName = other.getAssignmentName();
+        this.instructorName = other.getInstructorName();
+        this.assignDesc = other.getDescription();
+        this.assignExtension = other.getFileExtension();
+        this.startDate = other.getStartDate();
+        this.endDate = other.getEndDate();
+        this.assignType = other.getAssignmentType();
         this.spellSettings = other.spellSettings;
         assignmentCount++;
     }
 
     // Getters and Setters Below
 
-    public final String getFullName() {
-        return fullName.get();
+    public final String getAssignmentName() {
+        return assignmentName;
     }
 
     public final String getInstructorName() {
-        return instructorName.get();
-    }
-
-    public final String getDescription() {
-        return assignDesc.get();
-    }
-
-    public final String getFileExtension() {
-        return assignExtension.get();
-    }
-
-    public LocalDate getStartDate() {
-        return startDate.get();
-    }
-
-    public LocalDate getEndDate() {
-        return endDate.get();
-    }
-
-    public final SimpleStringProperty fullNameProperty() {
-        return fullName;
-    }
-
-    public final SimpleStringProperty instructorNameProperty() {
         return instructorName;
     }
 
-    public final SimpleStringProperty descriptionProperty() {
+    public final String getDescription() {
         return assignDesc;
     }
 
-    public final SimpleStringProperty extensionProperty() {
+    public final AssignmentType getAssignmentType() {
+        return assignType;
+    }
+
+    public final String getFileExtension() {
         return assignExtension;
     }
 
-    public final SimpleObjectProperty<LocalDate> startDateProperty() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public final SimpleObjectProperty<LocalDate> endDateProperty() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
@@ -129,7 +111,7 @@ public class Assignment {
 
         Assignment otherAssign = (Assignment) other;
 
-        return Objects.equals(getFullName(), otherAssign.getFullName()) &&
+        return Objects.equals(getAssignmentName(), otherAssign.getAssignmentName()) &&
                 Objects.equals(getDescription(), otherAssign.getDescription()) &&
                 Objects.equals(getInstructorName(), otherAssign.getInstructorName()) &&
                 Objects.equals(getFileExtension(), otherAssign.getFileExtension()) &&
@@ -138,40 +120,23 @@ public class Assignment {
     }
 
     public boolean copyOf(Assignment other) {
-        return Objects.equals(getFullName(), other.getFullName());
+        return Objects.equals(getAssignmentName(), other.getAssignmentName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFullName(), getDescription(), getInstructorName(),
+        return Objects.hash(getAssignmentName(), getDescription(), getInstructorName(),
                 getFileExtension(), getStartDate(), getEndDate());
     }
 
     @Override
     public String toString() {
-        return String.format("%s.%s (%s)", getFullName(), getFileExtension(), getInstructorName());
+        return String.format("%s.%s (%s)", getAssignmentName(), getFileExtension(), getInstructorName());
     }
 
-    public static class SerializableAssignment implements Serializable {
-        protected final String serFullName;
-        protected final String serInstructorName;
-        protected final String serDesc;
-        protected final String serExtension;
-        protected final LocalDate serStartDate;
-        protected final LocalDate serEndDate;
-        protected final HashMap<String, Boolean> serSettings;
-        private static final long serialVersionUID = 12345678912345L;
-
-        public SerializableAssignment(Assignment assign) {
-            serFullName = assign.getFullName();
-            serInstructorName = assign.getInstructorName();
-            serDesc = assign.getDescription();
-            serExtension = assign.getFileExtension();
-            serStartDate = assign.getStartDate();
-            serEndDate = assign.getEndDate();
-            serSettings = assign.getSpellSettings();
-        }
-
+    public enum AssignmentType {
+        NORMAL, INFORMATIONAL, UPLOAD
     }
+
 
 }

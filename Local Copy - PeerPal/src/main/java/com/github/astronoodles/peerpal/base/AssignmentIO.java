@@ -28,12 +28,10 @@ public class AssignmentIO {
                             "storage", "assignments.dat");
 
             if (!Files.exists(assignmentsLoc)) Files.createFile(assignmentsLoc);
-            List<Assignment.SerializableAssignment> serializableAssignments =
-                    generalAssignments.parallelStream().map(Assignment.SerializableAssignment::new).collect(Collectors.toList());
 
             try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(assignmentsLoc,
                     StandardOpenOption.WRITE))) {
-                oos.writeObject(serializableAssignments);
+                oos.writeObject(generalAssignments);
             }
 
         } catch (IOException e) {
@@ -67,14 +65,9 @@ public class AssignmentIO {
             final Path finalAssignmentsLoc = assignmentsLoc;
             assignments.forEach(assign -> assign.setAssignmentPath(finalAssignmentsLoc.toString()));
 
-            List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
-                    assignments.parallelStream()
-                            .map(StudentAssignment.SerializableStudentAssignment::new)
-                            .collect(Collectors.toList());
-
             try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(assignmentsLoc,
                     StandardOpenOption.WRITE))) {
-                oos.writeObject(serializableStudentAssignments);
+                oos.writeObject(assignments);
             }
 
         } catch (IOException e) {
@@ -112,22 +105,21 @@ public class AssignmentIO {
                              new ObjectInputStream(Files.newInputStream(assignmentPath, StandardOpenOption.READ))) {
                     if (assignmentPath.getFileName().toString().equals("studentAssignments.dat")) {
                         // I know what I am doing with these casts
-                        List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
-                                (List<StudentAssignment.SerializableStudentAssignment>) ois.readObject();
-                        assignments.addAll(serializableStudentAssignments.parallelStream()
-                                .map(StudentAssignment::new).filter(assign -> {
+                        List<StudentAssignment> savedStudentAssignments =
+                                (List<StudentAssignment>) ois.readObject();
+                        assignments.addAll(savedStudentAssignments.parallelStream().filter(assign -> {
                                     LocalDate expireDate = assign.getEndDate().plus(AssignmentTeacherScreen.EXPIRY_PERIOD);
                                     return expireDate.isEqual(LocalDate.now()) || expireDate.isAfter(LocalDate.now());
                                 }).collect(Collectors.toList()));
-                        assignments.forEach(assign -> retrievedAssignNames.add(assign.getFullName()));
+                        assignments.forEach(assign -> retrievedAssignNames.add(assign.getAssignmentName()));
                     } else { // assignments.dat
-                        List<Assignment.SerializableAssignment> serializableAssignments =
-                                (List<Assignment.SerializableAssignment>) ois.readObject();
-                        assignments.addAll(serializableAssignments.parallelStream().map(StudentAssignment::new)
+                        List<Assignment> savedAssignments =
+                                (List<Assignment>) ois.readObject();
+                        assignments.addAll(savedAssignments.parallelStream().map(StudentAssignment::new)
                                 .filter(assign2 -> {
                                     LocalDate assignExpireDate = assign2.getEndDate().plus(AssignmentTeacherScreen.EXPIRY_PERIOD);
                                     return (assignExpireDate.isEqual(LocalDate.now()) || assignExpireDate.isAfter(LocalDate.now()))
-                                            && !retrievedAssignNames.contains(assign2.getFullName());
+                                            && !retrievedAssignNames.contains(assign2.getAssignmentName());
                                 })
                                 .collect(Collectors.toList()));
                     }

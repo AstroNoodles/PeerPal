@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.input.KeyCodeCombination?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.github.astronoodles.peerpal.LoginScreen"
-      spacing="5" prefHeight="800" prefWidth="600">
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="800" prefWidth="600" spacing="5" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.LoginScreen">
 
     <MenuBar onKeyPressed="#handleShortcuts">
         <Menu text="File">
-            <MenuItem text="About" onAction="#showAboutDialog"/>
+            <MenuItem onAction="#showAboutDialog" text="About" />
         </Menu>
         <Menu text="Teacher">
-            <MenuItem text="Generate Class Code" onAction="#createClassCode">
+            <MenuItem onAction="#createClassCode" text="Generate Class Code">
                 <accelerator>
-                    <KeyCodeCombination code="C" shift="DOWN" control="ANY" shortcut="DOWN" meta="ANY" alt="ANY" />
+                    <KeyCodeCombination alt="ANY" code="C" control="ANY" meta="ANY" shift="DOWN" shortcut="DOWN" />
                 </accelerator>
             </MenuItem>
         </Menu>
@@ -25,90 +39,79 @@
     <TabPane fx:id="tabPane" prefHeight="700" prefWidth="600" tabClosingPolicy="UNAVAILABLE">
 
         <Tab fx:id="signUpTab" text="Sign Up">
-            <fx:include prefHeight="600" prefWidth="800" source="sign_up_screen.fxml"/>
+            <fx:include prefHeight="600" prefWidth="800" source="sign_up_screen.fxml" />
         </Tab>
         <Tab onSelectionChanged="#onLogin" text="Login">
-            <VBox prefWidth="600" prefHeight="600" spacing="5" styleClass="loginOther">
+            <VBox prefHeight="600" prefWidth="600" spacing="5" styleClass="loginOther">
                 <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
-                    <ImageView fitHeight="200" fitWidth="200" preserveRatio="true" pickOnBounds="true">
-                        <Image url="@/peerpal.png"/>
+                    <ImageView fitHeight="200" fitWidth="200" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@peerpal.png" />
                     </ImageView>
                 </HBox>
 
-                <Label styleClass="title_text" prefHeight="30" minWidth="500" prefWidth="900"
-                       text="Login with Your PeerPal Account!">
+                <Label minWidth="500" prefHeight="30" prefWidth="900" styleClass="title_text" text="Login with Your PeerPal Account!">
                     <padding>
-                        <Insets top="10" left="10"/>
+                        <Insets left="10" top="10" />
                     </padding>
                 </Label>
                 <GridPane hgap="10" prefHeight="300" prefWidth="600" style="-fx-background-color: #80DEEA" vgap="10">
-                    <Label id="login" prefWidth="100" prefHeight="20"
-                           style="-fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;" alignment="CENTER"
-                           text="Login:" textAlignment="CENTER" underline="true" GridPane.columnIndex="1"
-                           GridPane.rowIndex="2"/>
-                    <Label styleClass="login_plain" text="              Full Name:" GridPane.columnIndex="1"
-                           GridPane.rowIndex="3"/>
-                    <TextField fx:id="username" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
-                    <Label styleClass="login_plain" text="              Password:" GridPane.columnIndex="1"
-                           GridPane.rowIndex="4"/>
-                    <PasswordField fx:id="pwd" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+                    <Label id="login" alignment="CENTER" prefHeight="20" prefWidth="100" style="-fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;" text="Login:" textAlignment="CENTER" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label styleClass="login_plain" text="              Full Name:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <TextField fx:id="username" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                    <Label styleClass="login_plain" text="              Password:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    <PasswordField fx:id="pwd" GridPane.columnIndex="2" GridPane.rowIndex="4" />
 
-                    <Label styleClass="login_plain" text="             Class Code:" GridPane.columnIndex="1"
-                           GridPane.rowIndex="5"/>
-                    <TextField fx:id="class_code" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
-                    <Button id="enter" fx:id="enter" onAction="#enter" prefHeight="30" prefWidth="200"
-                            styleClass="login_plain" text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
+                    <Label styleClass="login_plain" text="             Class Code:" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    <TextField fx:id="class_code" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                    <Button id="enter" fx:id="enter" onAction="#enter" prefHeight="30" prefWidth="200" styleClass="login_plain" text="Submit" GridPane.columnIndex="2" GridPane.rowIndex="6" />
 
                     <columnConstraints>
                         <ColumnConstraints />
-                        <ColumnConstraints percentWidth="25" hgrow="SOMETIMES"/>
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="30"/>
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="25" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="30" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
                     </rowConstraints>
                 </GridPane>
-                <Separator styleClass="divider" prefWidth="Infinity"/>
+                <Separator prefWidth="Infinity" styleClass="divider" />
 
-                <HBox spacing="10" prefWidth="150" prefHeight="150">
+                <HBox prefHeight="150" prefWidth="150" spacing="10">
                     <padding>
-                        <Insets left="10" right="10" bottom="2"/>
+                        <Insets bottom="2" left="10" right="10" />
                     </padding>
-                    <StackPane styleClass="avatarPane" maxHeight="200" maxWidth="200" HBox.hgrow="SOMETIMES">
+                    <StackPane maxHeight="200" maxWidth="200" styleClass="avatarPane" HBox.hgrow="SOMETIMES">
                         <ImageView fx:id="changedAvatar" fitHeight="128" fitWidth="128" preserveRatio="true">
-                            <Image url="@/avatars/D2.png"/>
+                            <Image url="@avatars/D2.png" />
                         </ImageView>
                     </StackPane>
-                    <Label id="avatarSpeak" fx:id="avatarText" wrapText="true" prefWidth="500" prefHeight="200" HBox.hgrow="ALWAYS"
-                           text="Hello there! I'm your avatar and I'll be helping you out with learning some of the kinks of the language you are learning today!! Don't fret if you are a beginner as I'll assist you the best I know how.">
+                    <Label id="avatarSpeak" fx:id="avatarText" prefHeight="200" prefWidth="500" text="Hello there! I'm your avatar and I'll be helping you out with learning some of the kinks of the language you are learning today!! Don't fret if you are a beginner as I'll assist you the best I know how." wrapText="true" HBox.hgrow="ALWAYS">
                         <padding>
-                            <Insets left="20" top="4"/>
+                            <Insets left="20" top="4" />
                         </padding>
                     </Label>
                 </HBox>
-                    <Label styleClass="login_plain" wrapText="true" prefWidth="500" prefHeight="200" VBox.vgrow="ALWAYS"
-                           text="If your teacher has not created a class code for your class yet, please ask him or her to create it to get started with your PeerPal experience!">
+                    <Label prefHeight="200" prefWidth="500" styleClass="login_plain" text="If your teacher has not created a class code for your class yet, please ask him or her to create it to get started with your PeerPal experience!" wrapText="true" VBox.vgrow="ALWAYS">
                     <padding>
-                        <Insets left="10"/>
+                        <Insets left="10" />
                     </padding>
                 </Label>
-                <HBox spacing="10" prefHeight="150" prefWidth="150">
-                    <Label styleClass="login_plain" style="-fx-font-size: 10" text="Don't have an account?:" HBox.hgrow="ALWAYS">
+                <HBox prefHeight="150" prefWidth="150" spacing="10">
+                    <Label style="-fx-font-size: 10" styleClass="login_plain" text="Don't have an account?:" HBox.hgrow="ALWAYS">
                         <padding>
-                            <Insets left="10" top="10"/>
+                            <Insets left="10" top="10" />
                         </padding>
                     </Label>
-                    <Button id="sign_up" onAction="#goToPrevTab" styleClass="login_plain" style="-fx-font-weight: bold"
-                            text="Go To Previous Tab"/>
+                    <Button id="sign_up" onAction="#goToPrevTab" style="-fx-font-weight: bold" styleClass="login_plain" text="Go To Previous Tab" />
                 </HBox>
             </VBox>
 

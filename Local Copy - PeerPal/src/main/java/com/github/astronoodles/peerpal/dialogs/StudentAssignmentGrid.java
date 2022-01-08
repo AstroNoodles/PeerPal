@@ -35,7 +35,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class StudentAssignmentGrid {
     private final List<StudentAssignment> assignments;
@@ -171,7 +170,7 @@ public class StudentAssignmentGrid {
         try (DirectoryStream<Path> dstream = Files.newDirectoryStream(assignmentsLoc,
                 String.format("*.%s", curAssignment.getFileExtension()))) {
             for (Path entry : dstream) {
-                if (entry.getFileName().toString().contains(curAssignment.getFullName())) {
+                if (entry.getFileName().toString().contains(curAssignment.getAssignmentName())) {
                     srcPath = entry;
                     break;
                 }

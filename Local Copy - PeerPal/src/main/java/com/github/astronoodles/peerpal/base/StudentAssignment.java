@@ -10,59 +10,44 @@ import java.util.Objects;
 
 public class StudentAssignment extends Assignment {
 
-    private final SimpleFloatProperty grade;
-    private final SimpleObjectProperty<AssignmentStatus> status;
-    private final SimpleStringProperty feedback;
+    private double grade;
+    private AssignmentStatus status;
+    private String feedback;
     private String assignPath;
 
     public StudentAssignment(Assignment otherAssign, String assignPath, float grade, String feedback) {
-        super(otherAssign.getFullName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
+        super(otherAssign.getAssignmentName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
                 otherAssign.getDescription(), otherAssign.getStartDate(), otherAssign.getEndDate());
-        this.grade = new SimpleFloatProperty(grade);
-        this.status = new SimpleObjectProperty<>(AssignmentStatus.MISSING);
-        this.feedback = new SimpleStringProperty(feedback);
+        this.grade = grade;
+        this.status = AssignmentStatus.MISSING;
+        this.feedback = feedback;
         this.assignPath = assignPath;
     }
 
     public StudentAssignment(Assignment otherAssign, String assignPath) {
-        super(otherAssign.getFullName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
+        super(otherAssign.getAssignmentName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
                 otherAssign.getDescription(), otherAssign.getStartDate(), otherAssign.getEndDate());
-        this.grade = new SimpleFloatProperty(0);
-        this.status = new SimpleObjectProperty<>(AssignmentStatus.MISSING);
-        this.feedback = new SimpleStringProperty("");
+        this.grade = 0;
+        this.status = AssignmentStatus.MISSING;
+        this.feedback = "";
         this.assignPath = assignPath;
     }
 
     public StudentAssignment(Assignment otherAssign, String assignPath, float grade, String feedback,
                              AssignmentStatus status) {
-        super(otherAssign.getFullName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
+        super(otherAssign.getAssignmentName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
                 otherAssign.getDescription(), otherAssign.getStartDate(), otherAssign.getEndDate());
-        this.grade = new SimpleFloatProperty(grade);
-        this.status = new SimpleObjectProperty<>(status);
-        this.feedback = new SimpleStringProperty(feedback);
+        this.grade = grade;
+        this.status = status;
+        this.feedback = feedback;
         this.assignPath = assignPath;
-    }
-
-    public StudentAssignment(SerializableStudentAssignment serAssign) {
-        super(serAssign);
-        this.grade = new SimpleFloatProperty(serAssign.serGrade);
-        this.status = new SimpleObjectProperty<>(serAssign.serStatus);
-        this.feedback = new SimpleStringProperty(serAssign.assignFeedback);
-        this.assignPath = serAssign.serAssignPath;
-    }
-
-    public StudentAssignment(SerializableAssignment serAssign) {
-        super(serAssign);
-        this.grade = new SimpleFloatProperty(0);
-        this.status = new SimpleObjectProperty<>(AssignmentStatus.MISSING);
-        this.feedback = new SimpleStringProperty("");
     }
 
     public StudentAssignment(Assignment baseAssign) {
         super(baseAssign);
-        this.grade = new SimpleFloatProperty(0);
-        this.status = new SimpleObjectProperty<>(AssignmentStatus.MISSING);
-        this.feedback = new SimpleStringProperty("");
+        this.grade = 0;
+        this.status = AssignmentStatus.MISSING;
+        this.feedback = "";
     }
 
     @Override
@@ -78,7 +63,7 @@ public class StudentAssignment extends Assignment {
     }
 
     public boolean assignmentEquals(Assignment other) {
-        return Objects.equals(getFullName(), other.getFullName()) &&
+        return Objects.equals(getAssignmentName(), other.getAssignmentName()) &&
                 Objects.equals(getDescription(), other.getDescription()) &&
                 Objects.equals(getInstructorName(), other.getInstructorName()) &&
                 Objects.equals(getFileExtension(), other.getFileExtension()) &&
@@ -98,31 +83,31 @@ public class StudentAssignment extends Assignment {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFullName(), getDescription(), getInstructorName(),
+        return Objects.hash(getAssignmentName(), getDescription(), getInstructorName(),
                 getFileExtension(), getStartDate(), getEndDate(), getGrade(), getAssignmentFeedback(),
                 getStatus(), assignPath);
     }
 
     @Override
     public String toString() {
-        return String.format("%s.%s (%f) [%s]", getFullName(), getFileExtension(), getGrade(), getStatus());
+        return String.format("%s.%s (%f) [%s]", getAssignmentName(), getFileExtension(), getGrade(), getStatus());
     }
 
     // Getters and Setters Below
-    public float getGrade() {
-        return grade.get();
+    public double getGrade() {
+        return grade;
     }
 
-    public void setGrade(float grade) {
-        this.grade.set(grade);
+    public void setGrade(double grade) {
+        this.grade = grade;
     }
 
     public AssignmentStatus getStatus() {
-        return status.get();
+        return status;
     }
 
     public void setStatus(AssignmentStatus status) {
-        this.status.set(status);
+        this.status = status;
     }
 
     public String getAssignmentPath() {
@@ -133,50 +118,27 @@ public class StudentAssignment extends Assignment {
         this.assignPath = assignPath;
     }
 
-    public SimpleFloatProperty gradeProperty() {
-        return grade;
-    }
+    public void setAssignmentFeedback(String feedback) {this.feedback = feedback;}
 
-    public SimpleObjectProperty<AssignmentStatus> statusProperty() {
-        return status;
-    }
+    public String getAssignmentFeedback() {return feedback; }
 
-    public SimpleStringProperty feedbackProperty() {return feedback;}
-
-    public void setAssignmentFeedback(String feedback) {this.feedback.set(feedback);}
-
-    public String getAssignmentFeedback() {return feedback.get(); }
-
-    // INNER CLASS
-    public static class SerializableStudentAssignment extends SerializableAssignment {
-        protected final float serGrade;
-        protected final String serAssignPath;
-        protected final AssignmentStatus serStatus;
-        protected final String assignFeedback;
-        private static final long serialVersionUID = 23456789L;
-
-        public SerializableStudentAssignment(StudentAssignment studentAssign) {
-            super(studentAssign);
-            serGrade = studentAssign.getGrade();
-            serStatus = studentAssign.getStatus();
-            assignFeedback = studentAssign.getAssignmentFeedback();
-            serAssignPath = studentAssign.getAssignmentPath();
-        }
-    }
 
     // INNER CLASS
     public enum AssignmentStatus {
-        MISSING("Missing", Color.web("#e53935")),
-        UPLOADED("Uploaded", Color.web("#1e88e5")),
-        GRADED("Graded", Color.web("#388e3c")),
-        LATE("Late", Color.web("#b71c1c"));
+        MISSING("Missing", "#e53935"),
+        UPLOADED("Uploaded", "#1e88e5"),
+        GRADED("Graded", "#388e3c"),
+        LATE("Late", "#b71c1c");
 
-        private final Color statusColor;
+        private final String status;
+        private final String statusColorString;
 
-        AssignmentStatus(String statusText, Color statusColor) {
-            this.statusColor = statusColor;
+        AssignmentStatus(String statusText, String statusColorString) {
+            this.status = statusText;
+            this.statusColorString = statusColorString;
         }
 
-        public Color getStatusColor() {return statusColor;}
+        public String getStatusText() {return status;}
+        public Color getStatusColor() {return Color.web(statusColorString);}
     }
 }

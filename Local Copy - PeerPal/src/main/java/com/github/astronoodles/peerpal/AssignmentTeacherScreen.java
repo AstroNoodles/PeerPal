@@ -158,7 +158,7 @@ public class AssignmentTeacherScreen {
         // Get all of the completed data from the students and ensure that we can look at it
         // and access the grades on them
         CloudAssignmentParser parser = new CloudAssignmentParser(
-                String.format("%s.%s", row.getItem().getFullName(), row.getItem().getFileExtension())
+                String.format("%s.%s", row.getItem().getAssignmentName(), row.getItem().getFileExtension())
         );
 
         Map<String, List<StudentAssignment>> allAssign = parser.getStudentAssignments();
@@ -209,7 +209,7 @@ public class AssignmentTeacherScreen {
             Alert descAlert = new Alert(Alert.AlertType.INFORMATION,
                     assign.getDescription(), ButtonType.OK);
             descAlert.setHeaderText("Here is the description for your assignment!");
-            descAlert.setTitle(String.format("%s - Description", assign.getFullName()));
+            descAlert.setTitle(String.format("%s - Description", assign.getAssignmentName()));
             descAlert.show();
         });
         return new ContextMenu(descItem);
@@ -222,7 +222,7 @@ public class AssignmentTeacherScreen {
             //System.out.println(assign);
             String pathCheck = null;
             for (StudentAssignment studentAssignment : assign) {
-                if (studentAssignment.getFullName().trim().equals(item.getFullName().trim())) {
+                if (studentAssignment.getAssignmentName().trim().equals(item.getAssignmentName().trim())) {
                     // TODO Ensure that all assignments have an assignment path and
                     // TODO are written to the studentAssignments file.
                     assignments.add(studentAssignment);
@@ -288,13 +288,10 @@ public class AssignmentTeacherScreen {
             String assignmentPath = curStudentAssignments.get(0).getAssignmentPath();
             System.out.println("Saving items to: " + assignmentPath);
 
-            List<StudentAssignment.SerializableStudentAssignment> serializableStudentAssignments =
-                    curStudentAssignments.parallelStream().map(StudentAssignment.SerializableStudentAssignment::new).
-                            collect(Collectors.toList());
 
             try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get(assignmentPath),
                     StandardOpenOption.WRITE))) {
-                oos.writeObject(serializableStudentAssignments);
+                oos.writeObject(curStudentAssignments);
             } catch (IOException e) {
                 e.printStackTrace();
             }

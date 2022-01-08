@@ -61,7 +61,7 @@ public class CreateAssignmentDialog {
             extensionAlert.setHeaderText("Required File Type Warning");
             extensionAlert.show();
         } else {
-            String extension = comboExtensions.getValue().split("-")[0].trim().toLowerCase();
+            String extension = comboExtensions.getValue().split(" ")[0].trim().toLowerCase();
             curAssignment = new Assignment(assignName.getText().trim(), teacherName,
                     assignDesc.getText(), extension, assignStart.getValue(),
                     assignEnd.getValue());

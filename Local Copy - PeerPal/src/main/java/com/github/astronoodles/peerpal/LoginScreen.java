@@ -3,19 +3,20 @@ package com.github.astronoodles.peerpal;
 import com.github.astronoodles.peerpal.extras.CloudStorageConfig;
 import com.github.astronoodles.peerpal.extras.CryptographyHelper;
 import com.github.astronoodles.peerpal.extras.StageHelper;
+import com.github.astronoodles.peerpal.revamped.RevampedAssignmentScreen;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -112,14 +113,20 @@ public class LoginScreen extends Application {
 
                     System.out.println("Num Files: " + cloudConfig.countLocalStorage(1));
 
+                    FXMLLoader assignScreenLoader = new FXMLLoader(getClass().getResource("/assignment_screen.fxml"));
+                    Parent mainScreen = assignScreenLoader.load();
+
+                    RevampedAssignmentScreen ras = assignScreenLoader.getController();
+
                     if (classCodeEntries > 1) {
-                        AssignmentScreen screen = new AssignmentScreen(users[0]);
-                        GridPane pane = screen.loadStage();
-                        Scene scene = new Scene(pane, 620, 600);
+                        Scene scene = new Scene(mainScreen, 620, 600);
+                        ras.initialize(users[0], true);
 
                         cloudConfig.downloadTeacherAssignments();
 
                         Stage stage = new Stage();
+                        stage.setResizable(true);
+                        stage.setTitle("PeerPal Assignment Screen - Teachers");
                         stage.setScene(scene);
                         stage.show();
 
@@ -128,12 +135,14 @@ public class LoginScreen extends Application {
                         hasUser = true;
                         break;
                     } else {
-                        AssignmentTeacherScreen screen = new AssignmentTeacherScreen(users[0]);
-                        Scene s = new Scene(screen.loadStage(), 620, 600);
+                        Scene s = new Scene(mainScreen, 620, 600);
+                        ras.initialize(users[0], false);
 
-                        if(cloudConfig.isCloudStorageFull()) cloudConfig.downloadCloudStorage();
+                        if(cloudConfig.isCloudStorageAvailable()) cloudConfig.downloadCloudStorage();
 
                         Stage st = new Stage();
+                        st.setResizable(true);
+                        st.setTitle("PeerPal Assignment Screen - Students");
                         st.setOnCloseRequest((event) -> {
                             //screen.backUpAssignments();
                             //screen.updateGridStudentAssignments();
