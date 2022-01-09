@@ -140,7 +140,7 @@ public class AssignmentScreen {
         GridPane.setHgrow(welcome, Priority.SOMETIMES);
 
         ImageView refreshIcon = new ImageView(
-                new Image(AssignmentScreen.class.getResourceAsStream("/icons/refresh.png"), 50, 50, true, true));
+                new Image(AssignmentScreen.class.getResourceAsStream("/icons/refresh_icon.png"), 50, 50, true, true));
         Button refreshButton = new Button("", refreshIcon);
         refreshButton.setPrefWidth(30);
         refreshButton.setTooltip(new Tooltip("Click here to refresh current assignments."));
