@@ -23,6 +23,21 @@
 
     <MenuBar onKeyPressed="#shortcutAccentDialog">
         <Menu text="Utilities">
+         <MenuItem onAction="#copyText" text="Copy">
+            <accelerator>
+               <KeyCodeCombination alt="UP" code="C" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+            </accelerator>
+         </MenuItem>
+         <MenuItem onAction="#cutText" text="Cut">
+            <accelerator>
+               <KeyCodeCombination alt="UP" code="X" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+            </accelerator>
+         </MenuItem>
+         <MenuItem onAction="#pasteText" text="Paste">
+            <accelerator>
+               <KeyCodeCombination alt="UP" code="V" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+            </accelerator>
+         </MenuItem>
             <MenuItem onAction="#openAccentDialog" text="Open Accent Dialog">
                 <accelerator>
                     <KeyCodeCombination alt="ANY" code="A" control="ANY" meta="ANY" shift="DOWN" shortcut="ANY" />

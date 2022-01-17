@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -26,16 +27,19 @@ import java.time.Period;
 public class MainAssignmentScreen {
 
     @FXML
-    public Label assignmentTitle, assignedBy, statusText, assignedText, dueText, assignmentDescText;
+    public Label assignmentTitle, assignedBy, statusText, assignedText, dueText, assignmentDescText, feedbackLabel;
 
     @FXML
     public ImageView fileIcon;
+
+    @FXML
+    public Button viewResponses;
 
     public String studentName;
     public StudentAssignment currAssignment;
 
 
-    public void formatAssignmentText(String studentName, StudentAssignment assignment) {
+    public void formatAssignmentText(String studentName, boolean isTeacher, StudentAssignment assignment) {
         this.studentName = studentName;
         this.currAssignment = assignment;
 
@@ -50,6 +54,8 @@ public class MainAssignmentScreen {
         String icon_loc = String.format("/file_icons/%s_icon.png", assignment.getFileExtension());
         fileIcon.setImage(new Image(getClass().getResource(icon_loc).toExternalForm(), 150, 150,
                 true, true, true));
+
+        viewResponses.setVisible(isTeacher);
     }
 
     @FXML
@@ -118,7 +124,7 @@ public class MainAssignmentScreen {
     }
 
     @FXML
-    public void viewTeacherFeedback() {
+    public void doFeedback() {
         // see notes in notebook - may be more complicated than I thought
     }
 

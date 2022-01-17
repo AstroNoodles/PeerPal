@@ -247,7 +247,7 @@ public class RevampedAssignmentScreen {
             Parent assignDialog = loader.load();
 
             MainAssignmentScreen assignmentScreen = loader.getController();
-            assignmentScreen.formatAssignmentText(studentName, assignment);
+            assignmentScreen.formatAssignmentText(studentName, isTeacher, assignment);
 
             Scene dialogScene = new Scene(assignDialog, 300, 300);
             dialogScene.getStylesheets().add(getClass().getResource("/assignment_styles.css").toExternalForm());

@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.paint.Color;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,10 +13,10 @@ public class StudentAssignment extends Assignment {
 
     private double grade;
     private AssignmentStatus status;
-    private String feedback;
+    private LinkedList<Feedback> feedback;
     private String assignPath;
 
-    public StudentAssignment(Assignment otherAssign, String assignPath, float grade, String feedback) {
+    public StudentAssignment(Assignment otherAssign, String assignPath, float grade, LinkedList<Feedback> feedback) {
         super(otherAssign.getAssignmentName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
                 otherAssign.getDescription(), otherAssign.getStartDate(), otherAssign.getEndDate());
         this.grade = grade;
@@ -29,11 +30,11 @@ public class StudentAssignment extends Assignment {
                 otherAssign.getDescription(), otherAssign.getStartDate(), otherAssign.getEndDate());
         this.grade = 0;
         this.status = AssignmentStatus.MISSING;
-        this.feedback = "";
+        this.feedback = new LinkedList<>();
         this.assignPath = assignPath;
     }
 
-    public StudentAssignment(Assignment otherAssign, String assignPath, float grade, String feedback,
+    public StudentAssignment(Assignment otherAssign, String assignPath, float grade, LinkedList<Feedback> feedback,
                              AssignmentStatus status) {
         super(otherAssign.getAssignmentName(), otherAssign.getInstructorName(), otherAssign.getFileExtension(),
                 otherAssign.getDescription(), otherAssign.getStartDate(), otherAssign.getEndDate());
@@ -47,7 +48,7 @@ public class StudentAssignment extends Assignment {
         super(baseAssign);
         this.grade = 0;
         this.status = AssignmentStatus.MISSING;
-        this.feedback = "";
+        this.feedback = new LinkedList<>();
     }
 
     @Override
@@ -118,12 +119,30 @@ public class StudentAssignment extends Assignment {
         this.assignPath = assignPath;
     }
 
-    public void setAssignmentFeedback(String feedback) {this.feedback = feedback;}
+    public void setAssignmentFeedback(LinkedList<Feedback> feedback) {this.feedback = feedback;}
 
-    public String getAssignmentFeedback() {return feedback; }
+    public LinkedList<Feedback> getAssignmentFeedback() {return feedback; }
 
 
-    // INNER CLASS
+    // INNER CLASSES
+
+    public static class Feedback {
+        private final int startPos;
+        private final int endPos;
+        private String feedbackText;
+
+        public Feedback(int startPos, int endPos, String feedbackText) {
+            this.feedbackText = feedbackText;
+            this.startPos = startPos;
+            this.endPos = endPos;
+        }
+
+        public void setFeedbackText(String feedbackText) {
+            this.feedbackText = feedbackText;
+        }
+
+    }
+
     public enum AssignmentStatus {
         MISSING("Missing", "#e53935"),
         UPLOADED("Uploaded", "#1e88e5"),

@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -246,7 +247,11 @@ public class StudentAssignmentGrid {
                 feedbackArea.textProperty());
         okButton.disableProperty().bind(feedbackBinding);
 
-        okButton.setOnAction(event -> curAssign.setAssignmentFeedback(feedbackArea.getText()));
+        okButton.setOnAction(event -> {
+            LinkedList<StudentAssignment.Feedback> feedbackList = new LinkedList<>();
+            feedbackList.add(new StudentAssignment.Feedback(0, 10, feedbackArea.getText()));
+            curAssign.setAssignmentFeedback(feedbackList);
+        });
 
         feedbackDialog.setGraphic(new ImageView(avatarImage));
 

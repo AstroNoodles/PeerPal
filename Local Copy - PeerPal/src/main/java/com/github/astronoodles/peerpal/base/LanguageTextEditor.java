@@ -103,6 +103,21 @@ public class LanguageTextEditor {
     }
 
     @FXML
+    public void copyText(){
+        area.copy();
+    }
+
+    @FXML
+    public void cutText(){
+        area.cut();
+    }
+
+    @FXML
+    public void pasteText() {
+        area.paste();
+    }
+
+    @FXML
     protected void submitAssignment(){
         System.out.println("Submitting:" + area.getText());
         FileChooser chooser = new FileChooser();
