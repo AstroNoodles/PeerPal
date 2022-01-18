@@ -1,0 +1,29 @@
+.feedbackTitles {
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+    -fx-font-family: Charter, Arial, Times, sans-serif;
+}
+
+#studentResponse {
+    -fx-font-family: Arial, Times, sans-serif;
+    -fx-font-size: 12;
+    -fx-border-style: dashed;
+    -fx-border-width: 2;
+    -fx-border-radius: 1;
+}
+
+#commentBoxes {
+    -fx-border-color: #ff7043;
+    -fx-border-width: 1;
+    -fx-border-radius: 1;
+}
+
+#createCommentButton {
+    -fx-font-family: Charter, Arial, Times, sans-serif;
+}
+
+#feedbackBox {
+    -fx-font-family: Charter, Arial, Times, sans-serif;
+    -fx-font-size: 13;
+    -fx-border-color: #7986cd;
+}

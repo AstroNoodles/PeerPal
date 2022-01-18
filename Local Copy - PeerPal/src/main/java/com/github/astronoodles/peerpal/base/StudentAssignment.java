@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -126,7 +127,7 @@ public class StudentAssignment extends Assignment {
 
     // INNER CLASSES
 
-    public static class Feedback {
+    public static class Feedback implements Serializable {
         private final int startPos;
         private final int endPos;
         private String feedbackText;
@@ -136,6 +137,9 @@ public class StudentAssignment extends Assignment {
             this.startPos = startPos;
             this.endPos = endPos;
         }
+
+        public int getStartPos() {return startPos; }
+        public int getEndPos() {return endPos; }
 
         public void setFeedbackText(String feedbackText) {
             this.feedbackText = feedbackText;
