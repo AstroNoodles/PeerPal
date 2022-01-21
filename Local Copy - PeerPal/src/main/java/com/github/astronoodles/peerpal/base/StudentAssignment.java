@@ -144,6 +144,7 @@ public class StudentAssignment extends Assignment {
         public void setFeedbackText(String feedbackText) {
             this.feedbackText = feedbackText;
         }
+        public String getFeedbackText() {return feedbackText;}
 
     }
 

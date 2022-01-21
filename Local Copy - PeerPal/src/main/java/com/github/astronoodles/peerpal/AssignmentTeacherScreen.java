@@ -30,10 +30,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Deprecated
 public class AssignmentTeacherScreen {
 
     private final String name;
-    private List<StudentAssignment> updatedStudentAssignments = new ArrayList<>(10);
+    private final List<StudentAssignment> updatedStudentAssignments = new ArrayList<>(10);
     public List<StudentAssignment> curStudentAssignments = new ArrayList<>(10);
     public static final Period EXPIRY_PERIOD = Period.ofDays(3);
 

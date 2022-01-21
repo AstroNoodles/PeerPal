@@ -1,15 +1,14 @@
 package com.github.astronoodles.peerpal.base;
 
 import com.github.astronoodles.peerpal.AssignmentTeacherScreen;
+import com.github.astronoodles.peerpal.dialogs.MainAssignmentScreen;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -129,5 +128,31 @@ public class AssignmentIO {
             }
         }
         return assignments;
+    }
+
+    public static void updateAssignment(Path newAssignmentPath, String name, StudentAssignment curAssignment) {
+        try {
+            Path userLoc = Paths.get("./src/main/java/com/github/astronoodles/peerpal",
+                    "storage", name, String.format("%s.%s",
+                            curAssignment.getAssignmentName().trim(), curAssignment.getFileExtension()));
+
+            if (!Files.exists(userLoc)) {
+                Files.createDirectories(userLoc.getParent());
+                Files.createFile(userLoc);
+            }
+
+            Files.copy(newAssignmentPath, userLoc, StandardCopyOption.REPLACE_EXISTING);
+
+            Period latePeriod = MainAssignmentScreen.EXPIRY_PERIOD;
+            LocalDate lateDate = curAssignment.getEndDate().plus(latePeriod);
+
+            if (LocalDate.now().isAfter(lateDate)) {
+                curAssignment.setStatus(StudentAssignment.AssignmentStatus.LATE);
+            } else {
+                curAssignment.setStatus(StudentAssignment.AssignmentStatus.UPLOADED);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

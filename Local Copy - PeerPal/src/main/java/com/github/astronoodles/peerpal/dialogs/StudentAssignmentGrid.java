@@ -3,12 +3,16 @@ package com.github.astronoodles.peerpal.dialogs;
 import com.github.astronoodles.peerpal.base.Assignment;
 import com.github.astronoodles.peerpal.base.StudentAssignment;
 import com.github.astronoodles.peerpal.extras.StageHelper;
+import com.github.astronoodles.peerpal.revamped.TeacherFeedbackDialog;
 import javafx.animation.FillTransition;
 import javafx.animation.SequentialTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -19,6 +23,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
@@ -32,14 +37,12 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StudentAssignmentGrid {
     private final List<StudentAssignment> assignments;
     public static final int STUDENT_ROWS = 5;
+    private List<String> assignText;
 
     public StudentAssignmentGrid(List<StudentAssignment> assignments) {
         this.assignments = assignments;
@@ -97,7 +100,8 @@ public class StudentAssignmentGrid {
                 viewAssignment.setPrefWidth(150);
                 viewAssignment.setOnAction(e -> {
                     try {
-                        downloadAssignment(studentNames.get(curRow), refreshedAssignments.get(curRow * curCol));
+                        assignText =
+                                downloadAssignment(studentNames.get(curRow), refreshedAssignments.get(curRow * curCol));
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -123,7 +127,7 @@ public class StudentAssignmentGrid {
                 GridPane.setHgrow(giveFeedback, Priority.SOMETIMES);
 
                 giveFeedback.setOnAction(e -> {
-                    createFeedbackDialog(updateGrade.getScene().getWindow(), studentNames.get(curRow), avatarImage,
+                    createFeedbackDialog(updateGrade.getScene().getWindow(), studentNames.get(curRow),
                             refreshedAssignments.get(curRow * curCol));
                 });
 
@@ -159,7 +163,7 @@ public class StudentAssignmentGrid {
         return completedAssignments;
     }
 
-    private void downloadAssignment(String studentName, Assignment curAssignment) throws IOException {
+    public static List<String> downloadAssignment(String studentName, Assignment curAssignment) throws IOException {
         Path assignmentsLoc =
                 Paths.get("./src/main/java/com/github/astronoodles/peerpal",
                         "storage", studentName);
@@ -192,6 +196,13 @@ public class StudentAssignmentGrid {
             }
 
         }
+
+        if(curAssignment.getFileExtension().equals("txt") || curAssignment.getFileExtension().equals("html")) {
+            return Files.readAllLines(destFile.toPath());
+        } else {
+            return Collections.singletonList("");
+        }
+
     }
 
     private void updateAssignmentGrade(Window srcWindow, StudentAssignment curAssignment) {
@@ -225,37 +236,38 @@ public class StudentAssignmentGrid {
         gradeInput.showAndWait();
     }
 
-    private void createFeedbackDialog(Window srcWindow, String studentName, Image avatarImage, StudentAssignment curAssign) {
-        Dialog<String> feedbackDialog = new Dialog<>();
-        feedbackDialog.setTitle("Assignment Feedback Dialog");
-        feedbackDialog.setHeaderText("Insert Assignment Feedback for " + studentName + " here!");
-        feedbackDialog.initOwner(srcWindow);
-
-        TextArea feedbackArea = new TextArea();
-        feedbackArea.setPrefHeight(300);
-        feedbackArea.setPrefWidth(300);
-        feedbackArea.setBorder(new Border(new BorderStroke(Color.web("#3f51b5"), BorderStrokeStyle.SOLID,
-                new CornerRadii(2), new BorderWidths(1))));
-        feedbackArea.setWrapText(true);
-
-        feedbackDialog.getDialogPane().setContent(feedbackArea);
-        feedbackDialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
-
-        final Button okButton = (Button) feedbackDialog.getDialogPane().lookupButton(ButtonType.OK);
-
-        final BooleanBinding feedbackBinding = Bindings.createBooleanBinding(() -> feedbackArea.getText().isEmpty(),
-                feedbackArea.textProperty());
-        okButton.disableProperty().bind(feedbackBinding);
-
-        okButton.setOnAction(event -> {
-            LinkedList<StudentAssignment.Feedback> feedbackList = new LinkedList<>();
-            feedbackList.add(new StudentAssignment.Feedback(0, 10, feedbackArea.getText()));
-            curAssign.setAssignmentFeedback(feedbackList);
+    public static String squashLineListToString(List<String> lst) {
+        StringBuilder build = new StringBuilder();
+        lst.forEach(elem -> {
+            build.append(elem);
+            build.append("\n");
         });
+        return build.toString();
+    }
 
-        feedbackDialog.setGraphic(new ImageView(avatarImage));
+    private void createFeedbackDialog(Window srcWindow, String studentName, StudentAssignment curAssign) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("teacher_feedback_dialog.fxml"));
+            Parent feedbackDialog = loader.load();
+            TeacherFeedbackDialog controller = loader.getController();
 
-        feedbackDialog.showAndWait();
+            if(assignText == null) {
+                assignText = downloadAssignment(studentName, curAssign);
+            }
+
+            controller.initialize(studentName, curAssign, squashLineListToString(assignText));
+
+            Scene feedbackDialogScene = new Scene(feedbackDialog, 600, 400, Color.web("#90caf9"));
+            feedbackDialogScene.getStylesheets().add(getClass().getResource("/feedback_styles.css").toExternalForm());
+            Stage fstage = new Stage();
+            fstage.setScene(feedbackDialogScene);
+            fstage.initOwner(srcWindow);
+
+            fstage.showAndWait();
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private SequentialTransition showGradeTransition(Button gradeButton) {

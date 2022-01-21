@@ -29,6 +29,7 @@ import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.Period;
 
+@Deprecated
 public class AssignmentScreen {
 
     private final String name;
@@ -266,7 +267,8 @@ public class AssignmentScreen {
 
         MenuItem feedbackItem = new MenuItem("See Teacher Feedback");
         feedbackItem.setOnAction(event -> {
-            Alert feedbackAlert = new Alert(Alert.AlertType.INFORMATION, curAssignment.getAssignmentFeedback(), ButtonType.OK);
+            Alert feedbackAlert = new Alert(Alert.AlertType.INFORMATION,
+                    curAssignment.getAssignmentFeedback().get(0).getFeedbackText(), ButtonType.OK);
             feedbackAlert.initOwner(table.getScene().getWindow());
             feedbackAlert.setTitle("Teacher Feedback Notice");
             feedbackAlert.setHeaderText("See Your Teacher's Feedback");

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="3.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.revamped.StudentFeedbackDialog">
+   <children>
+      <VBox fx:id="mainBox" spacing="2.0">
+      <Label styleClass="feedbackTitles" text="Student Feedback Session" wrapText="true">
+         <VBox.margin>
+            <Insets left="10.0" top="10.0" />
+         </VBox.margin>
+      </Label>
+      <Label prefWidth="310.0" styleClass="login_plain" text="Here, you can review your feedback of your assignment from the teacher. You can hover over the feedback boxes to find the exact location of your mistake. Be sure to contact the teacher if you have any additional questions about your assignment." wrapText="true">
+         <font>
+            <Font name="Charter Roman" size="12.0" />
+         </font>
+         <VBox.margin>
+            <Insets left="10.0" top="5.0" />
+         </VBox.margin>
+      </Label>
+      </VBox>
+      <Separator orientation="VERTICAL" prefHeight="400.0" prefWidth="0.0" />
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="SOMETIMES">
+         <children>
+            <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="375.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
+               <content>
+                  <VBox id="commentBoxes" fx:id="commentPane" alignment="TOP_CENTER" prefHeight="300.0" prefWidth="100.0" spacing="5.0" />
+               </content>
+               <VBox.margin>
+                  <Insets bottom="5.0" right="7.0" top="5.0" />
+               </VBox.margin>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </children>
+</HBox>

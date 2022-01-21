@@ -27,3 +27,10 @@
     -fx-font-size: 13;
     -fx-border-color: #7986cd;
 }
+
+#studentFeedbackBox {
+    -fx-font-family: "Helvetica Neue", Charter, Arial, Times, sans-serif;
+    -fx-border-radius: 1;
+    -fx-border-color: #ba68c8;
+
+}

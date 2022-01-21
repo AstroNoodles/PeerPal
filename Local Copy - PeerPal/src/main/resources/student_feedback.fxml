@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.astronoodles.peerpal.revamped.CommentToolDialog">
+   <children>
+      <Label styleClass="feedbackTitles" text="Feedback" textAlignment="CENTER">
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </Label>
+      <Label id="studentFeedbackBox" prefHeight="200.0" prefWidth="500.0" text="Teacher Feedback" textAlignment="CENTER" wrapText="true">
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+         <font>
+            <Font name="Charter Roman" size="13.0" />
+         </font>
+         <padding>
+            <Insets bottom="150.0" />
+         </padding>
+      </Label>
+   </children>
+</VBox>
